@@ -47,7 +47,7 @@ export async function GET() {
 
   // Build per-habit streak details with heatmap
   const habitDetails = await Promise.all(
-    habits.map(async (habit) => {
+    habits.map(async (habit: any) => {
       const heatmap = await getHeatmapData(habit.id)
       const completionRate = computeCompletionRate(habit.logs)
 
@@ -67,8 +67,8 @@ export async function GET() {
   )
 
   // Overall stats across all habits
-  const overallCurrentStreak = Math.max(0, ...habits.map((h) => h.currentStreak))
-  const overallLongestStreak = Math.max(0, ...habits.map((h) => h.longestStreak))
+  const overallCurrentStreak = Math.max(0, ...habits.map((h:any) => h.currentStreak))
+  const overallLongestStreak = Math.max(0, ...habits.map((h:any) => h.longestStreak))
 
   // Total DONE logs all time
   const totalDaysTracked = await prisma.habitLog.count({

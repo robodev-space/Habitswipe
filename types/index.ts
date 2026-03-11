@@ -95,6 +95,73 @@ export interface WeeklyDataPoint {
   total: number
 }
 
+// Add this BEFORE HabitStreakDetail
+export interface StreakMilestone {
+  id: string
+  userId: string
+  habitId: string
+  milestone: number
+  achieved: boolean
+  achievedAt: Date | null
+  createdAt: Date
+}
+
+// Then this after
+export interface HabitStreakDetail {
+  habitId: string
+  name: string
+  icon: string
+  color: string
+  currentStreak: number
+  longestStreak: number
+  completionRate: number
+  lastStreakDate: Date | null
+  milestones: StreakMilestone[]   // ← needs StreakMilestone defined above
+  heatmap: HeatmapDay[]
+}
+
+export interface HeatmapDay {
+  date: string
+  status: LogStatus | null
+}
+
+export interface StreakPageData {
+  overallCurrentStreak: number
+  overallLongestStreak: number
+  totalDaysTracked: number
+  perfectDays: number
+  habits: HabitStreakDetail[]
+}
+
+
+export interface HabitStreakDetail {
+  habitId: string
+  name: string
+  icon: string
+  color: string
+  currentStreak: number
+  longestStreak: number
+  completionRate: number
+  lastStreakDate: Date | null
+  milestones: StreakMilestone[]
+  heatmap: HeatmapDay[]
+}
+
+export interface HeatmapDay {
+  date: string
+  status: LogStatus | null
+}
+
+export interface StreakPageData {
+  overallCurrentStreak: number
+  overallLongestStreak: number
+  totalDaysTracked: number
+  perfectDays: number
+  habits: HabitStreakDetail[]
+}
+
+
+
 // ─── Swipe card state ────────────────────────────────────────────────────────
 export type SwipeDirection = "left" | "right" | null
 export type CardState = "idle" | "swiping-left" | "swiping-right" | "done"

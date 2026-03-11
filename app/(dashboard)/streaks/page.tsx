@@ -37,7 +37,7 @@ export default function StreaksPage() {
 
   if (!data || data.habits.length === 0) {
     return (
-      <div className="max-w-2xl mx-auto px-6 py-8 text-center">
+      <div className="max-w-2xl h-full flex flex-col items-center justify-center mx-auto px-6 py-8 text-center">
         <div className="text-6xl mb-4">🔥</div>
         <h2 className="text-2xl text-fore mb-2" style={{ fontFamily: "var(--font-dm-serif)" }}>
           No streaks yet
@@ -52,7 +52,7 @@ export default function StreaksPage() {
   const overviewCards = [
     {
       label: "Current Best Streak",
-      value: `${data.overallCurrentStreak}d`,
+      value: `${data.overallCurrentStreak ||0} days`,
       icon: Flame,
       color: "#f97316",
       bg: "bg-orange-50 dark:bg-orange-950/30",
@@ -60,7 +60,7 @@ export default function StreaksPage() {
     },
     {
       label: "Longest Ever",
-      value: `${data.overallLongestStreak}d`,
+      value: `${data.overallLongestStreak||0} days`,
       icon: Trophy,
       color: "#f59e0b",
       bg: "bg-amber-50 dark:bg-amber-950/30",
@@ -98,7 +98,7 @@ export default function StreaksPage() {
       </div>
 
       {/* Overview stat cards */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 w-full gap-3">
         {overviewCards.map((card, i) => (
           <motion.div
             key={card.label}

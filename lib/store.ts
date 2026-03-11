@@ -36,6 +36,7 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
   fetchHabits: async () => {
     set({ isLoading: true, error: null })
     try {
+      debugger
       const res = await fetch("/api/habits")
       const json = await res.json()
       if (!res.ok) throw new Error(json.error)
