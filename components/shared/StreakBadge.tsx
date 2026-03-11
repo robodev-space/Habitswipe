@@ -2,9 +2,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // STREAK BADGE — Reusable streak display with flame icon
 // ─────────────────────────────────────────────────────────────────────────────
-
+'use client'
 import { Flame } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useEffect, useState } from "react"
 
 interface StreakBadgeProps {
   streak: number
@@ -20,6 +21,13 @@ export function StreakBadge({ streak, size = "md", className }: StreakBadgeProps
     md: "text-sm px-3 py-1 gap-1",
     lg: "text-base px-4 py-1.5 gap-1.5",
   }
+  const [mounted, setMounted] = useState(false)
+
+useEffect(() => {
+  setMounted(true)
+}, [])
+
+if (!mounted) return null
 
   const iconSize = { sm: "w-3 h-3", md: "w-4 h-4", lg: "w-5 h-5" }
 
@@ -59,9 +67,11 @@ export function ProgressRing({
   className,
   label,
 }: ProgressRingProps) {
-  const radius = (size - strokeWidth) / 2
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference - (percent / 100) * circumference
+const safePercent = Math.min(100, Math.max(0, percent || 0))
+
+const radius = (size - strokeWidth) / 2
+const circumference = 2 * Math.PI * radius
+const offset = circumference - (safePercent / 100) * circumference
 
   return (
     <div className={cn("relative flex items-center justify-center", className)}>

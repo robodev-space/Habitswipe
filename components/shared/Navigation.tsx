@@ -10,7 +10,7 @@ import { usePathname } from "next/navigation"
 import { signOut, useSession } from "next-auth/react"
 import { useTheme } from "next-themes"
 import {
-  LayoutDashboard, ListChecks, User, Sun, Moon, LogOut, Zap,
+  LayoutDashboard, ListChecks, User, Sun, Moon, LogOut, Zap,Sparkles,Flame  
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/Button"
@@ -19,6 +19,7 @@ const NAV_ITEMS = [
   { href: "/",        icon: Zap,             label: "Today" },
   { href: "/habits",  icon: ListChecks,      label: "Habits" },
   { href: "/dashboard", icon: LayoutDashboard, label: "Stats" },
+  { href: "/dashboard", icon: Flame  , label: "Streak" },
   { href: "/profile", icon: User,            label: "Profile" },
 ]
 

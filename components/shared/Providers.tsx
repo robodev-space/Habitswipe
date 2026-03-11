@@ -4,21 +4,42 @@
 // Wraps the whole app so every page gets auth + theme.
 // ─────────────────────────────────────────────────────────────────────────────
 
-"use client"
+'use client'
+import { useState, useEffect } from 'react'
+import { SessionProvider } from 'next-auth/react'
+import { ThemeProvider } from 'next-themes'
 
-import { SessionProvider } from "next-auth/react"
-import { ThemeProvider } from "next-themes"
+function ClientOnly({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    // Return a full-screen placeholder that matches the layout dimensions
+    // so there's no layout shift when the real content appears
+    return (
+      <div
+        style={{ minHeight: '100vh', background: 'var(--bg, #f8fafc)' }}
+        aria-hidden='true'
+      />
+    )
+  }
+
+  return <>{children}</>
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
       <ThemeProvider
-        attribute="class"          // toggles "dark" class on <html>
-        defaultTheme="system"      // respect OS preference
+        attribute='class' // toggles "dark" class on <html>
+        defaultTheme='system' // respect OS preference
         enableSystem
-        disableTransitionOnChange  // prevent flash on theme switch
+        disableTransitionOnChange // prevent flash on theme switch
       >
-        {children}
+        <ClientOnly>{children}</ClientOnly>
       </ThemeProvider>
     </SessionProvider>
   )
