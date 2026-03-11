@@ -1,26 +1,23 @@
-// components/shared/Navigation.tsx
-// ─────────────────────────────────────────────────────────────────────────────
-// NAVIGATION — Sidebar on desktop, bottom bar on mobile
-// ─────────────────────────────────────────────────────────────────────────────
-
 "use client"
+
+// components/shared/Navigation.tsx
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { signOut, useSession } from "next-auth/react"
 import { useTheme } from "next-themes"
 import {
-  LayoutDashboard, ListChecks, User, Sun, Moon, LogOut, Zap,Sparkles,Flame  
+  LayoutDashboard, ListChecks, User,
+  Sun, Moon, LogOut, Zap, Flame,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/Button"
 
 const NAV_ITEMS = [
-  { href: "/",        icon: Zap,             label: "Today" },
-  { href: "/habits",  icon: ListChecks,      label: "Habits" },
+  { href: "/",          icon: Zap,             label: "Today" },
+  { href: "/habits",    icon: ListChecks,      label: "Habits" },
+  { href: "/streaks",   icon: Flame,           label: "Streaks" },
   { href: "/dashboard", icon: LayoutDashboard, label: "Stats" },
-  { href: "/dashboard", icon: Flame  , label: "Streak" },
-  { href: "/profile", icon: User,            label: "Profile" },
+  { href: "/profile",   icon: User,            label: "Profile" },
 ]
 
 export function Navigation() {
@@ -30,14 +27,17 @@ export function Navigation() {
 
   return (
     <>
-      {/* ── Desktop sidebar ─────────────────────────────────────────────────── */}
+      {/* ── Desktop sidebar ───────────────────────────────────────────────── */}
       <aside className="hidden md:flex flex-col w-64 min-h-screen bg-surface border-r border-theme px-4 py-6 gap-2">
         {/* Logo */}
         <div className="flex items-center gap-2.5 px-3 mb-6">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
             <Zap className="w-5 h-5 text-white" fill="white" />
           </div>
-          <span className="text-xl font-bold text-fore" style={{ fontFamily: "var(--font-dm-serif)" }}>
+          <span
+            className="text-xl font-bold text-fore"
+            style={{ fontFamily: "var(--font-dm-serif)" }}
+          >
             HabitSwipe
           </span>
         </div>
@@ -58,7 +58,14 @@ export function Navigation() {
                     : "text-fore-2 hover:bg-surface-2 hover:text-fore"
                 )}
               >
-                <Icon className={cn("w-5 h-5", isActive ? "text-indigo-500" : "")} />
+                <Icon
+                  className={cn(
+                    "w-5 h-5 flex-shrink-0",
+                    isActive ? "text-indigo-500" : "",
+                    // Flame gets orange tint when not active
+                    !isActive && label === "Streaks" ? "text-orange-400" : ""
+                  )}
+                />
                 {label}
                 {isActive && (
                   <div className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500" />
@@ -70,7 +77,6 @@ export function Navigation() {
 
         {/* Bottom actions */}
         <div className="flex flex-col gap-2 pt-4 border-t border-theme">
-          {/* User info */}
           {session?.user && (
             <div className="flex items-center gap-2.5 px-3 py-2">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white text-sm font-semibold">
@@ -83,7 +89,6 @@ export function Navigation() {
             </div>
           )}
 
-          {/* Theme toggle */}
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-fore-2 hover:bg-surface-2 hover:text-fore transition-all"
@@ -92,7 +97,6 @@ export function Navigation() {
             {theme === "dark" ? "Light mode" : "Dark mode"}
           </button>
 
-          {/* Sign out */}
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-fore-2 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30 transition-all"
@@ -103,9 +107,9 @@ export function Navigation() {
         </div>
       </aside>
 
-      {/* ── Mobile bottom bar ────────────────────────────────────────────────── */}
+      {/* ── Mobile bottom bar ─────────────────────────────────────────────── */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md border-t border-theme">
-        <div className="flex items-center justify-around px-2 py-2 safe-area-pb">
+        <div className="flex items-center justify-around px-1 py-2">
           {NAV_ITEMS.map(({ href, icon: Icon, label }) => {
             const isActive = pathname === href
             return (
@@ -113,13 +117,18 @@ export function Navigation() {
                 key={href}
                 href={href}
                 className={cn(
-                  "flex flex-col items-center gap-1 px-4 py-1.5 rounded-xl",
+                  "flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl",
                   "transition-all duration-150",
                   isActive ? "text-indigo-500" : "text-fore-3"
                 )}
               >
-                <Icon className="w-5 h-5" />
-                <span className="text-[10px] font-medium">{label}</span>
+                <Icon
+                  className={cn(
+                    "w-5 h-5",
+                    !isActive && label === "Streaks" ? "text-orange-400" : ""
+                  )}
+                />
+                <span className="text-[9px] font-medium">{label}</span>
                 {isActive && (
                   <div className="w-1 h-1 rounded-full bg-indigo-500" />
                 )}

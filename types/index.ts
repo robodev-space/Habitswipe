@@ -98,3 +98,5 @@ export interface WeeklyDataPoint {
 // ─── Swipe card state ────────────────────────────────────────────────────────
 export type SwipeDirection = "left" | "right" | null
 export type CardState = "idle" | "swiping-left" | "swiping-right" | "done"
+export const MILESTONE_DAYS = [7, 14, 30, 60, 100] as const
+export type MilestoneDay = typeof MILESTONE_DAYS[number]

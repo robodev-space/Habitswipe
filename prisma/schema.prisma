@@ -125,3 +125,20 @@ enum LogStatus {
   DONE    // swiped right ✅
   SKIPPED // swiped left ❌
 }
+
+
+// ─── STREAK MILESTONE ────────────────────────────────────────────────────────
+// Records when a user hits a streak milestone (7, 14, 30, 60, 100 days).
+// Used to show achievements on the Streaks page.
+model StreakMilestone {
+  id        String   @id @default(cuid())
+  userId    String
+  habitId   String
+  milestone Int      // 7, 14, 30, 60, 100
+  achieved  Boolean  @default(false)
+  achievedAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@unique([habitId, milestone])
+  @@map("streak_milestones")
+}
