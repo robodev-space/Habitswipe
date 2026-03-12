@@ -60,22 +60,23 @@ export function HabitForm({
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
 
       {/* Preview */}
-      <div className="flex items-center gap-4 p-4 rounded-2xl bg-surface-2 border border-theme">
-        <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
-          style={{ background: selectedColor + "20" }}
-        >
-          {selectedIcon}
-        </div>
-        <div>
-          <p className="font-semibold text-fore text-lg leading-tight">
-            {watch("name") || "Habit name"}
-          </p>
-          <p className="text-xs text-fore-2 mt-0.5 capitalize">
-            {frequency.toLowerCase()}
-          </p>
-        </div>
-      </div>
+    <div className="flex items-center gap-4 p-4 rounded-2xl bg-surface-2 border border-theme">
+  <div
+    className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
+    style={{ background: selectedColor + "20" }}
+  >
+    {selectedIcon}
+  </div>
+
+  <div className="min-w-0">
+    <p className="font-semibold text-fore break-words text-lg leading-tight">
+      {watch("name") || "Habit name"}
+    </p>
+    <p className="text-xs text-fore-2 mt-0.5 capitalize">
+      {frequency.toLowerCase()}
+    </p>
+  </div>
+</div>
 
       {/* Name */}
       <Input
@@ -83,6 +84,7 @@ export function HabitForm({
         placeholder="e.g. Morning Meditation"
         error={errors.name?.message}
         {...register("name")}
+        maxLength={60}
       />
 
       {/* Icon picker */}
@@ -102,7 +104,7 @@ export function HabitForm({
                   ? "ring-2 ring-offset-1 scale-110"
                   : "bg-surface border border-theme"
               )}
-style={selectedIcon === icon ? { outlineColor: selectedColor, outlineWidth: "2px", outlineStyle: "solid" } : {}}            >
+              style={selectedIcon === icon ? { "--tw-ring-color": selectedColor } as any : {}}            >
               {icon}
             </button>
           ))}
@@ -128,7 +130,7 @@ style={selectedIcon === icon ? { outlineColor: selectedColor, outlineWidth: "2px
               style={{
                 background: color,
                 ...(selectedColor === color
-                  ? { outlineColor: color, ringColor: color }
+                  ? { "--tw-ring-color": color } as any
                   : {}),
               }}
             />
