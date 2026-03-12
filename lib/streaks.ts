@@ -30,7 +30,7 @@ export async function recalculateStreak(habitId: string, userId: string) {
   const lastStreakDate = logs.length > 0 ? logs[logs.length - 1].date : null
 
   // Save cached values back to the habit row
-  await prisma.habit.update({
+  await (prisma.habit as any).update({
     where: { id: habitId },
     data: { currentStreak, longestStreak, lastStreakDate },
   })

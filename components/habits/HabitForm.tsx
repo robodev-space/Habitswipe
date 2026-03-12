@@ -102,8 +102,7 @@ export function HabitForm({
                   ? "ring-2 ring-offset-1 scale-110"
                   : "bg-surface border border-theme"
               )}
-              style={selectedIcon === icon ? { ringColor: selectedColor } : {}}
-            >
+style={selectedIcon === icon ? { outlineColor: selectedColor, outlineWidth: "2px", outlineStyle: "solid" } : {}}            >
               {icon}
             </button>
           ))}
