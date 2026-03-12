@@ -11,6 +11,25 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
+function createPrismaClient() {
+  return new PrismaClient({
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["error", "warn"]
+        : ["error"],
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL,
+      },
+    },
+
+    transactionOptions: {
+      maxWait: 5000,
+      timeout: 10000,
+    },
+  })
+}
+
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({

@@ -17,11 +17,15 @@ export default function StreaksPage() {
 
   useEffect(() => {
     fetch("/api/streaks")
-      .then((r) => r.json())
+      .then((r) => {
+        if(!r.ok) throw new Error("Failed request")
+        console.log(r)
+       return r.json()})
       .then((json) => {
         if (json.data) setData(json.data)
       })
-      .finally(() => setIsLoading(false))
+      .catch(console.error)
+    .finally(() => setIsLoading(false))
   }, [])
 
   if (isLoading) {
