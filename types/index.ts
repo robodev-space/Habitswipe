@@ -40,6 +40,13 @@ export interface HabitLog {
   createdAt: Date
 }
 
+export interface SnapShareLog {
+  id: string
+  userId: string
+  date: Date
+  createdAt: Date
+}
+
 // ─── Enriched types (DB + computed) ──────────────────────────────────────────
 export interface HabitWithStats extends Habit {
   currentStreak: number       // consecutive days completed

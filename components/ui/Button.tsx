@@ -8,7 +8,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
-const buttonVariants = cva(
+export const buttonVariants = cva(
   // Base styles applied to ALL buttons
   [
     "inline-flex items-center justify-center gap-2",
@@ -50,10 +50,10 @@ const buttonVariants = cva(
         ],
       },
       size: {
-        sm:  "h-8  px-3 text-xs rounded-lg",
-        md:  "h-10 px-4 text-sm",
-        lg:  "h-12 px-6 text-base",
-        xl:  "h-14 px-8 text-base rounded-2xl",
+        sm: "h-8  px-3 text-xs rounded-lg",
+        md: "h-10 px-4 text-sm",
+        lg: "h-12 px-6 text-base",
+        xl: "h-14 px-8 text-base rounded-2xl",
         icon: "h-10 w-10 p-0",
       },
     },
@@ -66,7 +66,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   isLoading?: boolean
 }
 

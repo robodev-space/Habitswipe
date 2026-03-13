@@ -38,6 +38,7 @@ model User {
   // App relations
   habits   Habit[]
   logs     HabitLog[]
+  snapLogs SnapShareLog[]
 
   @@map("users")
 }
@@ -146,4 +147,19 @@ model StreakMilestone {
 
   @@unique([habitId, milestone])
   @@map("streak_milestones")
+}
+
+// ─── SNAP SHARE LOG ──────────────────────────────────────────────────────────
+// Records when a user shares a snap of their habit. Used for the calendar history.
+model SnapShareLog {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime @db.Date // Only the date, no time
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // One log per user per day max
+  @@unique([userId, date])
+  @@map("snap_share_logs")
 }

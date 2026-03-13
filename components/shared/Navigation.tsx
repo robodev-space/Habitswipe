@@ -8,7 +8,7 @@ import { signOut, useSession } from "next-auth/react"
 import { useTheme } from "next-themes"
 import {
   LayoutDashboard, ListChecks, User,
-  Sun, Moon, LogOut, Zap, Flame,
+  Sun, Moon, LogOut, Zap, Flame, Camera
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { href: "/habits",    icon: ListChecks,      label: "Habits" },
   { href: "/streaks",   icon: Flame,           label: "Streaks" },
   { href: "/dashboard", icon: LayoutDashboard, label: "Stats" },
+  { href: "/share",     icon: Camera,          label: "Snap" },
   { href: "/profile",   icon: User,            label: "Profile" },
 ]
 
