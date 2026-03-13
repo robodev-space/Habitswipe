@@ -6,6 +6,7 @@
 import { Flame } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useEffect, useState } from "react"
+import { motion } from "framer-motion"
 
 interface StreakBadgeProps {
   streak: number
@@ -42,7 +43,13 @@ if (!mounted) return null
         className
       )}
     >
-      <Flame className={cn(iconSize[size], "text-orange-500")} />
+      <motion.div
+        animate={{ scale: [1, 1.1, 1], rotate: [-5, 5, -5] }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+        style={{ originX: 0.5, originY: 1 }}
+      >
+        <Flame className={cn(iconSize[size], "text-orange-500")} />
+      </motion.div>
       <span>{streak}d</span>
     </div>
   )
@@ -87,7 +94,7 @@ const offset = circumference - (safePercent / 100) * circumference
           className="text-slate-200 dark:text-slate-700"
         />
         {/* Progress */}
-        <circle
+        <motion.circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
@@ -95,16 +102,22 @@ const offset = circumference - (safePercent / 100) * circumference
           stroke={color}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
-          strokeDashoffset={offset}
           strokeLinecap="round"
-          style={{ transition: "stroke-dashoffset 0.6s ease" }}
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset: offset }}
+          transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
         />
       </svg>
       {/* Center label */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
+      <motion.div 
+        className="absolute inset-0 flex flex-col items-center justify-center"
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.7 }}
+      >
         <span className="text-lg font-bold text-fore leading-none">{percent}%</span>
         {label && <span className="text-[10px] text-fore-3 mt-0.5">{label}</span>}
-      </div>
+      </motion.div>
     </div>
   )
 }

@@ -36,7 +36,6 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
   fetchHabits: async () => {
     set({ isLoading: true, error: null })
     try {
-      debugger
       const res = await fetch("/api/habits")
       const json = await res.json()
       if (!res.ok) throw new Error(json.error)
@@ -87,18 +86,18 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
       habits: state.habits.map((h) =>
         h.id === habitId
           ? {
-              ...h,
-              todayLog: {
-                id: "optimistic",
-                habitId,
-                userId: "",
-                date: new Date(),
-                status,
-                createdAt: new Date(),
-              },
-              currentStreak:
-                status === "DONE" ? h.currentStreak + 1 : h.currentStreak,
-            }
+            ...h,
+            todayLog: {
+              id: "optimistic",
+              habitId,
+              userId: "",
+              date: new Date(),
+              status,
+              createdAt: new Date(),
+            },
+            currentStreak:
+              status === "DONE" ? h.currentStreak + 1 : h.currentStreak,
+          }
           : h
       ),
     })),

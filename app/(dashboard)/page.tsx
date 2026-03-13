@@ -46,12 +46,15 @@ export default function TodayPage() {
         {/* Progress ring */}
         <ProgressRing
           percent={percent}
-          size={64}
-          strokeWidth={5}
+          size={52}
+          strokeWidth={4}
           color="#6366f1"
           label="done"
         />
       </header>
+
+      {/* ── Spacer for absolute header ──────────────────────────────────────── */}
+      <div className="h-24 shrink-0" />
 
       {/* ── Swipe area ──────────────────────────────────────────────────────── */}
       <div className="flex-1 px-6 pb-4 relative">
@@ -63,31 +66,76 @@ export default function TodayPage() {
             </div>
           </div>
         ) : totalHabits === 0 ? (
-          // Empty state — no habits yet
-          <motion.div
-            className="flex flex-col items-center justify-center h-full gap-5 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div className="text-6xl">✨</div>
-            <div>
+          // Premium Empty state
+          <div className="flex flex-col items-center justify-center h-full">
+            <motion.div
+              className="relative w-32 h-32 mb-8"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              {/* Abstract Floating Shapes */}
+              <motion.div
+                className="absolute inset-0 bg-indigo-500 rounded-3xl mix-blend-multiply dark:mix-blend-screen opacity-20 filter blur-xl"
+                animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              />
+              <motion.div
+                className="absolute inset-2 glass rounded-2xl flex items-center justify-center text-4xl z-10"
+                animate={{ y: [-5, 5, -5], rotateZ: [-2, 2, -2] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              >
+                ✨
+              </motion.div>
+              <motion.div
+                className="absolute -bottom-4 -right-4 w-12 h-12 glass rounded-full flex items-center justify-center text-xl z-20"
+                animate={{ y: [5, -5, 5], rotateZ: [10, -10, 10] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              >
+                🎯
+              </motion.div>
+              <motion.div
+                className="absolute -top-4 -left-4 w-10 h-10 glass rounded-full flex items-center justify-center text-lg z-0"
+                animate={{ y: [-3, 3, -3], rotateZ: [-10, 10, -10] }}
+                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              >
+                ⚡
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              className="text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
               <h2
                 className="text-2xl text-fore mb-2"
                 style={{ fontFamily: "var(--font-dm-serif)" }}
               >
-                No habits yet
+                Your canvas awaits
               </h2>
-              <p className="text-fore-2 text-sm max-w-xs">
-                Create your first habit and start building a better routine today.
+              <p className="text-fore-2 text-sm max-w-[260px] mx-auto mb-8">
+                Design your day. Create your first habit and build a better routine today.
               </p>
-            </div>
-            <Link href="/habits">
-              <Button variant="gradient" size="lg">
-                <Plus className="w-5 h-5" />
-                Create First Habit
-              </Button>
-            </Link>
-          </motion.div>
+              <Link href="/habits">
+                <motion.div whileHover="hover">
+                  <Button variant="gradient" size="lg" className="rounded-2xl px-8 shadow-lg shadow-indigo-500/20 active:scale-95 transition-transform">
+                    <motion.div
+                      variants={{
+                        hover: { rotate: 180, scale: 1.2 }
+                      }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                      className="mr-1 inline-flex"
+                    >
+                      <Plus className="w-5 h-5" />
+                    </motion.div>
+                    Create First Habit
+                  </Button>
+                </motion.div>
+              </Link>
+            </motion.div>
+          </div>
         ) : (
           <SwipeDeck habits={todayHabits} />
         )}

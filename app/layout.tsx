@@ -39,7 +39,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${outfit.variable} ${dmSerif.variable} font-sans antialiased`}>
+      <body className={`${outfit.variable} ${dmSerif.variable} font-sans antialiased overflow-x-hidden min-h-screen relative`}>
+        <div className="mesh-bg" />
         <Providers>{children}</Providers>
       </body>
     </html>

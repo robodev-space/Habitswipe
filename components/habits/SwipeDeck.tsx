@@ -12,6 +12,8 @@ import { HabitCard } from "./HabitCard"
 import { Button } from "@/components/ui/Button"
 import { useHabits } from "@/hooks/useHabits"
 import type { TodayHabit } from "@/types"
+import confetti from "canvas-confetti"
+import { useEffect } from "react"
 
 const MAX_VISIBLE_CARDS = 3  // how many cards visible in stack at once
 
@@ -33,7 +35,37 @@ export function SwipeDeck({ habits }: SwipeDeckProps) {
     }
   }
 
-  // ── All done! ─────────────────────────────────────────────────────────────
+  // ── All done celebration ──────────────────────────────────────────────────
+  useEffect(() => {
+    if (habits.length === 0) {
+      const duration = 3000
+      const end = Date.now() + duration
+
+      const colors = ["#10b981", "#6366f1", "#8b5cf6"]
+
+        ; (function frame() {
+          confetti({
+            particleCount: 5,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: colors,
+          })
+          confetti({
+            particleCount: 5,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: colors,
+          })
+
+          if (Date.now() < end) {
+            requestAnimationFrame(frame)
+          }
+        })()
+    }
+  }, [habits.length])
+
   if (habits.length === 0) {
     return (
       <motion.div

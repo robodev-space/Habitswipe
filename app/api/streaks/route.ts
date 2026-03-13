@@ -8,8 +8,12 @@ import { getServerSession } from "next-auth"
 import { format, subDays } from "date-fns"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { computeCompletionRate, getHeatmapData } from "@/lib/streaks"
-import type { StreakPageData } from "@/types"
+import {
+  calculateCurrentStreak,
+  calculateLongestStreak,
+  calculateCompletionRate,
+} from "@/lib/utils"
+import type { StreakPageData, LogStatus } from "@/types"
 
 export async function GET() {
   const session = await getServerSession(authOptions)
@@ -18,24 +22,38 @@ export async function GET() {
   }
 
   const userId = session.user.id
+  const heatmapStart = subDays(new Date(), 83) // 84-day window covers heatmap + streaks
 
-  // Fetch all active habits with logs + milestones
-  const habits = await prisma.habit.findMany({
-    where: { userId, isArchived: false },
-    // orderBy: { currentStreak: "desc" }, // highest streak first
-    include: {
-      logs: {
-        orderBy: { date: "desc" },
+  // ── Fetch everything in parallel (was 3 sequential awaits before) ────────────
+  const [habits, milestones, totalDaysTracked] = await Promise.all([
+    // Habits with logs filtered to last 84 days at the DB level (not full table scan)
+    prisma.habit.findMany({
+      where: { userId, isArchived: false },
+      select: {
+        id: true,
+        name: true,
+        icon: true,
+        color: true,
+        logs: {
+          where: { date: { gte: heatmapStart } }, // ← key: filter at DB, not in memory
+          select: { date: true, status: true },
+          orderBy: { date: "desc" },
+        },
       },
-      // Fetch milestones via raw relation
-    },
-  })
+    }),
 
-  // Fetch milestones separately
-  const milestones = await prisma.streakMilestone.findMany({
-    where: { userId },
-  })
+    // All milestones for all habits in one query
+    prisma.streakMilestone.findMany({
+      where: { userId },
+    }),
 
+    // Total DONE count — single COUNT query
+    prisma.habitLog.count({
+      where: { userId, status: "DONE" },
+    }),
+  ])
+
+  // ── Group milestones by habitId in memory ────────────────────────────────────
   const milestonesByHabit = milestones.reduce<Record<string, typeof milestones>>(
     (acc, m) => {
       if (!acc[m.habitId]) acc[m.habitId] = []
@@ -45,55 +63,71 @@ export async function GET() {
     {}
   )
 
-  // Build per-habit streak details with heatmap
-  const habitDetails = await Promise.all(
-    habits.map(async (habit: any) => {
-      const heatmap = await getHeatmapData(habit.id)
-      const completionRate = computeCompletionRate(habit.logs)
+  // ── Build heatmap in memory — zero extra DB queries (was 1 query per habit) ──
+  function buildHeatmap(logs: { date: Date; status: LogStatus }[]) {
+    const logMap = new Map(
+      logs.map((l) => [format(new Date(l.date), "yyyy-MM-dd"), l.status])
+    )
+    const days: { date: string; status: "DONE" | "SKIPPED" | null }[] = []
+    for (let i = 83; i >= 0; i--) {
+      const dateStr = format(subDays(new Date(), i), "yyyy-MM-dd")
+      days.push({
+        date: dateStr,
+        status: (logMap.get(dateStr) ?? null) as "DONE" | "SKIPPED" | null,
+      })
+    }
+    return days
+  }
 
-      return {
-        habitId: habit.id,
-        name: habit.name,
-        icon: habit.icon,
-        color: habit.color,
-        currentStreak: habit.currentStreak,
-        longestStreak: habit.longestStreak,
-        completionRate,
-        lastStreakDate: habit.lastStreakDate,
-        milestones: milestonesByHabit[habit.id] ?? [],
-        heatmap,
-      }
-    })
-  )
+  // ── Per-habit details — pure in-memory, no extra queries ─────────────────────
+  const habitDetails = habits.map((habit) => {
+    const logs = habit.logs as { date: Date; status: LogStatus }[]
 
-  // Overall stats across all habits
-  const overallCurrentStreak = Math.max(0, ...habits.map((h:any) => h.currentStreak))
-  const overallLongestStreak = Math.max(0, ...habits.map((h:any) => h.longestStreak))
+    const currentStreak = calculateCurrentStreak(logs)
+    const longestStreak = calculateLongestStreak(logs)
+    const completionRate = calculateCompletionRate(logs)
+    const heatmap = buildHeatmap(logs)
 
-  // Total DONE logs all time
-  const totalDaysTracked = await prisma.habitLog.count({
-    where: { userId, status: "DONE" },
+    // Last DONE log (logs already sorted desc)
+    const lastDone = logs.find((l) => l.status === "DONE")
+    const lastStreakDate = lastDone ? lastDone.date : null
+
+    return {
+      habitId: habit.id,
+      name: habit.name,
+      icon: habit.icon,
+      color: habit.color,
+      currentStreak,
+      longestStreak,
+      completionRate,
+      lastStreakDate,
+      milestones: milestonesByHabit[habit.id] ?? [],
+      heatmap,
+    }
   })
 
-  // Perfect days = days where ALL habits were completed
-  // We look at the last 30 days
-  const last30 = Array.from({ length: 30 }, (_, i) =>
-    format(subDays(new Date(), i), "yyyy-MM-dd")
-  )
+  // ── Overall stats — computed in memory, no extra queries ─────────────────────
+  const overallCurrentStreak = Math.max(0, ...habitDetails.map((h) => h.currentStreak))
+  const overallLongestStreak = Math.max(0, ...habitDetails.map((h) => h.longestStreak))
 
+  // Perfect days: days in last 30 where ALL habits were DONE
+  // Was 30 individual COUNT queries — now a single in-memory pass over fetched logs
   const totalHabits = habits.length
   let perfectDays = 0
 
   if (totalHabits > 0) {
-    for (const dateStr of last30) {
-      const doneCount = await prisma.habitLog.count({
-        where: {
-          userId,
-          status: "DONE",
-          date: new Date(dateStr + "T00:00:00.000Z"),
-        },
-      })
-      if (doneCount === totalHabits) perfectDays++
+    // Count DONE habits per day from already-fetched data
+    const doneCounts: Record<string, number> = {}
+    for (const habit of habits) {
+      for (const log of habit.logs) {
+        if (log.status !== "DONE") continue
+        const dateStr = format(new Date(log.date), "yyyy-MM-dd")
+        doneCounts[dateStr] = (doneCounts[dateStr] ?? 0) + 1
+      }
+    }
+    for (let i = 0; i < 30; i++) {
+      const dateStr = format(subDays(new Date(), i), "yyyy-MM-dd")
+      if ((doneCounts[dateStr] ?? 0) === totalHabits) perfectDays++
     }
   }
 
