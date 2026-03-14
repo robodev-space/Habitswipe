@@ -45,7 +45,7 @@ export default function LoginPage() {
     if (result?.error) {
       setServerError(result.error)
     } else {
-      router.push("/")
+      router.push("/today")
       router.refresh()
     }
   }

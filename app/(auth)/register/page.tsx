@@ -73,7 +73,7 @@ export default function RegisterPage() {
       setServerError("Account created. Please sign in.")
       router.push("/login")
     } else {
-      router.push("/")
+      router.push("/today")
     }
   }
 

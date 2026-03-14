@@ -14,13 +14,6 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const session = await getServerSession(authOptions)
-
-  // If not logged in, redirect to login
-  if (!session) {
-    redirect("/login")
-  }
-
   return (
     <div className="flex min-h-screen bg-app">
       <Navigation />
