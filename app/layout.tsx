@@ -5,23 +5,15 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { Metadata } from "next"
-import { Outfit, DM_Serif_Display } from "next/font/google"
+import { Inter } from "next/font/google"
 import "./globals.css"
 import { Providers } from "@/components/shared/Providers"
 
 // ── Fonts ────────────────────────────────────────────────────────────────────
-// Outfit: clean, modern sans for body text and UI
-// DM Serif Display: expressive, confident serif for headings
-const outfit = Outfit({
+// Inter: The same high-impact font used by BridgeMind
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-outfit",
-  display: "swap",
-})
-
-const dmSerif = DM_Serif_Display({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-dm-serif",
+  variable: "--font-inter",
   display: "swap",
 })
 
@@ -39,7 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${outfit.variable} ${dmSerif.variable} font-sans antialiased overflow-x-hidden min-h-screen relative`}>
+      <body className={`${inter.variable} font-sans antialiased overflow-x-hidden min-h-screen relative`}>
         <div className="mesh-bg" />
         <Providers>{children}</Providers>
       </body>
