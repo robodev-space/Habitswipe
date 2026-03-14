@@ -24,7 +24,7 @@ const tiers = [
     popular: false,
   },
   {
-    name: "Pro",
+    name: "Prime",
     price: 9,
     period: "/mo",
     description: "For serious builders who want to level up.",
@@ -39,7 +39,7 @@ const tiers = [
     popular: true,
   },
   {
-    name: "Team",
+    name: "Pro",
     price: 49,
     period: "/mo",
     description: "Collaborative habit building for teams.",
@@ -91,7 +91,7 @@ export function Pricing() {
                     >
                       Avail Offer
                     </button>
-                    <button 
+                    <button
                       onClick={() => setShowBanner(false)}
                       className="p-2 hover:bg-white/10 rounded-xl transition-colors"
                     >
@@ -105,7 +105,7 @@ export function Pricing() {
         </AnimatePresence>
 
         <div className="text-center mb-16">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm font-medium mb-8"
@@ -156,7 +156,7 @@ export function Pricing() {
                   <h3 className="text-xl font-bold mb-2">{tier.name}</h3>
                   <div className="flex items-baseline gap-1">
                     <AnimatePresence mode="wait">
-                      <motion.span 
+                      <motion.span
                         key={isDiscounted && isAnnualPlan ? 'discounted' : 'normal'}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
