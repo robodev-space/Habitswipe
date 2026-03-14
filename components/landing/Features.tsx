@@ -3,6 +3,9 @@
 import React from "react"
 import { motion, useMotionValue, useMotionTemplate } from "framer-motion"
 import { Touchpad, Target, BarChart3, Zap, ArrowRight } from "lucide-react"
+import { Inter } from "next/font/google"
+
+const inter = Inter({ subsets: ["latin"] })
 
 const features = [
   {
@@ -68,27 +71,27 @@ export function FeatureCard({ feature, index }: { feature: any, index: number })
           `,
         }}
       />
-      
+
       {/* Feature Static Glow */}
       <div className={`absolute top-0 right-0 w-64 h-64 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 blur-[80px] transition-opacity duration-700`} />
-      
+
       <div className="flex flex-col h-full gap-8 relative z-10">
         <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center p-4 shadow-2xl`}>
           <feature.icon className="w-full h-full text-white" />
         </div>
-        
+
         <div>
-          <h3 className="text-3xl font-black tracking-tight text-white mb-4 italic leading-tight">{feature.title}</h3>
+          <h3 className="text-3xl font-black tracking-tight text-white mb-4  leading-tight">{feature.title}</h3>
           <p className="text-zinc-400 text-lg leading-relaxed mb-8">
             {feature.description}
           </p>
         </div>
 
         <div className="mt-auto">
-            <button className="flex items-center gap-2 text-sm font-bold text-white group-hover:text-indigo-400 transition-colors">
-                {feature.link}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+          <button className="flex items-center gap-2 text-sm font-bold text-white group-hover:text-indigo-400 transition-colors">
+            {feature.link}
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </button>
         </div>
       </div>
     </motion.div>
@@ -100,15 +103,15 @@ export function Features() {
     <section className="py-24 px-6 relative bg-black overflow-hidden" id="features">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-20">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-6 text-white"
           >
-            Four features. <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent italic">One workflow.</span>
+            Four features. <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent ">One workflow.</span>
           </motion.h2>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

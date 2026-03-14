@@ -3,7 +3,9 @@
 import { motion } from "framer-motion"
 import { Check, Zap } from "lucide-react"
 import { Button } from "@/components/ui/Button"
+import { Inter } from "next/font/google"
 
+const inter = Inter({ subsets: ["latin"] })
 const tiers = [
   {
     name: "Starter",
@@ -51,10 +53,10 @@ const tiers = [
 
 export function Pricing() {
   return (
-    <section className="py-24 px-6 relative" id="pricing">
+    <section className={`${inter.className} py-24 px-6 relative`} id="pricing">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4" style={{ fontFamily: "var(--font-dm-serif)" }}>
+          <h2 className="text-3xl md:text-5xl lg:text-7xl font-black tracking-tighter mb-6 leading-[0.95]">
             Simple, honest pricing.
           </h2>
           <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
@@ -70,9 +72,8 @@ export function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className={`relative glass rounded-[2.5rem] p-8 border ${
-                tier.popular ? "border-indigo-500/50" : "border-white/5"
-              } flex flex-col`}
+              className={`relative glass rounded-[2.5rem] p-8 border ${tier.popular ? "border-indigo-500/50" : "border-white/5"
+                } flex flex-col`}
             >
               {tier.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-indigo-500 text-xs font-bold text-white flex items-center gap-1">

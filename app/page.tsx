@@ -1,12 +1,15 @@
+import { Inter } from "next/font/google"
 import { LandingNavbar } from "@/components/landing/LandingNavbar"
 import { Hero } from "@/components/landing/Hero"
 import { Features } from "@/components/landing/Features"
 import { Pricing } from "@/components/landing/Pricing"
 import { Footer } from "@/components/landing/Footer"
 
+const inter = Inter({ subsets: ["latin"] })
+
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-black text-white selection:bg-indigo-500/30">
+    <main className={`${inter.className} min-h-screen bg-black text-white selection:bg-indigo-500/30`}>
       <LandingNavbar />
       <Hero />
       <div id="features">
@@ -19,7 +22,7 @@ export default function LandingPage() {
            {/* Glow */}
            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-indigo-500/5 blur-[100px] -z-10" />
            
-           <h2 className="text-4xl md:text-6xl font-bold mb-8" style={{ fontFamily: "var(--font-dm-serif)" }}>
+           <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-8">
              Ready to build the <br /> better you?
            </h2>
            <p className="text-fore-2 text-lg md:text-xl max-w-xl mx-auto mb-12">
