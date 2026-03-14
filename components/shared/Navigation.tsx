@@ -13,12 +13,12 @@ import {
 import { cn } from "@/lib/utils"
 
 const NAV_ITEMS = [
-  { href: "/",          icon: Zap,             label: "Today" },
-  { href: "/habits",    icon: ListChecks,      label: "Habits" },
-  { href: "/streaks",   icon: Flame,           label: "Streaks" },
+  { href: "/", icon: Zap, label: "Today" },
+  { href: "/habits", icon: ListChecks, label: "Habits" },
+  { href: "/streaks", icon: Flame, label: "Streaks" },
   { href: "/dashboard", icon: LayoutDashboard, label: "Stats" },
-  { href: "/share",     icon: Camera,          label: "Snap" },
-  { href: "/profile",   icon: User,            label: "Profile" },
+  { href: "/share", icon: Camera, label: "Snap" },
+  { href: "/profile", icon: User, label: "Profile" },
 ]
 
 export function Navigation() {
@@ -29,13 +29,13 @@ export function Navigation() {
   return (
     <>
       {/* ── Desktop sidebar ───────────────────────────────────────────────── */}
-<aside className="hidden md:flex flex-col w-64 h-screen sticky top-0 overflow-y-auto flex-shrink-0 bg-surface border-r border-theme px-4 py-6 gap-2">        {/* Logo */}
+      <aside className="hidden md:flex flex-col w-64 h-screen sticky top-0 overflow-y-auto flex-shrink-0 bg-surface border-r border-theme px-4 py-6 gap-2">        {/* Logo */}
         <div className="flex items-center gap-2.5 px-3 mb-6">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
             <Zap className="w-5 h-5 text-white" fill="white" />
           </div>
           <span
-            className="text-xl font-bold text-fore"
+            className="text-xl font-bold text-fore select-none"
             style={{ fontFamily: "var(--font-dm-serif)" }}
           >
             HabitSwipe

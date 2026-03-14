@@ -41,7 +41,7 @@ export function LandingNavbar() {
           <div className="w-10 h-10 rounded-xl  flex items-center justify-center font-black text-white italic group-hover:scale-110 transition-transform">
             <Image src="/favicon.ico" alt="HabitSwipe" width={30} height={30} />
           </div>
-          <span className="text-2xl font-black tracking-tighter text-white">
+          <span className="text-2xl font-black tracking-tighter text-white select-none">
             HabitSwipe
           </span>
         </Link>
