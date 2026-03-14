@@ -32,11 +32,11 @@ export function Hero() {
       {/* ── Background Layer ────────────────────────────────────────────────── */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {/* Subtle Dotted Grid */}
-        <div 
-          className="absolute inset-0 opacity-[0.15]" 
-          style={{ 
+        <div
+          className="absolute inset-0 opacity-[0.15]"
+          style={{
             backgroundImage: `radial-gradient(circle, #fff 1px, transparent 1px)`,
-            backgroundSize: '32px 32px' 
+            backgroundSize: '32px 32px'
           }}
         />
 
@@ -52,7 +52,7 @@ export function Hero() {
             y: springY,
           }}
         />
-        
+
         <motion.div
           className="absolute rounded-full bg-cyan-500/15 blur-[110px]"
           style={{
@@ -116,61 +116,82 @@ export function Hero() {
             </Button>
           </Link>
           <Link href="/login" className="w-full sm:w-auto">
-            <Button size="xl" variant="secondary" className="rounded-xl px-10 bg-zinc-900 border border-white/5 hover:border-indigo-500/30 h-14 text-lg w-full sm:w-auto transition-colors">
+            <Button size="xl" variant="secondary" className="rounded-xl px-10 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-indigo-500/30 h-14 text-lg w-full sm:w-auto transition-all text-white">
               Log In
             </Button>
           </Link>
         </motion.div>
 
-        {/* Interactive Dashboard Preview */}
+        {/* Interactive Dashboard Preview / Video Screen */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="mt-20 relative px-4"
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-20 relative px-4 w-full"
         >
-          <div className="max-w-4xl mx-auto glass rounded-[2.5rem] border border-white/5 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.8)] overflow-hidden aspect-[16/10] bg-zinc-950 relative group/preview">
-             {/* Subtle Inner Glow */}
-             <div className="absolute inset-0 bg-indigo-500/[0.02] pointer-events-none" />
-             
-             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <motion.div 
-                  className="w-72 h-96 glass rounded-3xl border border-white/10 flex flex-col items-center justify-center gap-6 text-center p-8 shadow-2xl relative bg-zinc-900/40"
-                  animate={{ 
-                    rotateY: [-5, 5, -5],
-                    rotateX: [-3, 3, -3]
-                  }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                >
-                    <div className="w-20 h-20 rounded-full bg-indigo-500/20 flex items-center justify-center border border-indigo-500/20">
-                        <Zap className="w-10 h-10 text-indigo-400 fill-indigo-400/20" />
+          <div className="max-w-5xl mx-auto glass rounded-[2.5rem] border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.8)] overflow-hidden aspect-video bg-zinc-950 relative group/preview">
+            {/* Subtle Inner Glow */}
+            <div className="absolute inset-0 bg-indigo-500/[0.03] pointer-events-none" />
+
+            {/* Video Placeholder / Animation Overlays */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              {/* Visual placeholder for the video the user will play further */}
+              <div className="w-full h-full relative">
+                <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 via-transparent to-cyan-500/10" />
+
+                {/* Centered Logo/Brand Mark */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                  <Zap className="w-32 h-32 text-white blur-sm" />
+                </div>
+
+                {/* Dashboard Accents (Animated Cards) */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <motion.div
+                    className="w-72 h-44 glass rounded-3xl border border-white/20 flex flex-col items-center justify-center gap-4 text-center p-6 shadow-2xl relative bg-zinc-900/60 backdrop-blur-2xl"
+                    animate={{
+                      y: [0, -10, 0],
+                      rotateX: [0, 5, 0]
+                    }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <div className="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center">
+                      <Zap className="w-6 h-6 text-indigo-400" />
                     </div>
                     <div>
-                        <h3 className="text-2xl font-bold text-white mb-2">Morning Run</h3>
-                        <p className="text-sm text-zinc-500">Swipe right to mark done</p>
+                      <h3 className="text-xl font-bold text-white">Morning Run</h3>
+                      <div className="h-1 w-24 bg-white/10 rounded-full mx-auto mt-2 overflow-hidden">
+                        <motion.div
+                          className="h-full bg-indigo-500"
+                          animate={{ width: ["0%", "80%"] }}
+                          transition={{ duration: 3, repeat: Infinity }}
+                        />
+                      </div>
                     </div>
-                    
-                    {/* Simulated Swipe Handle */}
-                    <motion.div 
-                      className="absolute -right-6 top-1/2 -translate-y-1/2 w-14 h-14 bg-white rounded-full flex items-center justify-center text-black shadow-2xl border-4 border-black/10"
-                      animate={{ x: [0, 15, 0] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    >
-                      <ArrowRight className="w-6 h-6" />
-                    </motion.div>
-                </motion.div>
-             </div>
-             
-             {/* UI Accents (Top left dots) */}
-             <div className="absolute top-8 left-8 flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-white/10" />
-                <div className="w-3 h-3 rounded-full bg-white/10" />
-                <div className="w-3 h-3 rounded-full bg-white/10" />
-             </div>
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+
+            {/* Player Controls Accents (Mock) */}
+            <div className="absolute bottom-8 left-8 right-8 flex items-center justify-between opacity-50">
+              <div className="flex gap-4">
+                <div className="w-8 h-1 rounded-full bg-white/20" />
+                <div className="w-12 h-1 rounded-full bg-white/20" />
+              </div>
+              <div className="w-24 h-1 rounded-full bg-white/10" />
+            </div>
+
+            {/* Top Control Dots (Mac Style) */}
+            <div className="absolute top-8 left-8 flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#FF5F56] shadow-sm shadow-[#FF5F56]/20" />
+              <div className="w-3 h-3 rounded-full bg-[#FFBD2E] shadow-sm shadow-[#FFBD2E]/20" />
+              <div className="w-3 h-3 rounded-full bg-[#27C93F] shadow-sm shadow-[#27C93F]/20" />
+            </div>
           </div>
-          
-          {/* Subtle bottom accent glow */}
-          <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[80%] h-40 bg-indigo-500/20 blur-[100px] -z-10 rounded-full" />
+
+          {/* Main accent glow below the screen */}
+          <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[90%] h-48 bg-indigo-500/20 blur-[120px] -z-10 rounded-full" />
         </motion.div>
       </div>
     </section>
