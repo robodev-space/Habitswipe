@@ -28,7 +28,7 @@ export function Hero() {
   }, [mouseX, mouseY])
 
   return (
-    <section className="relative pt-32 pb-20 px-6 overflow-hidden bg-black min-h-[90vh] flex items-center">
+    <section className="relative pt-24 sm:pt-32 pb-16 sm:pb-20 px-6 sm:px-8 overflow-hidden bg-black min-h-[90vh] flex items-center">
       {/* ── Background Layer ────────────────────────────────────────────────── */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {/* Subtle Dotted Grid */}
@@ -84,11 +84,11 @@ export function Hero() {
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <h1 className="text-balance leading-[0.9] tracking-[-0.04em]">
+          <h1 className="text-balance leading-[0.95] tracking-[-0.04em]">
             <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-[7rem] xl:text-[8rem] font-[900] text-white">
               Build the
             </span>
-            <span className="mt-1 block text-5xl sm:text-6xl md:text-7xl lg:text-[7.5rem] xl:text-[8.5rem] font-[900] bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+            <span className="mt-1 block text-5xl sm:text-6xl md:text-7xl lg:text-[7.5rem] xl:text-[8rem] font-[900] bg-gradient-to-r from-blue-400 via-indigo-400 to-cyan-400 bg-clip-text text-transparent">
               Future.
             </span>
           </h1>
@@ -124,47 +124,60 @@ export function Hero() {
 
         {/* Interactive Dashboard Preview / Video Screen */}
         <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.95, y: 40 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-20 relative px-4 w-full"
+          transition={{
+            duration: 1.2,
+            delay: 0.2,
+            ease: [0.16, 1, 0.3, 1]
+          }}
+          className="mt-12 sm:mt-20 relative w-full flex justify-center"
         >
-          <div className="max-w-5xl mx-auto glass rounded-[2.5rem] border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.8)] overflow-hidden aspect-video bg-zinc-950 relative group/preview">
+          <div className="w-full max-w-5xl aspect-video rounded-[2rem] sm:rounded-[3rem] border border-white/5 shadow-[0_32px_128px_-16px_rgba(0,0,0,1)] overflow-hidden relative group/preview bg-zinc-950/50 backdrop-blur-sm">
             {/* Subtle Inner Glow */}
             <div className="absolute inset-0 bg-indigo-500/[0.03] pointer-events-none" />
 
-            {/* Video Placeholder / Animation Overlays */}
+            {/* Content Layers */}
             <div className="absolute inset-0 flex items-center justify-center">
-              {/* Visual placeholder for the video the user will play further */}
               <div className="w-full h-full relative">
-                <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 via-transparent to-cyan-500/10" />
+                {/* Background Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent pointer-events-none" />
 
-                {/* Centered Logo/Brand Mark */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                  <Zap className="w-32 h-32 text-white blur-sm" />
+                {/* Centered Premium Mark */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-30">
+                  <Zap className="w-24 h-24 sm:w-40 sm:h-40 text-blue-400 blur-[2px]" />
                 </div>
 
-                {/* Dashboard Accents (Animated Cards) */}
-                <div className="absolute inset-0 flex items-center justify-center">
+                {/* Floating Dashboard Card */}
+                <div className="absolute inset-0 flex items-center justify-center p-6 sm:p-12">
                   <motion.div
-                    className="w-72 h-44 glass rounded-3xl border border-white/20 flex flex-col items-center justify-center gap-4 text-center p-6 shadow-2xl relative bg-zinc-900/60 backdrop-blur-2xl"
-                    animate={{
-                      y: [0, -10, 0],
-                      rotateX: [0, 5, 0]
-                    }}
-                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                    className="w-full max-w-sm glass rounded-3xl border border-white/10 p-6 sm:p-8 shadow-2xl bg-zinc-900/40 backdrop-blur-2xl"
+                    animate={{ y: [0, -15, 0] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                   >
-                    <div className="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center">
-                      <Zap className="w-6 h-6 text-indigo-400" />
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center">
+                        <Zap className="w-6 h-6 text-blue-400" />
+                      </div>
+                      <div>
+                        <div className="h-2 w-24 bg-white/20 rounded-full mb-2" />
+                        <div className="h-2 w-16 bg-white/10 rounded-full" />
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-white">Morning Run</h3>
-                      <div className="h-1 w-24 bg-white/10 rounded-full mx-auto mt-2 overflow-hidden">
+                    <div className="space-y-3">
+                      <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                         <motion.div
-                          className="h-full bg-indigo-500"
-                          animate={{ width: ["0%", "80%"] }}
-                          transition={{ duration: 3, repeat: Infinity }}
+                          className="h-full bg-blue-500"
+                          animate={{ width: ["0%", "70%", "70%"] }}
+                          transition={{ duration: 4, repeat: Infinity }}
+                        />
+                      </div>
+                      <div className="h-1.5 w-[80%] bg-white/5 rounded-full overflow-hidden">
+                        <motion.div
+                          className="h-full bg-cyan-400"
+                          animate={{ width: ["0%", "0%", "90%", "90%"] }}
+                          transition={{ duration: 4, repeat: Infinity }}
                         />
                       </div>
                     </div>
@@ -172,25 +185,9 @@ export function Hero() {
                 </div>
               </div>
             </div>
-
-            {/* Player Controls Accents (Mock) */}
-            <div className="absolute bottom-8 left-8 right-8 flex items-center justify-between opacity-50">
-              <div className="flex gap-4">
-                <div className="w-8 h-1 rounded-full bg-white/20" />
-                <div className="w-12 h-1 rounded-full bg-white/20" />
-              </div>
-              <div className="w-24 h-1 rounded-full bg-white/10" />
-            </div>
-
-            {/* Top Control Dots (Mac Style) */}
-            <div className="absolute top-8 left-8 flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#FF5F56] shadow-sm shadow-[#FF5F56]/20" />
-              <div className="w-3 h-3 rounded-full bg-[#FFBD2E] shadow-sm shadow-[#FFBD2E]/20" />
-              <div className="w-3 h-3 rounded-full bg-[#27C93F] shadow-sm shadow-[#27C93F]/20" />
-            </div>
           </div>
 
-          {/* Main accent glow below the screen */}
+          {/* Glow Accent */}
           <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[90%] h-48 bg-indigo-500/20 blur-[120px] -z-10 rounded-full" />
         </motion.div>
       </div>
