@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Check, Zap, Sparkles, X } from "lucide-react"
 import { Button } from "@/components/ui/Button"
@@ -41,7 +41,7 @@ const tiers = [
   {
     name: "Pro",
     price: 49,
-    period: "/mo",
+    period: "/year",
     description: "Collaborative habit building for teams.",
     features: [
       "Everything in Pro",
@@ -57,6 +57,15 @@ const tiers = [
 export function Pricing() {
   const [isDiscounted, setIsDiscounted] = useState(false)
   const [showBanner, setShowBanner] = useState(true)
+  const proCardRef = useRef<HTMLDivElement>(null)
+
+  const handleAvailOffer = () => {
+    setIsDiscounted(true)
+    setShowBanner(false)
+    setTimeout(() => {
+      proCardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+    }, 100)
+  }
 
   return (
     <section className={`${inter.className} py-24 px-6 relative overflow-hidden`} id="pricing">
@@ -77,16 +86,13 @@ export function Pricing() {
                       <Sparkles className="w-6 h-6 text-indigo-400 animate-pulse" />
                     </div>
                     <div>
-                      <p className="text-white font-black text-lg tracking-tight">SAVE ON TEAM PLAN</p>
-                      <p className="text-indigo-200/60 text-sm">Unlock team collaboration for just $44/mo</p>
+                      <p className="text-white font-black text-lg tracking-tight">SAVE ON PRO PLAN</p>
+                      <p className="text-indigo-200/60 text-sm">Unlock pro features for just $44/mo</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 w-full md:w-auto">
                     <button
-                      onClick={() => {
-                        setIsDiscounted(true)
-                        setShowBanner(false)
-                      }}
+                      onClick={handleAvailOffer}
                       className="flex-1 md:flex-none px-8 py-3 rounded-xl bg-indigo-500 text-white text-sm font-black hover:bg-indigo-400 transition-all active:scale-95 shadow-lg shadow-indigo-500/20 whitespace-nowrap"
                     >
                       Avail Offer
@@ -111,7 +117,7 @@ export function Pricing() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm font-medium mb-8"
           >
             <Zap className="w-4 h-4 fill-current" />
-            <span>ANNUAL SALE: DISCOUNT ON TEAM PLAN</span>
+            <span>ANNUAL SALE: DISCOUNT ON PRO PLAN</span>
           </motion.div>
           <h2 className="text-3xl md:text-5xl lg:text-7xl font-black tracking-tighter mb-6 leading-[0.95]">
             Simple, honest pricing.
@@ -123,7 +129,7 @@ export function Pricing() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {tiers.map((tier, index) => {
-            const isAnnualPlan = tier.name === "Team";
+            const isAnnualPlan = tier.name === "Pro";
             const finalPrice = isDiscounted && isAnnualPlan
               ? 44
               : tier.price;
@@ -131,6 +137,7 @@ export function Pricing() {
             return (
               <motion.div
                 key={tier.name}
+                ref={isAnnualPlan ? proCardRef : null}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -191,7 +198,7 @@ export function Pricing() {
                   variant={tier.popular ? "gradient" : "secondary"}
                   className="w-full rounded-2xl h-12"
                 >
-                  {isDiscounted && isAnnualPlan ? 'Claim Annual Offer' : tier.cta}
+                  {isDiscounted && isAnnualPlan ? 'Claim Pro Offer' : tier.cta}
                 </Button>
               </motion.div>
             )
