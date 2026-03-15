@@ -6,6 +6,7 @@
 
 import { useHabitStore } from "@/lib/store"
 import { todayString } from "@/lib/utils"
+import { API_ROUTES } from "@/lib/constants/api-routes"
 import type { CreateHabitInput, UpdateHabitInput } from "@/types"
 
 export function useHabits() {
@@ -13,7 +14,7 @@ export function useHabits() {
 
   // ── Create habit ───────────────────────────────────────────────────────────
   const createHabit = async (input: CreateHabitInput) => {
-    const res = await fetch("/api/habits", {
+    const res = await fetch(API_ROUTES.HABITS.BASE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),
@@ -34,7 +35,7 @@ export function useHabits() {
 
   // ── Update habit ───────────────────────────────────────────────────────────
   const updateHabit = async (id: string, input: UpdateHabitInput) => {
-    const res = await fetch(`/api/habits/${id}`, {
+    const res = await fetch(API_ROUTES.HABITS.BY_ID(id), {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),
@@ -48,7 +49,7 @@ export function useHabits() {
 
   // ── Delete habit ───────────────────────────────────────────────────────────
   const deleteHabit = async (id: string) => {
-    const res = await fetch(`/api/habits/${id}`, { method: "DELETE" })
+    const res = await fetch(API_ROUTES.HABITS.BY_ID(id), { method: "DELETE" })
     const json = await res.json()
     if (!res.ok) throw new Error(json.error)
 
@@ -61,7 +62,7 @@ export function useHabits() {
     store.markSwiped(habitId, status)
 
     try {
-      const res = await fetch("/api/logs", {
+      const res = await fetch(API_ROUTES.LOGS.BASE, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ habitId, status, date: todayString() }),

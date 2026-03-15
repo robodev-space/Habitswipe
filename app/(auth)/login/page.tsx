@@ -13,9 +13,10 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Mail, Lock, Zap } from "lucide-react"
+import { Zap, Mail, Lock } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
+import { API_ROUTES } from "@/lib/constants/api-routes"
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -52,7 +53,7 @@ export default function LoginPage() {
 
   async function handleGoogle() {
     setIsGoogleLoading(true)
-    await signIn("google", { callbackUrl: "/" })
+    await signIn("google", { callbackUrl: "/today" })
   }
 
   return (

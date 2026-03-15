@@ -12,6 +12,7 @@ import {
 import { AvatarUpload } from "@/components/profile/AvatarUpload"
 import { ReferralCard } from "@/components/profile/ReferralCard"
 import { format } from "date-fns"
+import { API_ROUTES } from "@/lib/constants/api-routes"
 
 interface ProfileData {
   id: string
@@ -43,7 +44,7 @@ export default function ProfilePage() {
   const [bio, setBio] = useState("")
 
   useEffect(() => {
-    fetch("/api/profile")
+    fetch(API_ROUTES.PROFILE.BASE)
       .then((r) => r.json())
       .then((json) => {
         if (json.data) {
@@ -62,7 +63,7 @@ export default function ProfilePage() {
     setIsSaving(true)
     setError(null)
     try {
-      const res = await fetch("/api/profile", {
+      const res = await fetch(API_ROUTES.PROFILE.BASE, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -90,7 +91,7 @@ export default function ProfilePage() {
   }
 
   async function handleAvatarUpload(imageDataUrl: string) {
-    const res = await fetch("/api/profile/avatar", {
+    const res = await fetch(API_ROUTES.PROFILE.AVATAR, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ image: imageDataUrl }),

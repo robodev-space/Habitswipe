@@ -8,6 +8,7 @@
 import { create } from "zustand"
 import type { HabitWithStats, TodayHabit, DashboardStats } from "@/types"
 import { todayString } from "@/lib/utils"
+import { API_ROUTES } from "@/lib/constants/api-routes"
 
 interface HabitStore {
   // ── State ─────────────────────────────────────────────────────────────────
@@ -36,7 +37,7 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
   fetchHabits: async () => {
     set({ isLoading: true, error: null })
     try {
-      const res = await fetch("/api/habits")
+      const res = await fetch(API_ROUTES.HABITS.BASE)
       const json = await res.json()
       if (!res.ok) throw new Error(json.error)
 
@@ -54,7 +55,7 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
 
   fetchStats: async () => {
     try {
-      const res = await fetch("/api/stats")
+      const res = await fetch(API_ROUTES.STATS.BASE)
       const json = await res.json()
       if (res.ok) set({ stats: json.data })
     } catch {

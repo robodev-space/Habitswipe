@@ -6,6 +6,7 @@ import { format } from "date-fns"
 import { Calendar } from "@/components/ui/calendar"
 import { CameraSnapModal } from "@/components/share/CameraSnapModal"
 import { Flame, CheckCircle2, Share2 } from "lucide-react"
+import { API_ROUTES } from "@/lib/constants/api-routes"
 
 interface ShareableHabit {
   id: string
@@ -25,7 +26,7 @@ export default function SharePage() {
   const fetchData = async () => {
     try {
       // Fetch today's habits
-      const streaksRes = await fetch("/api/streaks")
+      const streaksRes = await fetch(API_ROUTES.STREAKS.BASE)
       const streaksData = await streaksRes.json()
       
       // Filter habits that have been completed today
@@ -37,7 +38,7 @@ export default function SharePage() {
       setCompletedHabits(doneToday)
 
       // Fetch shared dates
-      const snapsRes = await fetch("/api/snaps")
+      const snapsRes = await fetch(API_ROUTES.SNAPS.BASE)
       const snapsData = await snapsRes.json()
       
       // Parse UTC date strings to local Dates

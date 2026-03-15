@@ -10,13 +10,14 @@ import { motion } from "framer-motion"
 import { Flame, Trophy, CalendarDays, Star } from "lucide-react"
 import { StreakCard } from "@/components/streaks/StreakCard"
 import type { StreakPageData } from "@/types"
+import { API_ROUTES } from "@/lib/constants/api-routes"
 
 export default function StreaksPage() {
   const [data, setData] = useState<StreakPageData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    fetch("/api/streaks")
+    fetch(API_ROUTES.STREAKS.BASE)
       .then((r) => {
         if(!r.ok) throw new Error("Failed request")
         console.log(r)

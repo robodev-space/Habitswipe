@@ -16,6 +16,7 @@ import { motion } from "framer-motion"
 import { Mail, Lock, User, Zap } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
+import { API_ROUTES } from "@/lib/constants/api-routes"
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -46,7 +47,7 @@ export default function RegisterPage() {
     setServerError(null)
 
     // 1. Create account
-    const res = await fetch("/api/auth/register", {
+    const res = await fetch(API_ROUTES.AUTH.REGISTER, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -79,7 +80,7 @@ export default function RegisterPage() {
 
   async function handleGoogle() {
     setIsGoogleLoading(true)
-    await signIn("google", { callbackUrl: "/" })
+    await signIn("google", { callbackUrl: "/today" })
   }
 
   return (
