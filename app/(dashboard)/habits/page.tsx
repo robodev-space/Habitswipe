@@ -9,6 +9,7 @@ import { HabitForm } from "@/components/habits/HabitForm"
 import { StreakBadge } from "@/components/shared/StreakBadge"
 import { useHabits } from "@/hooks/useHabits"
 import { hexWithOpacity } from "@/lib/utils"
+import { Skeleton } from "@/components/ui/Skeleton"
 import type { HabitWithStats, CreateHabitInput } from "@/types"
 
 type Modal =
@@ -132,7 +133,7 @@ function HabitModal({
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function HabitsPage() {
-  const { habits, isLoading, fetchHabits, createHabit, updateHabit, deleteHabit } = useHabits()
+  const { habits, isLoading, isInitialized, fetchHabits, createHabit, updateHabit, deleteHabit } = useHabits()
   const [modal, setModal] = useState<Modal>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
@@ -179,9 +180,15 @@ export default function HabitsPage() {
             <h1 className="text-3xl text-fore" style={{ fontFamily: "var(--font-dm-serif)" }}>
               My Habits
             </h1>
-            <p className="text-fore-2 text-sm mt-1">
-              {habits.length} habit{habits.length !== 1 ? "s" : ""} tracked
-            </p>
+            <div className="mt-1">
+              {(isLoading || !isInitialized) ? (
+                <Skeleton className="h-4 w-32" />
+              ) : (
+                <p className="text-fore-2 text-sm">
+                  {habits.length} habit{habits.length !== 1 ? "s" : ""} tracked
+                </p>
+              )}
+            </div>
           </div>
           <Button variant="gradient" onClick={() => setModal({ type: "create" })}>
             <Plus className="w-4 h-4" />
@@ -189,10 +196,12 @@ export default function HabitsPage() {
           </Button>
         </div>
 
-        {/* Habit list */}
-        {isLoading ? (
-          <div className="flex justify-center py-20">
-            <div className="w-10 h-10 rounded-full border-4 border-indigo-200 border-t-indigo-500 animate-spin" />
+        {/* Habit list loading */}
+        {(isLoading || !isInitialized) ? (
+          <div className="flex flex-col gap-3">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-[80px] w-full rounded-2xl" />
+            ))}
           </div>
         ) : habits.length === 0 ? (
           <div className="text-center py-20">

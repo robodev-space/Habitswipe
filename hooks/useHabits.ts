@@ -72,6 +72,8 @@ export function useHabits() {
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error)
+      
+      return !!json.allCompleted
     } catch (err) {
       // If API fails, re-fetch to restore correct state
       store.fetchHabits()
@@ -84,6 +86,7 @@ export function useHabits() {
     todayHabits: store.todayHabits,
     stats: store.stats,
     isLoading: store.isLoading,
+    isInitialized: store.isInitialized,
     error: store.error,
     fetchHabits: store.fetchHabits,
     fetchStats: store.fetchStats,

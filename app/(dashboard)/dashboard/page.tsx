@@ -11,9 +11,10 @@ import { Flame, CheckCircle2, XCircle, Clock, TrendingUp } from "lucide-react"
 import { ProgressRing } from "@/components/shared/StreakBadge"
 import { useHabits } from "@/hooks/useHabits"
 import { hexWithOpacity } from "@/lib/utils"
+import { Skeleton } from "@/components/ui/Skeleton"
 
 export default function DashboardPage() {
-  const { habits, stats, fetchHabits, fetchStats, isLoading } = useHabits()
+  const { habits, stats, fetchHabits, fetchStats, isLoading, isInitialized } = useHabits()
 
   useEffect(() => {
     const controller = new AbortController()
@@ -24,11 +25,21 @@ export default function DashboardPage() {
       controller.abort()
     }
   }, [])
-
-  if (isLoading) {
+ 
+  if (isLoading || !isInitialized) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="w-10 h-10 rounded-full border-4 border-indigo-200 border-t-indigo-500 animate-spin" />
+      <div className="max-w-2xl mx-auto px-6 py-8 space-y-8">
+        <div className="space-y-2">
+          <Skeleton className="h-9 w-48" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <Skeleton className="h-[146px] w-full rounded-3xl" />
+        <div className="grid grid-cols-2 gap-3">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-[100px] w-full rounded-2xl" />
+          ))}
+        </div>
+        <Skeleton className="h-[200px] w-full rounded-3xl" />
       </div>
     )
   }

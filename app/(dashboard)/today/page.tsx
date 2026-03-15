@@ -15,9 +15,10 @@ import { formatDisplayDate } from "@/lib/utils"
 import { Button } from "@/components/ui/Button"
 import { Plus } from "lucide-react"
 import Link from "next/link"
+import { Skeleton } from "@/components/ui/Skeleton"
 
 export default function TodayPage() {
-  const { habits, todayHabits, isLoading, fetchHabits } = useHabits()
+  const { habits, todayHabits, isLoading, isInitialized, fetchHabits } = useHabits()
 
   useEffect(() => {
     fetchHabits()
@@ -43,14 +44,18 @@ export default function TodayPage() {
           </h1>
         </div>
 
-        {/* Progress ring */}
-        <ProgressRing
-          percent={percent}
-          size={52}
-          strokeWidth={4}
-          color="#6366f1"
-          label="done"
-        />
+        {/* Progress ring skeleton or actual */}
+        {(isLoading || !isInitialized) ? (
+          <Skeleton className="h-[52px] w-[52px] rounded-full" />
+        ) : (
+          <ProgressRing
+            percent={percent}
+            size={52}
+            strokeWidth={4}
+            color="#6366f1"
+            label="done"
+          />
+        )}
       </header>
 
       {/* ── Spacer for absolute header ──────────────────────────────────────── */}
@@ -58,12 +63,9 @@ export default function TodayPage() {
 
       {/* ── Swipe area ──────────────────────────────────────────────────────── */}
       <div className="flex-1 px-6 pb-4 relative">
-        {isLoading ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="flex flex-col items-center gap-4">
-              <div className="w-12 h-12 rounded-full border-4 border-indigo-200 border-t-indigo-500 animate-spin" />
-              <p className="text-fore-3 text-sm">Loading your habits...</p>
-            </div>
+        {(isLoading || !isInitialized) ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <Skeleton className="w-full max-w-sm aspect-[3/4] rounded-3xl" />
           </div>
         ) : totalHabits === 0 ? (
           // Premium Empty state
@@ -142,7 +144,11 @@ export default function TodayPage() {
       </div>
 
       {/* ── Quick stats bar ──────────────────────────────────────────────────── */}
-      {totalHabits > 0 && (
+      {(isLoading || !isInitialized) ? (
+        <div className="px-6 pb-4 flex items-center gap-2 overflow-hidden">
+          {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-7 w-20 rounded-full shrink-0" />)}
+        </div>
+      ) : totalHabits > 0 && (
         <div className="px-6 pb-4">
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
             {habits.map((habit) => (

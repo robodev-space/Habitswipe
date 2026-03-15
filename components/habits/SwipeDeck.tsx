@@ -7,13 +7,12 @@
 "use client"
 
 import { AnimatePresence, motion } from "framer-motion"
-import { CheckCircle2, PartyPopper } from "lucide-react"
+import { CheckCircle2 } from "lucide-react"
 import { HabitCard } from "./HabitCard"
-import { Button } from "@/components/ui/Button"
 import { useHabits } from "@/hooks/useHabits"
 import type { TodayHabit } from "@/types"
 import confetti from "canvas-confetti"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 
 const MAX_VISIBLE_CARDS = 3  // how many cards visible in stack at once
 
@@ -27,44 +26,46 @@ export function SwipeDeck({ habits }: SwipeDeckProps) {
   // Show only top N cards in the visual stack
   const visibleHabits = habits.slice(0, MAX_VISIBLE_CARDS)
 
+  function triggerCelebration() {
+    const duration = 3000
+    const end = Date.now() + duration
+    const colors = ["#10b981", "#6366f1", "#8b5cf6"]
+
+    ;(function frame() {
+      confetti({
+        particleCount: 5,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: colors,
+      })
+      confetti({
+        particleCount: 5,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: colors,
+      })
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame)
+      }
+    })()
+  }
+
   async function handleSwipe(habitId: string, status: "DONE" | "SKIPPED") {
     try {
-      await swipeHabit(habitId, status)
+      const allCompleted = await swipeHabit(habitId, status)
+      if (allCompleted) {
+        triggerCelebration()
+      }
     } catch (err) {
       console.error("Swipe failed:", err)
     }
   }
 
   // ── All done celebration ──────────────────────────────────────────────────
-  useEffect(() => {
-    if (habits.length === 0) {
-      const duration = 3000
-      const end = Date.now() + duration
-
-      const colors = ["#10b981", "#6366f1", "#8b5cf6"]
-
-        ; (function frame() {
-          confetti({
-            particleCount: 5,
-            angle: 60,
-            spread: 55,
-            origin: { x: 0 },
-            colors: colors,
-          })
-          confetti({
-            particleCount: 5,
-            angle: 120,
-            spread: 55,
-            origin: { x: 1 },
-            colors: colors,
-          })
-
-          if (Date.now() < end) {
-            requestAnimationFrame(frame)
-          }
-        })()
-    }
-  }, [habits.length])
+  // Removed useEffect-based trigger to handle it via backend response in handleSwipe
 
   if (habits.length === 0) {
     return (

@@ -10,6 +10,7 @@ import { motion } from "framer-motion"
 import { Flame, Trophy, CalendarDays, Star } from "lucide-react"
 import { StreakCard } from "@/components/streaks/StreakCard"
 import type { StreakPageData } from "@/types"
+import { Skeleton } from "@/components/ui/Skeleton"
 import { API_ROUTES } from "@/lib/constants/api-routes"
 
 export default function StreaksPage() {
@@ -38,10 +39,21 @@ export default function StreaksPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-full border-4 border-indigo-200 border-t-indigo-500 animate-spin" />
-          <p className="text-fore-3 text-sm">Loading streaks...</p>
+      <div className="max-w-2xl mx-auto px-6 py-8 space-y-8">
+        <div className="space-y-2">
+          <Skeleton className="h-9 w-32" />
+          <Skeleton className="h-4 w-48" />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-[100px] w-full rounded-2xl" />
+          ))}
+        </div>
+        <div className="space-y-3">
+          <Skeleton className="h-6 w-48 mb-3" />
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-[80px] w-full rounded-2xl" />
+          ))}
         </div>
       </div>
     )

@@ -16,6 +16,7 @@ interface HabitStore {
   todayHabits: TodayHabit[]    // habits pending swipe today
   stats: DashboardStats | null
   isLoading: boolean
+  isInitialized: boolean
   error: string | null
 
   // ── Actions ───────────────────────────────────────────────────────────────
@@ -36,7 +37,8 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
   habits: [],
   todayHabits: [],
   stats: null,
-  isLoading: false,
+  isLoading: true,
+  isInitialized: false,
   error: null,
 
   fetchHabits: async () => {
@@ -53,9 +55,9 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
       const today = todayString()
       const todayHabits = habits.filter((h) => !h.todayLog)
 
-      set({ habits, todayHabits, isLoading: false })
+      set({ habits, todayHabits, isLoading: false, isInitialized: true })
     } catch (err: any) {
-      set({ error: err.message, isLoading: false })
+      set({ error: err.message, isLoading: false, isInitialized: true })
     }
   },
 

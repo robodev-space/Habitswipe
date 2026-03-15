@@ -8,20 +8,22 @@ import { CameraSnapModal } from "@/components/share/CameraSnapModal"
 import { Flame, CheckCircle2, Share2 } from "lucide-react"
 import { API_ROUTES } from "@/lib/constants/api-routes"
 
+import { Skeleton } from "@/components/ui/Skeleton"
+ 
 interface ShareableHabit {
   id: string
   name: string
   icon: string
   currentStreak: number
 }
-
+ 
 export default function SharePage() {
   const { data: session } = useSession()
   const [completedHabits, setCompletedHabits] = useState<ShareableHabit[]>([])
   const [sharedDates, setSharedDates] = useState<Date[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedHabit, setSelectedHabit] = useState<ShareableHabit | null>(null)
-
+ 
   // Fetch initial data
   const fetchData = async (signal?: AbortSignal) => {
     try {
@@ -36,7 +38,7 @@ export default function SharePage() {
       ) || []
       
       setCompletedHabits(doneToday)
-
+ 
       // Fetch shared dates
       const snapsRes = await fetch(API_ROUTES.SNAPS.BASE, { signal })
       const snapsData = await snapsRes.json()
@@ -47,7 +49,7 @@ export default function SharePage() {
         return new Date(year, month - 1, day) // Note: months are 0-indexed in JS Date!
       })
       setSharedDates(dates)
-
+ 
     } catch (error: any) {
       if (error.name === "AbortError") return
       console.error("Error fetching share data:", error)
@@ -55,20 +57,20 @@ export default function SharePage() {
       setIsLoading(false)
     }
   }
-
+ 
   useEffect(() => {
     const controller = new AbortController()
     fetchData(controller.signal)
     return () => controller.abort()
   }, [])
-
+ 
   return (
     <div className="w-full max-w-3xl mx-auto p-4 md:p-8 space-y-12">
       <header className="space-y-2">
         <h1 className="text-3xl font-serif font-bold text-fore">Share your Snap 📸</h1>
         <p className="text-fore-2">Capture your daily wins and share them with friends to keep yourself accountable!</p>
       </header>
-
+ 
       {/* Habits Section */}
       <section className="space-y-4">
          <h2 className="text-xl font-bold flex items-center gap-2">
@@ -77,8 +79,8 @@ export default function SharePage() {
          </h2>
          
          {isLoading ? (
-            <div className="animate-pulse flex gap-4 overflow-x-auto pb-4">
-              {[1, 2].map(i => <div key={i} className="w-64 h-24 bg-surface-2 rounded-2xl flex-shrink-0" />)}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[1, 2].map(i => <Skeleton key={i} className="h-24 w-full rounded-2xl" />)}
             </div>
          ) : completedHabits.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

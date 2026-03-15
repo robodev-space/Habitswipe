@@ -54,7 +54,21 @@ export async function POST(req: Request) {
       },
     })
 
-    return NextResponse.json({ data: log }, { status: 201 })
+    // Check if all habits for this date are now completed
+    const totalHabits = await prisma.habit.count({
+      where: { userId: session.user.id }
+    })
+    
+    const completedLogs = await prisma.habitLog.count({
+      where: { 
+        userId: session.user.id, 
+        date: new Date(date + "T00:00:00.000Z") 
+      }
+    })
+
+    const allCompleted = totalHabits > 0 && completedLogs === totalHabits
+
+    return NextResponse.json({ data: log, allCompleted }, { status: 201 })
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.errors[0].message }, { status: 400 })
