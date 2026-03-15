@@ -9,6 +9,10 @@ import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Flame, Trophy, CalendarDays, Star } from "lucide-react"
 import { StreakCard } from "@/components/streaks/StreakCard"
+import { StreakStatsHeader } from "@/components/streaks/StreakStatsHeader"
+import { ConsistencyLineChart } from "@/components/streaks/ConsistencyLineChart"
+import { HabitDistributionPieChart } from "@/components/streaks/HabitDistributionPieChart"
+import { ContributionGraph } from "@/components/streaks/ContributionGraph"
 import type { StreakPageData } from "@/types"
 import { Skeleton } from "@/components/ui/Skeleton"
 import { API_ROUTES } from "@/lib/constants/api-routes"
@@ -39,22 +43,21 @@ export default function StreaksPage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-2xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-4xl mx-auto px-6 py-8 space-y-8">
         <div className="space-y-2">
           <Skeleton className="h-9 w-32" />
           <Skeleton className="h-4 w-48" />
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-[100px] w-full rounded-2xl" />
           ))}
         </div>
-        <div className="space-y-3">
-          <Skeleton className="h-6 w-48 mb-3" />
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-[80px] w-full rounded-2xl" />
-          ))}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Skeleton className="h-[240px] w-full rounded-2xl" />
+          <Skeleton className="h-[240px] w-full rounded-2xl" />
         </div>
+        <Skeleton className="h-[200px] w-full rounded-3xl" />
       </div>
     )
   }
@@ -73,83 +76,54 @@ export default function StreaksPage() {
     )
   }
 
-  const overviewCards = [
-    {
-      label: "Current Best Streak",
-      value: `${data.overallCurrentStreak ||0} days`,
-      icon: Flame,
-      color: "#f97316",
-      bg: "bg-orange-50 dark:bg-orange-950/30",
-      iconColor: "text-orange-500",
-    },
-    {
-      label: "Longest Ever",
-      value: `${data.overallLongestStreak||0} days`,
-      icon: Trophy,
-      color: "#f59e0b",
-      bg: "bg-amber-50 dark:bg-amber-950/30",
-      iconColor: "text-amber-500",
-    },
-    {
-      label: "Total Days Done",
-      value: data.totalDaysTracked.toString(),
-      icon: CalendarDays,
-      color: "#6366f1",
-      bg: "bg-indigo-50 dark:bg-indigo-950/30",
-      iconColor: "text-indigo-500",
-    },
-    {
-      label: "Perfect Days",
-      value: data.perfectDays.toString(),
-      icon: Star,
-      color: "#10b981",
-      bg: "bg-emerald-50 dark:bg-emerald-950/30",
-      iconColor: "text-emerald-500",
-    },
-  ]
-
   return (
-    <div className="max-w-2xl mx-auto px-6 py-8 space-y-8">
-
+    <div className="w-full mx-auto px-4 md:px-8 py-8 space-y-12">
       {/* Header */}
       <div>
-        <h1 className="text-3xl text-fore" style={{ fontFamily: "var(--font-dm-serif)" }}>
-          Streaks
+        <h1 className="text-4xl text-fore" style={{ fontFamily: "var(--font-dm-serif)" }}>
+          Streaks & Insights
         </h1>
-        <p className="text-fore-2 text-sm mt-1">
-          Your consistency over time
+        <p className="text-fore-2 text-base mt-2">
+          Visualizing your journey to consistency with premium analytics.
         </p>
       </div>
 
-      {/* Overview stat cards */}
-      <div className="grid grid-cols-2 w-full gap-3">
-        {overviewCards.map((card, i) => (
-          <motion.div
-            key={card.label}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.07 }}
-            className={`rounded-2xl p-4 border border-theme ${card.bg}`}
-          >
-            <card.icon className={`w-5 h-5 mb-2 ${card.iconColor}`} />
-            <p className="text-2xl font-bold text-fore">{card.value}</p>
-            <p className="text-xs text-fore-2 mt-0.5">{card.label}</p>
-          </motion.div>
-        ))}
-      </div>
+      {/* 1. Overview Stats */}
+      <section>
+        <StreakStatsHeader
+          currentBest={data.overallCurrentStreak}
+          longestEver={data.overallLongestStreak}
+          totalDays={data.totalDaysTracked}
+          perfectDays={data.perfectDays}
+        />
+      </section>
 
-      {/* Per-habit streak cards */}
-      <div>
-        <h2 className="text-lg font-semibold text-fore mb-3">
-          Habits — ranked by streak
+      {/* 2. Analytics Charts */}
+      <section className="flex flex-col lg:flex-row gap-8">
+        <div className="lg:w-[62%]">
+          <ConsistencyLineChart data={data.dailyTrend} />
+        </div>
+        <div className="lg:w-[38%]">
+          <HabitDistributionPieChart data={data.habitDistribution} />
+        </div>
+      </section>
+
+      {/* 3. Global Heatmap */}
+      <section>
+        <ContributionGraph data={data.globalHeatmap} />
+      </section>
+
+      {/* 4. Per-habit Detail List */}
+      <section className="space-y-6">
+        <h2 className="text-2xl font-bold text-fore">
+          Habit Breakdown
         </h2>
-        <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 gap-6">
           {data.habits.map((habit, i) => (
             <StreakCard key={habit.habitId} habit={habit} rank={i + 1} />
           ))}
         </div>
-      </div>
-
+      </section>
     </div>
   )
 }

@@ -123,33 +123,6 @@ export interface HabitStreakDetail {
   longestStreak: number
   completionRate: number
   lastStreakDate: Date | null
-  milestones: StreakMilestone[]   // ← needs StreakMilestone defined above
-  heatmap: HeatmapDay[]
-}
-
-export interface HeatmapDay {
-  date: string
-  status: LogStatus | null
-}
-
-export interface StreakPageData {
-  overallCurrentStreak: number
-  overallLongestStreak: number
-  totalDaysTracked: number
-  perfectDays: number
-  habits: HabitStreakDetail[]
-}
-
-
-export interface HabitStreakDetail {
-  habitId: string
-  name: string
-  icon: string
-  color: string
-  currentStreak: number
-  longestStreak: number
-  completionRate: number
-  lastStreakDate: Date | null
   milestones: StreakMilestone[]
   heatmap: HeatmapDay[]
 }
@@ -159,12 +132,31 @@ export interface HeatmapDay {
   status: LogStatus | null
 }
 
+export interface GlobalHeatmapDay {
+  date: string
+  count: number // number of habits done
+}
+
+export interface DailyTrendPoint {
+  date: string
+  completions: number
+}
+
+export interface HabitDistributionPoint {
+  name: string
+  value: number
+  color: string
+}
+
 export interface StreakPageData {
   overallCurrentStreak: number
   overallLongestStreak: number
   totalDaysTracked: number
   perfectDays: number
   habits: HabitStreakDetail[]
+  globalHeatmap: GlobalHeatmapDay[]
+  dailyTrend: DailyTrendPoint[]
+  habitDistribution: HabitDistributionPoint[]
 }
 
 
