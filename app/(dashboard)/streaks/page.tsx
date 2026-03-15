@@ -17,16 +17,23 @@ export default function StreaksPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    fetch(API_ROUTES.STREAKS.BASE)
+    const controller = new AbortController()
+
+    fetch(API_ROUTES.STREAKS.BASE, { signal: controller.signal })
       .then((r) => {
-        if(!r.ok) throw new Error("Failed request")
-        console.log(r)
-       return r.json()})
+        if (!r.ok) throw new Error("Failed request")
+        return r.json()
+      })
       .then((json) => {
         if (json.data) setData(json.data)
       })
-      .catch(console.error)
-    .finally(() => setIsLoading(false))
+      .catch((err) => {
+        if (err.name === "AbortError") return
+        console.error("Streaks fetch error:", err)
+      })
+      .finally(() => setIsLoading(false))
+
+    return () => controller.abort()
   }, [])
 
   if (isLoading) {

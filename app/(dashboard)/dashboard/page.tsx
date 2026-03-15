@@ -16,8 +16,13 @@ export default function DashboardPage() {
   const { habits, stats, fetchHabits, fetchStats, isLoading } = useHabits()
 
   useEffect(() => {
-    fetchHabits()
-    fetchStats()
+    const controller = new AbortController()
+    fetchHabits() 
+    fetchStats()  
+    return () => {
+      // Abort previous calls on unmount
+      controller.abort()
+    }
   }, [])
 
   if (isLoading) {

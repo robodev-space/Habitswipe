@@ -25,7 +25,12 @@ interface HabitStore {
   updateHabit: (id: string, updates: Partial<HabitWithStats>) => void
   removeHabit: (id: string) => void
   markSwiped: (habitId: string, status: "DONE" | "SKIPPED") => void
+  // Helper to get a fresh signal and abort previous
+  getAbortSignal: (key: string) => AbortSignal
 }
+
+// Track controllers outside store to avoid serialization issues if any
+const controllers: Record<string, AbortController> = {}
 
 export const useHabitStore = create<HabitStore>((set, get) => ({
   habits: [],
@@ -35,9 +40,10 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
   error: null,
 
   fetchHabits: async () => {
+    const signal = get().getAbortSignal("fetchHabits")
     set({ isLoading: true, error: null })
     try {
-      const res = await fetch(API_ROUTES.HABITS.BASE)
+      const res = await fetch(API_ROUTES.HABITS.BASE, { signal })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error)
 
@@ -54,8 +60,9 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
   },
 
   fetchStats: async () => {
+    const signal = get().getAbortSignal("fetchStats")
     try {
-      const res = await fetch(API_ROUTES.STATS.BASE)
+      const res = await fetch(API_ROUTES.STATS.BASE, { signal })
       const json = await res.json()
       if (res.ok) set({ stats: json.data })
     } catch {
@@ -102,4 +109,12 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
           : h
       ),
     })),
+
+  getAbortSignal: (key: string) => {
+    if (controllers[key]) {
+      controllers[key].abort()
+    }
+    controllers[key] = new AbortController()
+    return controllers[key].signal
+  },
 }))

@@ -80,6 +80,7 @@ export default function RegisterPage() {
 
   async function handleGoogle() {
     setIsGoogleLoading(true)
+    // For OAuth, we typically don't abort, but adding signal for consistency if needed
     await signIn("google", { callbackUrl: "/today" })
   }
 

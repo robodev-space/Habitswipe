@@ -44,7 +44,9 @@ export default function ProfilePage() {
   const [bio, setBio] = useState("")
 
   useEffect(() => {
-    fetch(API_ROUTES.PROFILE.BASE)
+    const controller = new AbortController()
+
+    fetch(API_ROUTES.PROFILE.BASE, { signal: controller.signal })
       .then((r) => r.json())
       .then((json) => {
         if (json.data) {
@@ -56,7 +58,13 @@ export default function ProfilePage() {
           setBio(p.bio ?? "")
         }
       })
+      .catch((err) => {
+        if (err.name === "AbortError") return
+        console.error("Profile fetch error:", err)
+      })
       .finally(() => setIsLoading(false))
+
+    return () => controller.abort()
   }, [])
 
   async function handleSave() {

@@ -138,8 +138,13 @@ export default function HabitsPage() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    fetchHabits()
+    const controller = new AbortController()
+    fetchHabits() // Store handles its own internal abort
     setMounted(true)
+    return () => {
+      controller.abort()
+      setMounted(false)
+    }
   }, [])
 
   async function handleCreate(data: CreateHabitInput) {

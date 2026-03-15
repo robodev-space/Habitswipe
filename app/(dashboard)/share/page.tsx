@@ -23,10 +23,10 @@ export default function SharePage() {
   const [selectedHabit, setSelectedHabit] = useState<ShareableHabit | null>(null)
 
   // Fetch initial data
-  const fetchData = async () => {
+  const fetchData = async (signal?: AbortSignal) => {
     try {
       // Fetch today's habits
-      const streaksRes = await fetch(API_ROUTES.STREAKS.BASE)
+      const streaksRes = await fetch(API_ROUTES.STREAKS.BASE, { signal })
       const streaksData = await streaksRes.json()
       
       // Filter habits that have been completed today
@@ -38,7 +38,7 @@ export default function SharePage() {
       setCompletedHabits(doneToday)
 
       // Fetch shared dates
-      const snapsRes = await fetch(API_ROUTES.SNAPS.BASE)
+      const snapsRes = await fetch(API_ROUTES.SNAPS.BASE, { signal })
       const snapsData = await snapsRes.json()
       
       // Parse UTC date strings to local Dates
@@ -48,7 +48,8 @@ export default function SharePage() {
       })
       setSharedDates(dates)
 
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === "AbortError") return
       console.error("Error fetching share data:", error)
     } finally {
       setIsLoading(false)
@@ -56,7 +57,9 @@ export default function SharePage() {
   }
 
   useEffect(() => {
-    fetchData()
+    const controller = new AbortController()
+    fetchData(controller.signal)
+    return () => controller.abort()
   }, [])
 
   return (

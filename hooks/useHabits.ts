@@ -13,11 +13,12 @@ export function useHabits() {
   const store = useHabitStore()
 
   // ── Create habit ───────────────────────────────────────────────────────────
-  const createHabit = async (input: CreateHabitInput) => {
+  const createHabit = async (input: CreateHabitInput, signal?: AbortSignal) => {
     const res = await fetch(API_ROUTES.HABITS.BASE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),
+      signal,
     })
     const json = await res.json()
     if (!res.ok) throw new Error(json.error)
@@ -34,11 +35,12 @@ export function useHabits() {
   }
 
   // ── Update habit ───────────────────────────────────────────────────────────
-  const updateHabit = async (id: string, input: UpdateHabitInput) => {
+  const updateHabit = async (id: string, input: UpdateHabitInput, signal?: AbortSignal) => {
     const res = await fetch(API_ROUTES.HABITS.BY_ID(id), {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),
+      signal,
     })
     const json = await res.json()
     if (!res.ok) throw new Error(json.error)
@@ -48,8 +50,8 @@ export function useHabits() {
   }
 
   // ── Delete habit ───────────────────────────────────────────────────────────
-  const deleteHabit = async (id: string) => {
-    const res = await fetch(API_ROUTES.HABITS.BY_ID(id), { method: "DELETE" })
+  const deleteHabit = async (id: string, signal?: AbortSignal) => {
+    const res = await fetch(API_ROUTES.HABITS.BY_ID(id), { method: "DELETE", signal })
     const json = await res.json()
     if (!res.ok) throw new Error(json.error)
 
@@ -57,7 +59,7 @@ export function useHabits() {
   }
 
   // ── Swipe (log completion) ─────────────────────────────────────────────────
-  const swipeHabit = async (habitId: string, status: "DONE" | "SKIPPED") => {
+  const swipeHabit = async (habitId: string, status: "DONE" | "SKIPPED", signal?: AbortSignal) => {
     // Optimistic update — remove card immediately for snappy UX
     store.markSwiped(habitId, status)
 
@@ -66,6 +68,7 @@ export function useHabits() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ habitId, status, date: todayString() }),
+        signal,
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error)

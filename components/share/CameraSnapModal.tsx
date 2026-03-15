@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import { toBlob } from "html-to-image"
 import { Camera, RefreshCw, Share2, X, Upload, Flame } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { API_ROUTES } from "@/lib/constants/api-routes"
 
 interface CameraSnapModalProps {
   habit: { id: string; name: string; icon: string; currentStreak: number }
@@ -79,7 +80,7 @@ export function CameraSnapModal({ habit, onClose, onShareSuccess }: CameraSnapMo
         })
 
         // Log the share success
-        await fetch("/api/snaps", { method: "POST" })
+        await fetch(API_ROUTES.SNAPS.BASE, { method: "POST" })
         onShareSuccess()
         onClose()
       } else {
@@ -91,7 +92,7 @@ export function CameraSnapModal({ habit, onClose, onShareSuccess }: CameraSnapMo
         a.click()
         URL.revokeObjectURL(downloadUrl)
 
-        await fetch("/api/snaps", { method: "POST" })
+        await fetch(API_ROUTES.SNAPS.BASE, { method: "POST" })
         onShareSuccess()
         onClose()
       }
