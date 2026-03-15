@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 export default withAuth(
   function middleware(req) {
+    debugger
     const { token } = req.nextauth;
     const { pathname } = req.nextUrl;
 
@@ -14,14 +15,14 @@ export default withAuth(
     if (token && (isAuthPage || isLandingPage)) {
       return NextResponse.redirect(new URL("/today", req.url));
     }
-    
+
     return NextResponse.next();
   },
   {
     callbacks: {
       authorized: ({ token, req }) => {
         const { pathname } = req.nextUrl;
-        
+
         // ── PUBLIC ROUTES ───────────────────────────────────────────────────
         // These can be accessed without a session
         const publicRoutes = ["/", "/login", "/register"];
