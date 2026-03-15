@@ -68,56 +68,58 @@ export function ContributionGraph({ data }: ContributionGraphProps) {
     <div className="bg-surface border border-theme rounded-3xl p-4 md:p-8 card-shadow overflow-x-auto">
       <h3 className="text-base font-semibold text-fore mb-8">Yearly Consistency</h3>
       
-      <div className="w-full">
-        {/* Month Labels */}
-        <div className="flex text-[11px] font-medium text-fore-3 mb-3 ml-10 h-4 relative">
-          {monthLabels.map((m) => (
-            <div 
-              key={`${m.label}-${m.index}`}
-              className="absolute"
-              style={{ left: `${m.index * 17}px` }}
-            >
-              {m.label}
-            </div>
-          ))}
-        </div>
-
-        <div className="flex gap-2">
-          {/* Day Labels */}
-          <div className="flex flex-col gap-[9px] text-[10px] font-medium text-fore-3 pr-2 pt-[3px]">
-            <span>Mon</span>
-            <span>Wed</span>
-            <span>Fri</span>
-          </div>
-
-          {/* The Grid */}
-          <div className="flex gap-[4px]">
-            {weeks.map((week, wi) => (
-              <div key={wi} className="flex flex-col gap-[4px]">
-                {week.map((day) => (
-                  <div
-                    key={day.date}
-                    title={`${day.date}: ${day.count} habits`}
-                    className={cn(
-                      "w-[13px] h-[13px] rounded-[3px] transition-all duration-200 hover:scale-125 hover:z-10 cursor-pointer shadow-sm",
-                      getColor(day.count)
-                    )}
-                  />
-                ))}
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="inline-block">
+          {/* Month Labels */}
+          <div className="flex text-[11px] font-medium text-fore-3 mb-3 ml-10 h-4 relative">
+            {monthLabels.map((m) => (
+              <div 
+                key={`${m.label}-${m.index}`}
+                className="absolute"
+                style={{ left: `${m.index * 17}px` }}
+              >
+                {m.label}
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Legend */}
-        <div className="flex items-center justify-end gap-2 mt-4 text-[10px] text-fore-3">
-          <span>Less</span>
-          <div className="w-[10px] h-[10px] rounded-[2px] bg-slate-100 dark:bg-slate-800" />
-          <div className="w-[10px] h-[10px] rounded-[2px] bg-emerald-400 dark:bg-emerald-600" />
-          <div className="w-[10px] h-[10px] rounded-[2px] bg-indigo-500 dark:bg-indigo-700" />
-          <div className="w-[10px] h-[10px] rounded-[2px] bg-violet-600 dark:bg-violet-500" />
-          <div className="w-[10px] h-[10px] rounded-[2px] bg-fuchsia-600 dark:bg-fuchsia-500" />
-          <span>More</span>
+          <div className="flex gap-2">
+            {/* Day Labels */}
+            <div className="flex flex-col gap-[9px] text-[10px] font-medium text-fore-3 pr-2 pt-[3px]">
+              <span>Mon</span>
+              <span>Wed</span>
+              <span>Fri</span>
+            </div>
+
+            {/* The Grid */}
+            <div className="flex gap-[4px]">
+              {weeks.map((week, wi) => (
+                <div key={wi} className="flex flex-col gap-[4px]">
+                  {week.map((day) => (
+                    <div
+                      key={day.date}
+                      title={`${day.date}: ${day.count} habits`}
+                      className={cn(
+                        "w-[13px] h-[13px] rounded-[3px] transition-all duration-200 hover:scale-125 hover:z-10 cursor-pointer shadow-sm",
+                        getColor(day.count)
+                      )}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Legend */}
+          <div className="flex items-center justify-end gap-2 mt-4 text-[10px] text-fore-3">
+            <span>Less</span>
+            <div className="w-[10px] h-[10px] rounded-[2px] bg-slate-100 dark:bg-slate-800" />
+            <div className="w-[10px] h-[10px] rounded-[2px] bg-emerald-400 dark:bg-emerald-600" />
+            <div className="w-[10px] h-[10px] rounded-[2px] bg-indigo-500 dark:bg-indigo-700" />
+            <div className="w-[10px] h-[10px] rounded-[2px] bg-violet-600 dark:bg-violet-500" />
+            <div className="w-[10px] h-[10px] rounded-[2px] bg-fuchsia-600 dark:bg-fuchsia-500" />
+            <span>More</span>
+          </div>
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@ import { Flame, Trophy, CalendarDays, Star } from "lucide-react"
 import { StreakCard } from "@/components/streaks/StreakCard"
 import { StreakStatsHeader } from "@/components/streaks/StreakStatsHeader"
 import { ConsistencyLineChart } from "@/components/streaks/ConsistencyLineChart"
-import { HabitDistributionPieChart } from "@/components/streaks/HabitDistributionPieChart"
+import { MonthlyBarChart } from "@/components/streaks/MonthlyBarChart"
 import { ContributionGraph } from "@/components/streaks/ContributionGraph"
 import type { StreakPageData } from "@/types"
 import { Skeleton } from "@/components/ui/Skeleton"
@@ -99,12 +99,12 @@ export default function StreaksPage() {
       </section>
 
       {/* 2. Analytics Charts */}
-      <section className="flex flex-col lg:flex-row gap-8">
-        <div className="lg:w-[62%]">
+      <section className="flex flex-col lg:flex-row gap-8 w-full">
+        <div className="flex-[3] min-w-0">
           <ConsistencyLineChart data={data.dailyTrend} />
         </div>
-        <div className="lg:w-[38%]">
-          <HabitDistributionPieChart data={data.habitDistribution} />
+        <div className="flex-[2] min-w-0">
+          <MonthlyBarChart data={data.monthlyPerformance} />
         </div>
       </section>
 

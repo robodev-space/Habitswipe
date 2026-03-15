@@ -148,6 +148,12 @@ export interface HabitDistributionPoint {
   color: string
 }
 
+export interface MonthlyPerformancePoint {
+  month: string
+  completions: number
+  fill: string
+}
+
 export interface StreakPageData {
   overallCurrentStreak: number
   overallLongestStreak: number
@@ -157,6 +163,7 @@ export interface StreakPageData {
   globalHeatmap: GlobalHeatmapDay[]
   dailyTrend: DailyTrendPoint[]
   habitDistribution: HabitDistributionPoint[]
+  monthlyPerformance: MonthlyPerformancePoint[]
 }
 
 

@@ -13,7 +13,7 @@ import {
   calculateLongestStreak,
   calculateCompletionRate,
 } from "@/lib/utils"
-import type { StreakPageData, LogStatus } from "@/types"
+import type { StreakPageData, LogStatus, MonthlyPerformancePoint } from "@/types"
 
 export async function GET() {
   const session = await getServerSession(authOptions)
@@ -102,6 +102,36 @@ export async function GET() {
     color: h.color
   })).filter(h => h.value > 0)
 
+  // 4. Monthly Performance (Bar Chart - last 12 months)
+  const monthlyPerformance: MonthlyPerformancePoint[] = []
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  
+  for (let i = 11; i >= 0; i--) {
+    const d = subDays(new Date(), i * 30) // Rough approximation for 12 months
+    const monthIndex = d.getMonth()
+    const year = d.getFullYear()
+    const monthKey = `${year}-${(monthIndex + 1).toString().padStart(2, '0')}`
+    
+    // Calculate total completions for this month
+    let completions = 0
+    for (const habit of habits) {
+      for (const log of habit.logs) {
+        if (log.status === "DONE") {
+          const logDate = new Date(log.date)
+          if (logDate.getMonth() === monthIndex && logDate.getFullYear() === year) {
+            completions++
+          }
+        }
+      }
+    }
+
+    monthlyPerformance.push({
+      month: `${monthNames[monthIndex]} ${year}`,
+      completions,
+      fill: i % 2 === 0 ? "var(--chart-1)" : "var(--chart-2)"
+    })
+  }
+
   // ── Per-habit details ──────────────────────────────────────────────────────
   const habitDetails = habits.map((habit) => {
     const logs = habit.logs as { date: Date; status: LogStatus }[]
@@ -161,7 +191,8 @@ export async function GET() {
     habits: habitDetails,
     globalHeatmap,
     dailyTrend,
-    habitDistribution
+    habitDistribution,
+    monthlyPerformance
   }
 
   return NextResponse.json({ data })
