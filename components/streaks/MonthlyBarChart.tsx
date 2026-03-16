@@ -18,6 +18,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import type { MonthlyPerformancePoint } from "@/types"
+import { ChartTooltipContentProps } from "@/types/index"
 import { cn } from "@/lib/utils"
 
 interface MonthlyBarChartProps {
@@ -62,7 +63,7 @@ export function MonthlyBarChart({ data }: MonthlyBarChartProps) {
           <ChevronDown className="absolute right-2 top-1.5 h-3.5 w-3.5 text-fore-3 pointer-events-none" />
         </div>
       </CardHeader>
-      
+
       <CardContent className="pb-0 flex-1 min-h-0">
         <ChartContainer config={chartConfig} className="h-full w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -85,11 +86,11 @@ export function MonthlyBarChart({ data }: MonthlyBarChartProps) {
               <XAxis dataKey="completions" type="number" hide />
               <ChartTooltip
                 cursor={false}
-                content={<ChartTooltipContent hideLabel />}
+              // content={<ChartTooltipContent hideLabel />}
               />
-              <Bar 
-                dataKey="completions" 
-                radius={6} 
+              <Bar
+                dataKey="completions"
+                radius={6}
                 fill="#6366f1"
                 animationDuration={1500}
               />
