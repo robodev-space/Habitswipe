@@ -48,6 +48,9 @@ const ChartTooltipContent = React.forwardRef<
     indicator?: "line" | "dot" | "dashed"
     nameKey?: string
     labelKey?: string
+    payload: any[],
+    className: string,
+    label: string,
   }
 >(({ active, payload, className, hideLabel, hideIndicator, indicator = "dot", label, labelKey, nameKey }, ref) => {
   if (!active || !payload?.length) {
