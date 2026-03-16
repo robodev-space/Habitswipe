@@ -6,7 +6,7 @@
 
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { SwipeDeck } from "@/components/habits/SwipeDeck"
 import { ProgressRing } from "@/components/shared/StreakBadge"
@@ -34,19 +34,19 @@ export default function TodayPage() {
       <header className="flex items-center justify-between px-6 pt-8 pb-4">
         <div>
           <p className="text-xs font-medium text-fore-3 uppercase tracking-wider mb-0.5">
-            {formatDisplayDate(new Date())}
+            Today
           </p>
           <h1
             className="text-2xl text-fore leading-tight"
             style={{ fontFamily: "var(--font-dm-serif)" }}
           >
-            Today&apos;s Habits
+            Daily Habits
           </h1>
         </div>
 
         {/* Progress ring skeleton or actual */}
-        {(isLoading || !isInitialized) ? (
-          <Skeleton className="h-[52px] w-[52px] rounded-full" />
+        {(!isInitialized || isLoading) ? (
+          <div className="h-[52px] w-[52px] rounded-full bg-slate-100 dark:bg-slate-800 animate-pulse border-4 border-slate-200 dark:border-slate-700" />
         ) : (
           <ProgressRing
             percent={percent}
@@ -58,14 +58,25 @@ export default function TodayPage() {
         )}
       </header>
 
-      {/* ── Spacer for absolute header ──────────────────────────────────────── */}
-      <div className="h-24 shrink-0" />
+      {/* ── Spacer removed as header is not absolute ─────────────────────────── */}
+      <div className="h-4 shrink-0" />
 
       {/* ── Swipe area ──────────────────────────────────────────────────────── */}
       <div className="flex-1 px-6 pb-4 relative">
-        {(isLoading || !isInitialized) ? (
-          <div className="w-full h-full flex items-center justify-center">
-            <Skeleton className="w-full max-w-sm aspect-[3/4] rounded-3xl" />
+        {(!isInitialized || isLoading) ? (
+          <div className="w-full h-full relative flex items-center justify-center">
+            {/* Skeleton Card Stack */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-full max-w-sm aspect-[3/4] bg-slate-100 dark:bg-slate-800 rounded-3xl animate-pulse scale-[0.92] translate-y-8 opacity-40 border border-theme" />
+              <div className="absolute w-full max-w-sm aspect-[3/4] bg-slate-100 dark:bg-slate-800 rounded-3xl animate-pulse scale-[0.96] translate-y-4 opacity-70 border border-theme" />
+              <div className="absolute w-full max-w-sm aspect-[3/4] bg-slate-50 dark:bg-slate-900 rounded-3xl animate-pulse shadow-xl border border-theme">
+                <div className="h-full w-full flex flex-col items-center justify-center gap-6 p-8">
+                  <div className="w-28 h-28 rounded-3xl bg-slate-200 dark:bg-slate-800 animate-pulse" />
+                  <div className="w-32 h-6 bg-slate-200 dark:bg-slate-800 rounded-full animate-pulse" />
+                  <div className="w-20 h-4 bg-slate-200 dark:bg-slate-800 rounded-full animate-pulse" />
+                </div>
+              </div>
+            </div>
           </div>
         ) : totalHabits === 0 ? (
           // Premium Empty state
@@ -144,9 +155,11 @@ export default function TodayPage() {
       </div>
 
       {/* ── Quick stats bar ──────────────────────────────────────────────────── */}
-      {(isLoading || !isInitialized) ? (
+      {(!isInitialized || isLoading) ? (
         <div className="px-6 pb-4 flex items-center gap-2 overflow-hidden">
-          {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-7 w-20 rounded-full shrink-0" />)}
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="h-8 w-24 rounded-full bg-slate-100 dark:bg-slate-800 animate-pulse border border-theme shrink-0" />
+          ))}
         </div>
       ) : totalHabits > 0 && (
         <div className="px-6 pb-4">

@@ -139,8 +139,8 @@ export function StreakCard({ habit, rank }: StreakCardProps) {
               </div>
 
               {/* Heatmap */}
-              <div>
-                <p className="text-xs font-semibold text-fore-2 mb-2 uppercase tracking-wider">
+              <div className="bg-surface-2 -mx-4 px-4 py-6 border-y border-theme/50">
+                <p className="text-[10px] font-bold text-fore-3 mb-4 uppercase tracking-[0.2em] px-2">
                   Last 12 Weeks
                 </p>
                 <HeatmapCalendar data={habit.heatmap} color={habit.color} />

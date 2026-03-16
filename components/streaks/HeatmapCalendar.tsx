@@ -42,9 +42,9 @@ export function HeatmapCalendar({ data, color }: HeatmapCalendarProps) {
           </div>
 
           {/* Week columns */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-2 flex-1">
             {/* Month labels at top */}
-            <div className="flex gap-1 mb-1">
+            <div className="flex gap-1.5 mb-2">
               {weeks.map((week, wi) => {
                 const firstDay = week[0]?.date
                 const label =
@@ -54,7 +54,7 @@ export function HeatmapCalendar({ data, color }: HeatmapCalendarProps) {
                 return (
                   <div
                     key={wi}
-                    className="w-3 text-[9px] text-fore-3 truncate"
+                    className="w-5 text-[10px] font-medium text-fore-3 truncate text-center"
                   >
                     {label}
                   </div>
@@ -64,11 +64,11 @@ export function HeatmapCalendar({ data, color }: HeatmapCalendarProps) {
 
             {/* Grid rows — one row per day of week */}
             {Array.from({ length: 7 }, (_, dayOfWeek) => (
-              <div key={dayOfWeek} className="flex gap-1">
+              <div key={dayOfWeek} className="flex gap-1.5">
                 {weeks.map((week, wi) => {
                   const cell = week[dayOfWeek]
                   if (!cell) {
-                    return <div key={wi} className="w-3 h-3" />
+                    return <div key={wi} className="w-5 h-5" />
                   }
 
                   const isDone = cell.status === "DONE"
@@ -81,16 +81,16 @@ export function HeatmapCalendar({ data, color }: HeatmapCalendarProps) {
                       key={wi}
                       title={`${cell.date}: ${cell.status ?? "no log"}`}
                       className={cn(
-                        "w-3 h-3 rounded-[2px] transition-all duration-200",
-                        "hover:scale-125 cursor-default",
-                        isToday && "ring-1 ring-offset-1 ring-indigo-400",
-                        isEmpty && "bg-slate-100 dark:bg-slate-800"
+                        "w-5 h-5 rounded-[3px] transition-all duration-300",
+                        "hover:scale-125 hover:z-10 cursor-default",
+                        isToday && "ring-2 ring-primary ring-offset-2",
+                        isEmpty && "bg-[#ebedf0] dark:bg-[#161b22] border border-black/5 dark:border-white/5"
                       )}
                       style={
                         isDone
-                          ? { backgroundColor: color, opacity: 0.9 }
+                          ? { backgroundColor: "#39d353", boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05)" }
                           : isSkipped
-                            ? { backgroundColor: "#ef4444", opacity: 0.4 }
+                            ? { backgroundColor: "#f85149", opacity: 0.9 }
                             : undefined
                       }
                     />
@@ -102,26 +102,25 @@ export function HeatmapCalendar({ data, color }: HeatmapCalendarProps) {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-3 mt-3 text-[10px] text-fore-3">
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-[2px] bg-slate-100 dark:bg-slate-800" />
-            No log
+        <div className="flex items-center gap-6 mt-6 text-[12px] text-fore-3 font-medium">
+          <div className="flex items-center gap-2">
+            <span className="opacity-70">Less</span>
+            <div className="flex gap-1">
+              <div className="w-4 h-4 rounded-[2px] bg-[#ebedf0] dark:bg-[#161b22] border border-black/5 dark:border-white/5" />
+              <div className="w-4 h-4 rounded-[2px] bg-[#39d353] opacity-30" />
+              <div className="w-4 h-4 rounded-[2px] bg-[#39d353] opacity-60" />
+              <div className="w-4 h-4 rounded-[2px] bg-[#39d353]" />
+            </div>
+            <span className="opacity-70">More</span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2 border-l border-theme pl-6">
             <div
-              className="w-3 h-3 rounded-[2px]"
-              style={{ backgroundColor: color, opacity: 0.9 }}
+              className="w-4 h-4 rounded-[2px]"
+              style={{ backgroundColor: "#f85149", opacity: 0.9 }}
             />
-            Done
+            <span className="opacity-70">Skipped</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div
-              className="w-3 h-3 rounded-[2px]"
-              style={{ backgroundColor: "#ef4444", opacity: 0.4 }}
-            />
-            Skipped
         </div>
-      </div>
     </div>
   </div>
   )

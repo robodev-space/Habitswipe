@@ -92,12 +92,6 @@ export function HabitCard({
           style={{ background: habit.color }}
         />
 
-        {/* ── Habit color accent bar ────────────────────────────────────────── */}
-        <div
-          className="absolute top-0 left-0 right-0 h-1.5"
-          style={{ background: habit.color }}
-        />
-
         {/* ── DONE overlay (right swipe) ────────────────────────────────────── */}
         <motion.div
            className="absolute inset-0 flex items-center justify-start pl-10 rounded-3xl border-2 border-emerald-400"
@@ -198,7 +192,7 @@ export function HabitCard({
               >
                 <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
               </motion.svg>
-               <span className="text-sm font-semibold" style={{ color: habit.color }}>
+               <span className="text-sm font-semibold text-[#39d353]">
                  {(habit as any).currentStreak} day streak
                </span>
              </div>
