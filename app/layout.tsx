@@ -5,9 +5,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Inter, Geist } from "next/font/google"
 import "./globals.css"
 import { Providers } from "@/components/shared/Providers"
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+
 
 // ── Fonts ────────────────────────────────────────────────────────────────────
 // Inter: The same high-impact font used by BridgeMind
@@ -30,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
       <body className={`${inter.variable} font-sans antialiased overflow-x-hidden min-h-screen relative`}>
         <div className="mesh-bg" />
         <Providers>{children}</Providers>
