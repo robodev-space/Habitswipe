@@ -13,35 +13,25 @@ import { Field, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/Input"
 import { Label } from "@/components/ui/label"
 
-export function Confirmation() {
+export function Confirmation({ title, description, buttonLabel, open, setOpen }: { title: string, description: string, buttonLabel: string, open: boolean, setOpen: (open: boolean) => void }) {
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <form>
                 <DialogTrigger asChild >
                     <Button variant="outline" > Open Dialog </Button>
                 </DialogTrigger>
                 < DialogContent className="sm:max-w-sm" >
                     <DialogHeader>
-                        <DialogTitle>Edit profile </DialogTitle>
+                        <DialogTitle>{title} </DialogTitle>
                         <DialogDescription>
-
+                            {description}
                         </DialogDescription>
                     </DialogHeader>
-                    < FieldGroup >
-                        <Field>
-                            <Label htmlFor="name-1" > Name </Label>
-                            < Input id="name-1" name="name" defaultValue="Pedro Duarte" />
-                        </Field>
-                        < Field >
-                            <Label htmlFor="username-1" > Username </Label>
-                            < Input id="username-1" name="username" defaultValue="@peduarte" />
-                        </Field>
-                    </FieldGroup>
                     < DialogFooter >
                         <DialogClose asChild >
                             <Button variant="outline" > Cancel </Button>
                         </DialogClose>
-                        < Button type="submit" > Save changes </Button>
+                        < Button type="submit" >{buttonLabel} </Button>
                     </DialogFooter>
                 </DialogContent>
             </form>

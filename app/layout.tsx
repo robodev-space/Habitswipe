@@ -5,12 +5,12 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { Metadata } from "next"
-import { Inter, Geist } from "next/font/google"
+import { Inter } from "next/font/google"
+import { GeistSans } from "geist/font/sans"
 import "./globals.css"
 import { Providers } from "@/components/shared/Providers"
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 
 // ── Fonts ────────────────────────────────────────────────────────────────────
@@ -34,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+    <html lang="en" suppressHydrationWarning className={cn("font-sans", GeistSans.className)}>
       <body className={`${inter.variable} font-sans antialiased overflow-x-hidden min-h-screen relative`}>
         <div className="mesh-bg" />
         <Providers>{children}</Providers>

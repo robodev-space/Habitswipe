@@ -11,6 +11,7 @@ import {
   Sun, Moon, LogOut, Zap, Flame, Camera
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Confirmation } from "../common/Confirmation"
 
 const NAV_ITEMS = [
   { href: "/today", icon: Zap, label: "Today" },
@@ -137,6 +138,7 @@ export function Navigation() {
           })}
         </div>
       </nav>
+      <Confirmation title="Logout" description="Are you sure you want to logout?" buttonLabel="Logout" open={false} setOpen={() => { }} />
     </>
   )
 }
