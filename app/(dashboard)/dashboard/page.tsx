@@ -10,7 +10,6 @@ import { motion } from "framer-motion"
 import { Flame, CheckCircle2, XCircle, Clock, TrendingUp } from "lucide-react"
 import { ProgressRing } from "@/components/shared/StreakBadge"
 import { useHabits } from "@/hooks/useHabits"
-import { hexWithOpacity } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/Skeleton"
 
 export default function DashboardPage() {
@@ -18,14 +17,14 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const controller = new AbortController()
-    fetchHabits() 
-    fetchStats()  
+    fetchHabits()
+    fetchStats()
     return () => {
       // Abort previous calls on unmount
       controller.abort()
     }
   }, [])
- 
+
   if (isLoading || !isInitialized) {
     return (
       <div className="max-w-2xl mx-auto px-6 py-8 space-y-8">
@@ -164,9 +163,8 @@ export default function DashboardPage() {
                     )}
                   </div>
                   <span
-                    className={`text-[10px] font-medium ${
-                      isToday ? "text-indigo-500" : "text-fore-3"
-                    }`}
+                    className={`text-[10px] font-medium ${isToday ? "text-indigo-500" : "text-fore-3"
+                      }`}
                   >
                     {day.date}
                   </span>
@@ -185,7 +183,7 @@ export default function DashboardPage() {
             <div key={habit.id} className="flex items-center gap-3">
               <div
                 className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
-                style={{ background: hexWithOpacity(habit.color, 0.12) }}
+              // style={{ background: hexWithOpacity(habit.color, 0.12) }}
               >
                 {habit.icon}
               </div>

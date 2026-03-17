@@ -14,7 +14,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Flame, TrendingUp, Trophy, ChevronDown } from "lucide-react"
 import { HeatmapCalendar } from "./HeatmapCalendar"
 import { MilestoneBadges } from "./MilestoneBadge"
-import { hexWithOpacity } from "@/lib/utils"
 import type { HabitStreakDetail } from "@/types"
 
 interface StreakCardProps {
@@ -54,7 +53,7 @@ export function StreakCard({ habit, rank }: StreakCardProps) {
         {/* Habit icon */}
         <div
           className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
-          style={{ background: hexWithOpacity(habit.color, 0.12) }}
+        // style={{ background: hexWithOpacity(habit.color, 0.12) }}
         >
           {habit.icon}
         </div>
@@ -106,9 +105,8 @@ export function StreakCard({ habit, rank }: StreakCardProps) {
 
           {/* Expand chevron */}
           <ChevronDown
-            className={`w-4 h-4 text-fore-3 transition-transform duration-200 ${
-              expanded ? "rotate-180" : ""
-            }`}
+            className={`w-4 h-4 text-fore-3 transition-transform duration-200 ${expanded ? "rotate-180" : ""
+              }`}
           />
         </div>
       </button>

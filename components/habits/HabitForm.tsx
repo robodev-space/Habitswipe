@@ -60,23 +60,23 @@ export function HabitForm({
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
 
       {/* Preview */}
-    <div className="flex items-center gap-4 p-4 rounded-2xl bg-surface-2 border border-theme">
-  <div
-    className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
-    style={{ background: selectedColor + "20" }}
-  >
-    {selectedIcon}
-  </div>
+      <div className="flex items-center gap-4 p-4 rounded-2xl bg-surface-2 border border-theme">
+        <div
+          className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl"
+          style={{ background: selectedColor + "20" }}
+        >
+          {selectedIcon}
+        </div>
 
-  <div className="min-w-0">
-    <p className="font-semibold text-fore break-words text-lg leading-tight">
-      {watch("name") || "Habit name"}
-    </p>
-    <p className="text-xs text-fore-2 mt-0.5 capitalize">
-      {frequency.toLowerCase()}
-    </p>
-  </div>
-</div>
+        <div className="min-w-0">
+          <p className="font-semibold text-fore break-words text-lg leading-tight">
+            {watch("name") || "Habit name"}
+          </p>
+          <p className="text-xs text-fore-2 mt-0.5 capitalize">
+            {frequency.toLowerCase()}
+          </p>
+        </div>
+      </div>
 
       {/* Name */}
       <Input
@@ -175,9 +175,7 @@ export function HabitForm({
         </Button>
         <Button
           type="submit"
-          variant="gradient"
           className="flex-1"
-          isLoading={isSubmitting}
         >
           {submitLabel}
         </Button>

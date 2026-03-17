@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/Button"
 import { HabitForm } from "@/components/habits/HabitForm"
 import { StreakBadge } from "@/components/shared/StreakBadge"
 import { useHabits } from "@/hooks/useHabits"
-import { hexWithOpacity } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/Skeleton"
 import type { HabitWithStats, CreateHabitInput } from "@/types"
 
@@ -190,7 +189,7 @@ export default function HabitsPage() {
               )}
             </div>
           </div>
-          <Button variant="gradient" onClick={() => setModal({ type: "create" })}>
+          <Button onClick={() => setModal({ type: "create" })}>
             <Plus className="w-4 h-4" />
             New Habit
           </Button>
@@ -208,7 +207,7 @@ export default function HabitsPage() {
             <div className="text-5xl mb-4">🌱</div>
             <h2 className="text-xl font-semibold text-fore mb-2">No habits yet</h2>
             <p className="text-fore-2 text-sm mb-6">Start by creating your first habit</p>
-            <Button variant="gradient" onClick={() => setModal({ type: "create" })}>
+            <Button onClick={() => setModal({ type: "create" })}>
               <Plus className="w-4 h-4" /> Create Habit
             </Button>
           </div>
@@ -226,7 +225,7 @@ export default function HabitsPage() {
                 >
                   <div
                     className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
-                    style={{ background: hexWithOpacity(habit.color, 0.12) }}
+                  // style={{ background: hexWithOpacity(habit.color, 0.12) }}
                   >
                     {habit.icon}
                   </div>
