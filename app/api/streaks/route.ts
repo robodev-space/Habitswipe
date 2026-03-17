@@ -8,11 +8,11 @@ import { getServerSession } from "next-auth"
 import { format, subDays } from "date-fns"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import {
-  calculateCurrentStreak,
-  calculateLongestStreak,
-  calculateCompletionRate,
-} from "@/lib/utils"
+// import {
+//   calculateCurrentStreak,
+//   calculateLongestStreak,
+//   calculateCompletionRate,
+// } from "@/lib/utils"
 import type { StreakPageData, LogStatus, MonthlyPerformancePoint } from "@/types"
 
 export async function GET() {
@@ -74,7 +74,7 @@ export async function GET() {
   }
 
   // ── Build Heatmaps and Trends ──────────────────────────────────────────────
-  
+
   // 1. Global Heatmap (365 days)
   const globalHeatmap: { date: string; count: number }[] = []
   for (let i = 364; i >= 0; i--) {
@@ -105,13 +105,13 @@ export async function GET() {
   // 4. Monthly Performance (Bar Chart - last 12 months)
   const monthlyPerformance: MonthlyPerformancePoint[] = []
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-  
+
   for (let i = 11; i >= 0; i--) {
     const d = subDays(new Date(), i * 30) // Rough approximation for 12 months
     const monthIndex = d.getMonth()
     const year = d.getFullYear()
     const monthKey = `${year}-${(monthIndex + 1).toString().padStart(2, '0')}`
-    
+
     // Calculate total completions for this month
     let completions = 0
     for (const habit of habits) {
@@ -135,17 +135,20 @@ export async function GET() {
   // ── Per-habit details ──────────────────────────────────────────────────────
   const habitDetails = habits.map((habit) => {
     const logs = habit.logs as { date: Date; status: LogStatus }[]
-    
+
     // For individual habit heatmap, we still only show last 84 days to keep it compact
     const currentWeekLogs = logs.filter(l => new Date(l.date) >= subDays(new Date(), 83))
 
-    const currentStreak = calculateCurrentStreak(logs)
-    const longestStreak = calculateLongestStreak(logs)
-    const completionRate = calculateCompletionRate(logs)
-    
+    const currentStreak = 1
+    const longestStreak = 2
+    const completionRate = 3
+    // const currentStreak = calculateCurrentStreak(logs)
+    // const longestStreak = calculateLongestStreak(logs)
+    // const completionRate = calculateCompletionRate(logs)
+
     const habitHeatmap: { date: string; status: LogStatus | null }[] = []
     const logMap = new Map(logs.map(l => [format(new Date(l.date), "yyyy-MM-dd"), l.status]))
-    
+
     for (let i = 83; i >= 0; i--) {
       const dateStr = format(subDays(new Date(), i), "yyyy-MM-dd")
       habitHeatmap.push({

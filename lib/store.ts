@@ -7,7 +7,7 @@
 
 import { create } from "zustand"
 import type { HabitWithStats, TodayHabit, DashboardStats } from "@/types"
-import { todayString } from "@/lib/utils"
+// import { todayString } from "@/lib/utils"
 import { API_ROUTES } from "@/lib/constants/api-routes"
 
 interface HabitStore {
@@ -52,7 +52,8 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
       const habits: HabitWithStats[] = json.data
 
       // Today's habits = those without a log for today
-      const today = todayString()
+      const today = '2026-03-18'
+      // const today = todayString()
       const todayHabits = habits.filter((h) => !h.todayLog)
 
       set({ habits, todayHabits, isLoading: false, isInitialized: true })

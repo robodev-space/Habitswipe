@@ -11,7 +11,6 @@ import { motion } from "framer-motion"
 import { SwipeDeck } from "@/components/habits/SwipeDeck"
 import { ProgressRing } from "@/components/shared/StreakBadge"
 import { useHabits } from "@/hooks/useHabits"
-import { formatDisplayDate } from "@/lib/utils"
 import { Button } from "@/components/ui/Button"
 import { Plus } from "lucide-react"
 import Link from "next/link"
@@ -133,7 +132,7 @@ export default function TodayPage() {
               </p>
               <Link href="/habits">
                 <motion.div whileHover="hover">
-                  <Button variant="gradient" size="lg" className="rounded-2xl px-8 shadow-lg shadow-indigo-500/20 active:scale-95 transition-transform">
+                  <Button size="lg" className="rounded-2xl px-8 shadow-lg shadow-indigo-500/20 active:scale-95 transition-transform">
                     <motion.div
                       variants={{
                         hover: { rotate: 180, scale: 1.2 }

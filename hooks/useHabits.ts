@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useHabitStore } from "@/lib/store"
-import { todayString } from "@/lib/utils"
+// import { todayString } from "@/lib/utils"
 import { API_ROUTES } from "@/lib/constants/api-routes"
 import type { CreateHabitInput, UpdateHabitInput } from "@/types"
 
@@ -67,12 +67,12 @@ export function useHabits() {
       const res = await fetch(API_ROUTES.LOGS.BASE, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ habitId, status, date: todayString() }),
+        body: JSON.stringify({ habitId, status, date: '2026-03-18' }),
         signal,
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error)
-      
+
       return !!json.allCompleted
     } catch (err) {
       // If API fails, re-fetch to restore correct state

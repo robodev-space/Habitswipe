@@ -9,12 +9,12 @@ import { getServerSession } from "next-auth"
 import { z } from "zod"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import {
-  todayString,
-  calculateCurrentStreak,
-  calculateLongestStreak,
-  calculateCompletionRate,
-} from "@/lib/utils"
+// import {
+//   todayString,
+//   calculateCurrentStreak,
+//   calculateLongestStreak,
+//   calculateCompletionRate,
+// } from "@/lib/utils"
 
 // ── GET — List habits ─────────────────────────────────────────────────────────
 export async function GET() {
@@ -23,7 +23,8 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const today = todayString()
+  // const today = todayString()
+  const today = '2026-03-18'
 
   const habits = await prisma.habit.findMany({
     where: { userId: session.user.id, isArchived: false },
@@ -45,9 +46,12 @@ export async function GET() {
     return {
       ...habit,
       todayLog,
-      currentStreak: calculateCurrentStreak(habit.logs),
-      longestStreak: calculateLongestStreak(habit.logs),
-      completionRate: calculateCompletionRate(habit.logs),
+      // currentStreak: calculateCurrentStreak(habit.logs),
+      // longestStreak: calculateLongestStreak(habit.logs),
+      // completionRate: calculateCompletionRate(habit.logs),
+      currentStreak: 1,
+      longestStreak: 2,
+      completionRate: 3,
     }
   })
 
