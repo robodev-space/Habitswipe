@@ -63,13 +63,20 @@ export function LandingNavbar() {
         </div>
 
         <div className="flex items-center gap-4">
-          <Link href="/login" className="hidden sm:block text-sm font-bold text-zinc-400 hover:text-white transition-colors">
-            Log In
+          <Link
+            href="/login"
+            className="hidden sm:block text-sm font-medium text-zinc-400 hover:text-white transition-colors"
+          >
+            Log in
           </Link>
           <Link href="/register">
-            <Button variant="gradient" size="md" className="rounded-xl px-6 font-bold shadow-lg shadow-indigo-500/20 active:scale-95 transition-all">
-              Get Started
-            </Button>
+            <button className="relative px-5 py-2 rounded-xl text-sm font-semibold text-white overflow-hidden group transition-all active:scale-95">
+              {/* gradient bg */}
+              <span className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600 transition-opacity group-hover:opacity-90" />
+              {/* shine */}
+              <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              <span className="relative">Get Started</span>
+            </button>
           </Link>
         </div>
       </div>

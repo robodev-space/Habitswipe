@@ -109,16 +109,18 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 group"
         >
-          <Link href="/register" className="w-full sm:w-auto">
-            <Button size="xl" variant="gradient" className="rounded-xl px-10 group h-14 text-lg w-full sm:w-auto shadow-lg shadow-indigo-500/20 transition-all hover:shadow-indigo-500/30">
-              Get Started
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
+          <Link href="/register">
+            <button className="relative group h-13 px-8 py-3.5 rounded-xl text-[15px] font-semibold text-white overflow-hidden transition-all active:scale-95 flex items-center gap-2 shadow-xl shadow-indigo-600/25">
+              <span className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600" />
+              <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              <span className="relative">Get Started</span>
+              <ArrowRight className="relative w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </button>
           </Link>
-          <Link href="/login" className="w-full sm:w-auto">
-            <Button size="xl" variant="secondary" className="rounded-xl px-10 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-indigo-500/30 h-14 text-lg w-full sm:w-auto transition-all text-white">
-              Log In
-            </Button>
+          <Link href="/login">
+            <button className="h-13 px-8 py-3.5 rounded-xl text-[15px] font-medium text-zinc-300 bg-white/[0.05] border border-white/[0.08] hover:bg-white/[0.09] hover:border-indigo-500/30 hover:text-white transition-all">
+              Log in
+            </button>
           </Link>
         </motion.div>
 

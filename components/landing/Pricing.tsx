@@ -35,7 +35,7 @@ const tiers = [
       "Priority agentic suggestions",
       "Custom themes",
     ],
-    cta: "Go Pro",
+    cta: "Go Prime",
     popular: true,
   },
   {
@@ -194,12 +194,14 @@ export function Pricing() {
                   ))}
                 </ul>
 
-                <Button
-                  variant={tier.popular ? "gradient" : "secondary"}
-                  className="w-full rounded-2xl h-12"
+                <button
+                  className={`w-full h-11 rounded-xl text-sm font-semibold transition-all active:scale-[0.98] ${tier.popular
+                    ? "bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20"
+                    : "bg-white/[0.05] hover:bg-white/[0.08] text-zinc-300 border border-white/[0.07]"
+                    }`}
                 >
-                  {isDiscounted && isAnnualPlan ? 'Claim Pro Offer' : tier.cta}
-                </Button>
+                  {isDiscounted && isAnnualPlan ? "Claim Pro Offer" : tier.cta}
+                </button>
               </motion.div>
             )
           })}
