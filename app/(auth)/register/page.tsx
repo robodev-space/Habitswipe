@@ -99,13 +99,13 @@ export default function RegisterPage() {
       setServerError("Account created. Please sign in.")
       router.push("/login")
     } else {
-      router.push("/today")
+      router.push("/onboarding")
     }
   }
 
   async function handleGoogle() {
     setIsGoogleLoading(true)
-    await signIn("google", { callbackUrl: "/today" })
+    await signIn("google", { callbackUrl: "/onboarding" })
   }
 
   return (

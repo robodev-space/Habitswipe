@@ -53,4 +53,7 @@ export const API_ROUTES = {
   STREAKS: {
     BASE: `${BASE_URL}/api/streaks`,
   },
+  ONBOARDING: {
+    BASE: `${BASE_URL}/api/onboarding`,
+  },
 } as const

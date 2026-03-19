@@ -30,6 +30,11 @@ model User {
   referralCode  String?  @unique  // this user's own referral code
   referredBy    String?           // referral code used when signing up
 
+  // Onboarding
+  onboardingComplete Boolean  @default(false)
+  goal               String?           // health, mind, learn, work, finance, custom
+  reminderTime       String?           // e.g. "07:00"
+  emailReminders     Boolean  @default(true)
 
   // NextAuth relations
   accounts Account[]

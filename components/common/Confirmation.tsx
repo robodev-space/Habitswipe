@@ -85,7 +85,7 @@ export function Confirmation({
                             />
 
                             {/* Close button */}
-                            <motion.button
+                            {/* <motion.button
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.2 }}
@@ -93,7 +93,7 @@ export function Confirmation({
                                 className="absolute top-3.5 right-3.5 w-7 h-7 rounded-lg flex items-center justify-center text-white/30 hover:text-white/70 hover:bg-white/[0.08] transition-all duration-150 z-10"
                             >
                                 <X className="w-3.5 h-3.5" />
-                            </motion.button>
+                            </motion.button> */}
 
                             <div className="px-6 pt-6 pb-6">
                                 {/* Icon block */}

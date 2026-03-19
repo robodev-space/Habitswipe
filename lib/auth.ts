@@ -63,27 +63,38 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    // Add user ID to the JWT token
-    async jwt({ token, user }) {
+    // Add user ID + onboardingComplete to the JWT token
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id
       }
+
+      // Fetch onboardingComplete on sign-in or when session is updated
+      if (user || trigger === "update") {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: (token.id as string) || (user?.id as string) },
+          select: { onboardingComplete: true },
+        })
+        token.onboardingComplete = dbUser?.onboardingComplete ?? false
+      }
+
       return token
     },
 
-    // Add user ID to the session object (accessible in components)
+    // Add user ID + onboardingComplete to the session object
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string
+        ;(session.user as any).onboardingComplete = token.onboardingComplete as boolean
       }
       return session
     },
   },
 
   pages: {
-    signIn: "/login",        // custom login page
-    error: "/login",         // redirect errors to login
-    newUser: "/habits",      // after first sign-in, go to habits
+    signIn: "/login",           // custom login page
+    error: "/login",            // redirect errors to login
+    newUser: "/onboarding",     // after first sign-in, go to onboarding
   },
 }
 
@@ -95,6 +106,14 @@ declare module "next-auth" {
       name?: string | null
       email?: string | null
       image?: string | null
+      onboardingComplete?: boolean
     }
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id?: string
+    onboardingComplete?: boolean
   }
 }

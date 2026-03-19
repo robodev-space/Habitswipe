@@ -31,21 +31,12 @@ export async function POST(req: Request) {
     // Hash password (12 rounds = good balance of security vs speed)
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    // Create user + seed with 3 starter habits
+    // Create user (habits will be created during onboarding)
     const user = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
-        habits: {
-          createMany: {
-            data: [
-              { name: "Morning Exercise", icon: "🏃", color: "#6366f1", frequency: "DAILY", sortOrder: 0 },
-              { name: "Drink 8 Glasses of Water", icon: "💧", color: "#3b82f6", frequency: "DAILY", sortOrder: 1 },
-              { name: "Read for 20 mins", icon: "📚", color: "#10b981", frequency: "DAILY", sortOrder: 2 },
-            ],
-          },
-        },
       },
       select: { id: true, email: true, name: true },
     })
