@@ -35,7 +35,7 @@
 .onboarding-shell {
   position: fixed;
   inset: 0;
-  font-family: 'Cabinet Grotesk', 'Inter', sans-serif;
+  font-family: var(--font-inter, 'Inter'), sans-serif;
   color: var(--ob-ink);
   overflow-x: hidden;
   overflow-y: auto;
@@ -84,13 +84,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 36px;
+  padding: 14px 36px;
   flex-shrink: 0;
 }
 
 .ob-logo {
-  font-family: 'Lora', serif;
-  font-size: 18px;
+  font-family: var(--font-inter, 'Inter'), sans-serif;
+  font-size: 16px;
   font-weight: 600;
   color: var(--ob-ink);
   display: flex;
@@ -99,14 +99,14 @@
 }
 
 .ob-logo-mark {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   background: var(--ob-green);
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .ob-skip-btn {
@@ -198,12 +198,13 @@
 }
 
 .ob-headline {
-  font-family: 'Lora', serif;
-  font-size: clamp(26px, 4vw, 36px);
-  font-weight: 600;
-  line-height: 1.18;
+  font-family: var(--font-inter, 'Inter'), sans-serif;
+  font-size: clamp(24px, 3.5vw, 32px);
+  font-weight: 700;
+  line-height: 1.2;
   color: var(--ob-ink);
   margin-bottom: 10px;
+  letter-spacing: -0.02em;
 }
 
 .ob-headline em {
@@ -589,12 +590,13 @@
 }
 
 .ob-ready-title {
-  font-family: 'Lora', serif;
-  font-size: 28px;
-  font-weight: 600;
+  font-family: var(--font-inter, 'Inter'), sans-serif;
+  font-size: 26px;
+  font-weight: 700;
   color: var(--ob-ink);
   text-align: center;
   margin: 12px 0 6px;
+  letter-spacing: -0.02em;
 }
 
 .ob-ready-title em { font-style: italic; color: var(--ob-green); }
@@ -723,8 +725,8 @@
   border-radius: 16px;
   background: var(--ob-green);
   color: white;
-  font-family: 'Lora', serif;
-  font-size: 16px;
+  font-family: var(--font-inter, 'Inter'), sans-serif;
+  font-size: 15px;
   font-weight: 600;
   border: none;
   cursor: pointer;
@@ -733,7 +735,7 @@
   justify-content: center;
   gap: 10px;
   transition: all .2s;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.01em;
   position: relative;
   overflow: hidden;
 }

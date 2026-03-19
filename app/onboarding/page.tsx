@@ -476,9 +476,11 @@ export default function OnboardingPage() {
 
       {/* Bottom bar */}
       <div className="ob-bottom-bar">
-        <button className="ob-btn-back" onClick={prevStep} disabled={step === 1}>
-          ←
-        </button>
+        {step > 1 && (
+          <button className="ob-btn-back" onClick={prevStep}>
+            ←
+          </button>
+        )}
         <button
           className="ob-btn-next"
           onClick={step === 4 ? handleSubmit : nextStep}
