@@ -222,12 +222,10 @@ export default function OnboardingPage() {
         </button>
       </div>
 
-      {/* Progress */}
+      {/* Mobile: progress + dots */}
       <div className="ob-progress-track">
         <div className="ob-progress-fill" style={{ width: `${(step / 4) * 100}%` }} />
       </div>
-
-      {/* Step dots */}
       <div className="ob-step-dots">
         {[1, 2, 3, 4].map((i) => (
           <div
@@ -238,9 +236,34 @@ export default function OnboardingPage() {
         ))}
       </div>
 
-      {/* Stage */}
-      <div className="ob-stage">
-        <AnimatePresence mode="wait">
+      {/* Main layout: sidebar + content */}
+      <div className="ob-main-layout">
+        {/* Desktop sidebar */}
+        <div className="ob-sidebar">
+          <div className="ob-step-list">
+            {[
+              { num: 1, label: "Your goal" },
+              { num: 2, label: "First habit" },
+              { num: 3, label: "Reminders" },
+              { num: 4, label: "All set!" },
+            ].map((s) => (
+              <div
+                key={s.num}
+                className={`ob-step-item ${s.num === step ? "active" : s.num < step ? "done" : ""}`}
+                onClick={() => { if (s.num < step) goTo(s.num, "back") }}
+              >
+                <div className="ob-step-num">{s.num}</div>
+                <div className="ob-step-label">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Content area */}
+        <div className="ob-content-area">
+          {/* Stage */}
+          <div className="ob-stage">
+            <AnimatePresence mode="wait">
           {/* ── STEP 1: Goal ── */}
           {step === 1 && (
             <motion.div
@@ -277,7 +300,7 @@ export default function OnboardingPage() {
                 </div>
               </div>
 
-              <div className="ob-social-strip">
+              <div className="ob-social-strip ob-social-strip-inline">
                 <div className="ob-avatar-stack">
                   <div className="ob-av g1">A</div>
                   <div className="ob-av g2">M</div>
@@ -472,24 +495,43 @@ export default function OnboardingPage() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+          </div>
 
-      {/* Bottom bar */}
-      <div className="ob-bottom-bar">
-        {step > 1 && (
-          <button className="ob-btn-back" onClick={prevStep}>
-            ←
-          </button>
-        )}
-        <button
-          className="ob-btn-next"
-          onClick={step === 4 ? handleSubmit : nextStep}
-          disabled={isSubmitting}
-        >
-          <span>{isSubmitting ? "Saving…" : BTN_LABELS[step]}</span>
-          {!isSubmitting && <span className="ob-arrow">→</span>}
-        </button>
-      </div>
+          {/* Bottom bar */}
+          <div className="ob-bottom-bar">
+            {step > 1 && (
+              <button className="ob-btn-back" onClick={prevStep}>
+                ←
+              </button>
+            )}
+            <button
+              className="ob-btn-next"
+              onClick={step === 4 ? handleSubmit : nextStep}
+              disabled={isSubmitting}
+            >
+              <span>{isSubmitting ? "Saving…" : BTN_LABELS[step]}</span>
+              {!isSubmitting && <span className="ob-arrow">→</span>}
+            </button>
+          </div>
+        </div>{/* /ob-content-area */}
+
+        {/* Right sidebar (desktop only) */}
+        <div className="ob-right-sidebar">
+          <div className="ob-right-content">
+            <div className="ob-avatar-stack">
+              <div className="ob-av g1">A</div>
+              <div className="ob-av g2">M</div>
+              <div className="ob-av g3">P</div>
+              <div className="ob-av g4">R</div>
+            </div>
+            <div className="ob-right-divider" />
+            <div className="ob-right-text">
+              Join <strong>12,400+</strong> people building better habits
+            </div>
+          </div>
+        </div>
+
+      </div>{/* /ob-main-layout */}
     </div>
   )
 }
