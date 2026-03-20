@@ -8,7 +8,7 @@ import { Confetti } from "@/components/shared/Confetti"
 
 export default function TodayPage() {
   const { data: session } = useSession()
-  const { habits, todayHabits, toggleSwipe, isLoading } = useHabits()
+  const { habits, todayHabits, swipeHabit, isLoading } = useHabits()
   const [mood, setMood] = useState<string | null>(null)
   const [filterOn, setFilterOn] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
@@ -19,13 +19,13 @@ export default function TodayPage() {
   const dateLabel = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
 
   // Stats
-  const activeHabits = habits.filter(h => h.status === "ACTIVE")
+  const activeHabits = habits.filter(h => !h.isArchived)
   const total = activeHabits.length
   
   // Real done logic depends on todayHabits from the store
   // We'll map through activeHabits and check if their ID is in todayHabits with status "COMPLETED"
   const completedCount = activeHabits.filter(h => 
-    todayHabits.some(th => th.habitId === h.id && th.status === "COMPLETED")
+    todayHabits.some(th => th.id === h.id && th.todayLog?.status === "DONE")
   ).length
 
   const pendingCount = total - completedCount
@@ -37,8 +37,8 @@ export default function TodayPage() {
   // ─── Handlers ───────────────────────────────────────────────────────────────
   const handleToggle = async (habitId: string) => {
     try {
-      const isDone = todayHabits.some(th => th.habitId === habitId && th.status === "COMPLETED")
-      await toggleSwipe(habitId, isDone ? "right" : "left")
+      const isDone = todayHabits.some(th => th.id === habitId && th.todayLog?.status === "DONE")
+      await swipeHabit(habitId, isDone ? "SKIPPED" : "DONE")
       if (!isDone) {
         toast.success("Habit marked done!")
       }
@@ -169,7 +169,7 @@ export default function TodayPage() {
       <div className="h-list" id="hList">
         {isLoading && <div className="text-center text-xs text-gray-500 py-4">Loading habits...</div>}
         {!isLoading && activeHabits.map((habit, i) => {
-          const isDone = todayHabits.some(th => th.habitId === habit.id && th.status === "COMPLETED")
+          const isDone = todayHabits.some(th => th.id === habit.id && th.todayLog?.status === "DONE")
           if (filterOn && isDone) return null
 
           // Cycles through some colors for mockup aesthetics similar to HTML snippet

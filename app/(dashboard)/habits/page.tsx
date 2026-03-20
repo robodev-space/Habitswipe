@@ -102,8 +102,8 @@ export default function HabitsPage() {
 
   const handleSubmit = modal?.type === "create" ? handleCreate : handleEdit
 
-  const activeHabits = habits.filter(h => h.status === "ACTIVE")
-  const archivedHabits = habits.filter(h => h.status === "ARCHIVED")
+  const activeHabits = habits.filter(h => !h.isArchived)
+  const archivedHabits = habits.filter(h => h.isArchived)
 
   const filteredHabits = useMemo(() => {
     if (filter === "All") return activeHabits
@@ -193,7 +193,7 @@ export default function HabitsPage() {
                 <div className="arch-ico">{habit.icon || "📦"}</div>
                 <div className="arch-name">{habit.name}</div>
                 <div className="arch-date">Archived recently</div>
-                <button className="missed-add" onClick={() => updateHabit(habit.id, { status: "ACTIVE" })}>Restore</button>
+                <button className="missed-add" onClick={() => updateHabit(habit.id, { isArchived: false })}>Restore</button>
               </div>
             ))}
           </>

@@ -9,8 +9,8 @@
   --red:#ef4444;--red-s:#fee2e2;
   --pnk:#ec4899;
   --r:16px;--rs:10px;
-  --serif:'var(--font-dm-serif)',Georgia,serif;
-  --sans:'var(--font-inter)',system-ui,sans-serif;
+  --serif: var(--font-dm-serif), Georgia, serif;
+  --sans: var(--font-inter), system-ui, sans-serif;
 }
 .dark, [data-theme="dark"]{
   --bg:#0e0d0b;--surf:#161412;--surf2:#1e1c18;--bord:#2a2520;
