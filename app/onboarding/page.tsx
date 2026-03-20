@@ -10,6 +10,7 @@ import { useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { motion, AnimatePresence } from "framer-motion"
+import { Zap } from "lucide-react"
 import { API_ROUTES } from "@/lib/constants/api-routes"
 import "./onboarding.css"
 
@@ -107,7 +108,7 @@ export default function OnboardingPage() {
   const [nameError, setNameError] = useState(false)
 
   // BG color per step
-  const bgColors: Record<number, string> = { 1: "#f5f1ea", 2: "#f3f0ed", 3: "#f4f1eb", 4: "#f0f5f2" }
+  const bgColors: Record<number, string> = { 1: "#ffffff", 2: "#FAFAFE", 3: "#F8F7FF", 4: "#F4F2FF" }
 
   const goTo = useCallback((n: number, dir: "forward" | "back" = "forward") => {
     setDirection(dir)
@@ -143,7 +144,7 @@ export default function OnboardingPage() {
           goal,
           habitName: habitName.trim() || "Morning meditation",
           habitIcon,
-          habitColor: "#3d7a55",
+          habitColor: "#4f46e5",
           frequency: dbFrequency,
           targetDays,
           reminderTime,
@@ -177,7 +178,7 @@ export default function OnboardingPage() {
           goal: "custom",
           habitName: "Morning meditation",
           habitIcon: "🧘",
-          habitColor: "#3d7a55",
+          habitColor: "#4f46e5",
           frequency: "DAILY",
           targetDays: 7,
           reminderTime: "07:00",
@@ -195,16 +196,9 @@ export default function OnboardingPage() {
 
   return (
     <div className="onboarding-shell" style={{ background: bgColors[step] }}>
-      {/* Google Fonts */}
-      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-      <link
-        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@300;400;500;700&display=swap"
-        rel="stylesheet"
-      />
 
       {/* Background art */}
       <div className="ob-bg-art">
-        <div className="ob-bg-dots" />
         <div className="ob-bg-circle ob-bc1" />
         <div className="ob-bg-circle ob-bc2" />
         <div className="ob-bg-circle ob-bc3" />
@@ -214,7 +208,9 @@ export default function OnboardingPage() {
       {/* Top bar */}
       <div className="ob-topbar">
         <div className="ob-logo">
-          <div className="ob-logo-mark">🌿</div>
+          <div className="ob-logo-mark">
+            <Zap className="w-3.5 h-3.5" fill="white" />
+          </div>
           HabitSwipe
         </div>
         <button className="ob-skip-btn" onClick={handleSkip} disabled={isSubmitting}>
@@ -476,7 +472,7 @@ export default function OnboardingPage() {
                   <span className="ob-sum-tag">Day 1</span>
                 </div>
                 <div className="ob-summary-row">
-                  <div className="ob-sum-icon" style={{ background: "#faebd4" }}>🎯</div>
+                  <div className="ob-sum-icon" style={{ background: "#EDE9FE" }}>🎯</div>
                   <div className="ob-sum-info">
                     <div className="ob-sum-name">Your goal</div>
                     <div className="ob-sum-meta">
