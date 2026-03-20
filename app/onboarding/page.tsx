@@ -10,7 +10,7 @@ import { useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Zap } from "lucide-react"
+import { Zap, Plus, AlertCircle } from "lucide-react"
 import { API_ROUTES } from "@/lib/constants/api-routes"
 import "./onboarding.css"
 
@@ -38,7 +38,18 @@ const TIME_SLOTS = [
   { id: "morning",   emoji: "🌅", name: "Morning",   range: "6 – 10 am",  defaultTime: "07:00" },
   { id: "afternoon", emoji: "☀️",  name: "Afternoon", range: "12 – 4 pm",  defaultTime: "12:00" },
   { id: "evening",   emoji: "🌙", name: "Evening",   range: "6 – 10 pm",  defaultTime: "19:00" },
+  { id: "night",     emoji: "🌌", name: "Night",     range: "10 pm – 6 am", defaultTime: "23:00" },
 ] as const
+
+const DAYS = [
+  { id: "mon", label: "M" },
+  { id: "tue", label: "T" },
+  { id: "wed", label: "W" },
+  { id: "thu", label: "T" },
+  { id: "fri", label: "F" },
+  { id: "sat", label: "S" },
+  { id: "sun", label: "S" },
+];
 
 const GOAL_LABELS: Record<string, string> = {
   health: "Health & fitness",
@@ -106,6 +117,22 @@ export default function OnboardingPage() {
   const [reminderTime, setReminderTime] = useState("07:00")
   const [emailReminders, setEmailReminders] = useState(true)
   const [nameError, setNameError] = useState(false)
+  const [selectedDays, setSelectedDays] = useState<string[]>(["mon", "tue", "wed", "thu", "fri", "sat", "sun"])
+  const [isNightAdded, setIsNightAdded] = useState(false)
+  const [showNightWarning, setShowNightWarning] = useState(false)
+
+  // Auto select time slot when manual exact time changes
+  const handleReminderTimeChange = (val: string) => {
+    setReminderTime(val)
+    const [h] = val.split(":").map(Number)
+    if (h >= 6 && h < 12) setTimeSlot("morning")
+    else if (h >= 12 && h < 18) setTimeSlot("afternoon")
+    else if (h >= 18 && h < 22) setTimeSlot("evening")
+    else {
+      if (isNightAdded) setTimeSlot("night")
+      else setTimeSlot("custom")
+    }
+  }
 
   // BG color per step
   const bgColors: Record<number, string> = { 1: "#ffffff", 2: "#FAFAFE", 3: "#F8F7FF", 4: "#F4F2FF" }
@@ -133,9 +160,10 @@ export default function OnboardingPage() {
       // Map UI frequency to DB enum
       let dbFrequency: "DAILY" | "WEEKLY" = "DAILY"
       let targetDays = 7
-      if (frequency === "weekdays") { dbFrequency = "WEEKLY"; targetDays = 5 }
-      else if (frequency === "3x")  { dbFrequency = "WEEKLY"; targetDays = 3 }
-      else if (frequency === "custom") { dbFrequency = "WEEKLY"; targetDays = 4 }
+      if (frequency !== "daily") {
+        dbFrequency = "WEEKLY"
+        targetDays = Math.max(1, selectedDays.length)
+      }
 
       const res = await fetch(API_ROUTES.ONBOARDING.BASE, {
         method: "POST",
@@ -196,6 +224,47 @@ export default function OnboardingPage() {
 
   return (
     <div className="onboarding-shell" style={{ background: bgColors[step] }}>
+
+      {/* Night Warning Modal */}
+      <AnimatePresence>
+        {showNightWarning && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/40">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl relative"
+            >
+              <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-5">
+                <AlertCircle className="w-6 h-6 text-amber-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Late night habit?</h3>
+              <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+                We don't recommend doing work at late night. Rest is critical for building consistent habits long-term.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  className="flex-1 py-3 rounded-xl text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                  onClick={() => setShowNightWarning(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="flex-1 py-3 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+                  onClick={() => {
+                    setIsNightAdded(true)
+                    setShowNightWarning(false)
+                    setTimeSlot("night")
+                    setReminderTime("23:00")
+                  }}
+                >
+                  Yes, add it
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Background art */}
       <div className="ob-bg-art">
@@ -356,18 +425,51 @@ export default function OnboardingPage() {
                 </div>
 
                 <div className="ob-field-label">How often?</div>
-                <div className="ob-freq-grid">
+                <div className="ob-freq-grid mb-5">
                   {FREQUENCIES.map((f) => (
                     <div
                       key={f.id}
                       className={`ob-freq-btn ${frequency === f.id ? "sel" : ""}`}
-                      onClick={() => setFrequency(f.id)}
+                      onClick={() => {
+                        setFrequency(f.id);
+                        if (f.id === "daily") setSelectedDays(["mon", "tue", "wed", "thu", "fri", "sat", "sun"])
+                        else if (f.id === "weekdays") setSelectedDays(["mon", "tue", "wed", "thu", "fri"])
+                        else if (f.id === "3x") setSelectedDays(["mon", "wed", "fri"])
+                      }}
                       style={{ whiteSpace: "pre-line" }}
                     >
                       {f.label}
                     </div>
                   ))}
                 </div>
+
+                {frequency !== "daily" && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }} 
+                    animate={{ opacity: 1, height: "auto" }}
+                    className="overflow-hidden mb-1"
+                  >
+                    <div className="ob-field-label">Which days?</div>
+                    <div className="flex justify-between items-center gap-1">
+                      {DAYS.map(day => (
+                        <button
+                          key={day.id}
+                          className={`w-[36px] h-[36px] flex items-center justify-center rounded-full text-[13px] font-bold transition-all ${selectedDays.includes(day.id) ? 'bg-indigo-600 text-white shadow-[0_4px_12px_rgba(79,70,229,0.2)]' : 'bg-[#F4F2FF] text-[#6B7280] hover:bg-[#E0DEF7]'}`}
+                          onClick={() => {
+                            if (selectedDays.includes(day.id)) {
+                              setSelectedDays(selectedDays.filter(d => d !== day.id))
+                            } else {
+                              setSelectedDays([...selectedDays, day.id])
+                            }
+                            setFrequency("custom")
+                          }}
+                        >
+                          {day.label}
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           )}
@@ -394,20 +496,37 @@ export default function OnboardingPage() {
               <div className="ob-card">
                 <div className="ob-field-label" style={{ marginBottom: 12 }}>Best time of day</div>
                 <div className="ob-time-grid">
-                  {TIME_SLOTS.map((t) => (
-                    <div
-                      key={t.id}
-                      className={`ob-time-card ${timeSlot === t.id ? "sel" : ""}`}
-                      onClick={() => {
-                        setTimeSlot(t.id)
-                        setReminderTime(t.defaultTime)
-                      }}
-                    >
-                      <div className="ob-time-emoji">{t.emoji}</div>
-                      <div className="ob-time-name">{t.name}</div>
-                      <div className="ob-time-range">{t.range}</div>
-                    </div>
-                  ))}
+                  {TIME_SLOTS.map((t) => {
+                    if (t.id === "night" && !isNightAdded) {
+                      return (
+                        <div
+                          key={t.id}
+                          className="ob-time-card flex flex-col items-center justify-center border border-dashed border-indigo-200 bg-transparent hover:bg-indigo-50/50 opacity-80"
+                          onClick={() => setShowNightWarning(true)}
+                        >
+                          <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mb-2">
+                            <Plus className="w-4 h-4 text-indigo-600" />
+                          </div>
+                          <div className="ob-time-name text-indigo-400">Add Night</div>
+                        </div>
+                      )
+                    }
+
+                    return (
+                      <div
+                        key={t.id}
+                        className={`ob-time-card ${timeSlot === t.id ? "sel" : ""}`}
+                        onClick={() => {
+                          setTimeSlot(t.id)
+                          setReminderTime(t.defaultTime)
+                        }}
+                      >
+                        <div className="ob-time-emoji">{t.emoji}</div>
+                        <div className="ob-time-name">{t.name}</div>
+                        <div className="ob-time-range">{t.range}</div>
+                      </div>
+                    )
+                  })}
                 </div>
 
                 <div className="ob-custom-time-wrap">
@@ -416,7 +535,7 @@ export default function OnboardingPage() {
                     className="ob-time-picker-input"
                     type="time"
                     value={reminderTime}
-                    onChange={(e) => setReminderTime(e.target.value)}
+                    onChange={(e) => handleReminderTimeChange(e.target.value)}
                   />
                 </div>
 
