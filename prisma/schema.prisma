@@ -44,6 +44,7 @@ model User {
   habits   Habit[]
   logs     HabitLog[]
   snapLogs SnapShareLog[]
+  moodLogs MoodLog[]
 
   @@map("users")
 }
@@ -167,4 +168,22 @@ model SnapShareLog {
   // One log per user per day max
   @@unique([userId, date])
   @@map("snap_share_logs")
+}
+
+// ─── MOOD LOG ─────────────────────────────────────────────────────────────────
+// Records user's daily mood from the Today dashboard
+model MoodLog {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime @db.Date // Only the date, no time
+  mood      String   // e.g. "Exhausted", "Tired", "Good", "Energised", "On fire"
+  emoji     String   // e.g. "😴"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // One mood per user per day max
+  @@unique([userId, date])
+  @@map("mood_logs")
 }

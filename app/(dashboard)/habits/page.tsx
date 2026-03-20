@@ -1,12 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { createPortal } from "react-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import { Plus, Pencil, Trash2, TrendingUp, X } from "lucide-react"
-import { Button } from "@/components/ui/Button"
+import { X } from "lucide-react"
 import { HabitForm } from "@/components/habits/HabitForm"
-import { StreakBadge } from "@/components/shared/StreakBadge"
 import { useHabits } from "@/hooks/useHabits"
 import { Skeleton } from "@/components/ui/Skeleton"
 import type { HabitWithStats, CreateHabitInput } from "@/types"
@@ -17,9 +15,6 @@ type Modal =
   | null
 
 // ── Portal Modal ──────────────────────────────────────────────────────────────
-// Uses createPortal to render directly on document.body
-// This completely escapes the sidebar layout, max-w constraints, everything.
-// The modal will ALWAYS be centered on the true viewport.
 function HabitModal({
   modal,
   onClose,
@@ -29,93 +24,45 @@ function HabitModal({
   onClose: () => void
   onSubmit: (data: CreateHabitInput) => Promise<void>
 }) {
-  if (!modal) return null
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  
+  if (!modal || !mounted) return null
 
   return createPortal(
     <AnimatePresence>
       <div
         style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100vw",
-          height: "100vh",
-          zIndex: 9999,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "16px",
+          position: "fixed", top: 0, left: 0, width: "100%", height: "100%", zIndex: 9999,
+          display: "flex", alignItems: "center", justifyContent: "center", padding: "16px",
           boxSizing: "border-box",
         }}
       >
-        {/* Backdrop */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           onClick={onClose}
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "rgba(0,0,0,0.6)",
-            backdropFilter: "blur(4px)",
-          }}
+          style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)" }}
         />
-
-        {/* Modal card */}
         <motion.div
-          initial={{ scale: 0.92, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.92, opacity: 0, y: 20 }}
+          initial={{ scale: 0.92, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.92, opacity: 0, y: 20 }}
           transition={{ type: "spring", stiffness: 380, damping: 32 }}
           onClick={(e) => e.stopPropagation()}
           style={{
-            position: "relative",
-            width: "100%",
-            maxWidth: "480px",
-            maxHeight: "90vh",
-            overflowY: "auto",
-            borderRadius: "24px",
-            zIndex: 1,
-            backgroundColor: "rgb(var(--surface))",
-            border: "1px solid rgb(var(--border))",
-            boxShadow: "0 25px 60px rgba(0,0,0,0.5)",
+            position: "relative", width: "100%", maxWidth: "480px", maxHeight: "90vh", overflowY: "auto",
+            borderRadius: "24px", zIndex: 1, backgroundColor: "rgb(var(--surface, 255,255,255))",
+            border: "1px solid rgb(var(--border, 230,230,230))", boxShadow: "0 25px 60px rgba(0,0,0,0.5)",
           }}
+          className="bg-surf border-bord"
         >
           <div style={{ padding: "24px" }}>
-            {/* Header */}
-            <div style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: "20px",
-            }}>
-              <h2 style={{
-                fontSize: "20px",
-                fontWeight: 700,
-                color: "rgb(var(--foreground))",
-                fontFamily: "var(--font-dm-serif)",
-              }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+              <h2 className="text-[20px] font-bold text-txt" style={{ fontFamily: "var(--font-dm-serif)" }}>
                 {modal.type === "create" ? "New Habit" : "Edit Habit"}
               </h2>
-              <button
-                onClick={onClose}
-                style={{
-                  padding: "8px",
-                  borderRadius: "8px",
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "rgb(var(--foreground-3))",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
+              <button onClick={onClose} className="p-2 rounded-lg bg-transparent border-none cursor-pointer text-txt3 flex items-center justify-center">
                 <X size={20} />
               </button>
             </div>
-
             <HabitForm
               initialValues={modal.type === "edit" ? modal.habit : undefined}
               onSubmit={onSubmit}
@@ -134,17 +81,12 @@ function HabitModal({
 export default function HabitsPage() {
   const { habits, isLoading, isInitialized, fetchHabits, createHabit, updateHabit, deleteHabit } = useHabits()
   const [modal, setModal] = useState<Modal>(null)
-  const [deletingId, setDeletingId] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
+  const [filter, setFilter] = useState<"All" | "Daily" | "Weekly">("All")
 
   useEffect(() => {
-    const controller = new AbortController()
-    fetchHabits() // Store handles its own internal abort
+    fetchHabits()
     setMounted(true)
-    return () => {
-      controller.abort()
-      setMounted(false)
-    }
   }, [])
 
   async function handleCreate(data: CreateHabitInput) {
@@ -158,120 +100,106 @@ export default function HabitsPage() {
     setModal(null)
   }
 
-  async function handleDelete(id: string) {
-    setDeletingId(id)
-    try {
-      await deleteHabit(id)
-    } finally {
-      setDeletingId(null)
-    }
-  }
-
   const handleSubmit = modal?.type === "create" ? handleCreate : handleEdit
+
+  const activeHabits = habits.filter(h => h.status === "ACTIVE")
+  const archivedHabits = habits.filter(h => h.status === "ARCHIVED")
+
+  const filteredHabits = useMemo(() => {
+    if (filter === "All") return activeHabits
+    return activeHabits.filter(h => h.frequency === filter.toUpperCase())
+  }, [activeHabits, filter])
+
+  // Mock colors matching HTML
+  const colors = ["#10b981", "#6366f1", "#a855f7", "#f97316", "#3b82f6", "#eab308"]
+  const bgs = ["#d1fae5", "#eef2ff", "#fdf4ff", "#fff7ed", "#eff6ff", "#fef9c3"]
 
   return (
     <>
-      <div className="max-w-2xl mx-auto px-6 py-8">
-
+      <div className="tab active" id="tab-habits">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="ph">
           <div>
-            <h1 className="text-3xl text-fore" style={{ fontFamily: "var(--font-dm-serif)" }}>
-              My Habits
-            </h1>
-            <div className="mt-1">
-              {(isLoading || !isInitialized) ? (
-                <Skeleton className="h-4 w-32" />
-              ) : (
-                <p className="text-fore-2 text-sm">
-                  {habits.length} habit{habits.length !== 1 ? "s" : ""} tracked
-                </p>
-              )}
+            <div className="pd">Your habits</div>
+            <div className="pt">Build your <em>routine</em></div>
+            <div className="ps">
+              {isLoading ? "Loading..." : `${activeHabits.length} active habit${activeHabits.length !== 1 ? 's' : ''} · managing well`}
             </div>
           </div>
-          <Button onClick={() => setModal({ type: "create" })}>
-            <Plus className="w-4 h-4" />
-            New Habit
-          </Button>
+          <button className="btn-primary" onClick={() => setModal({ type: "create" })}>
+            <svg viewBox="0 0 14 14"><path d="M7 2v10M2 7h10" /></svg>New habit
+          </button>
         </div>
 
-        {/* Habit list loading */}
-        {(isLoading || !isInitialized) ? (
-          <div className="flex flex-col gap-3">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-[80px] w-full rounded-2xl" />
+        {/* Filter */}
+        <div className="sh">
+          <div className="st">Active · {activeHabits.length}</div>
+          <div className="filter-pills">
+            {(["All", "Daily", "Weekly"] as const).map(f => (
+              <div 
+                key={f}
+                className={`pill ${filter === f ? 'on' : 'off'}`} 
+                onClick={() => setFilter(f)}
+              >
+                {f}
+              </div>
             ))}
           </div>
-        ) : habits.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="text-5xl mb-4">🌱</div>
-            <h2 className="text-xl font-semibold text-fore mb-2">No habits yet</h2>
-            <p className="text-fore-2 text-sm mb-6">Start by creating your first habit</p>
-            <Button onClick={() => setModal({ type: "create" })}>
-              <Plus className="w-4 h-4" /> Create Habit
-            </Button>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-3">
-            <AnimatePresence>
-              {habits.map((habit, i) => (
-                <motion.div
-                  key={habit.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, x: -20, height: 0, marginBottom: 0 }}
-                  transition={{ delay: i * 0.05, duration: 0.3 }}
-                  className="bg-surface border border-theme rounded-2xl p-4 flex items-center gap-4 card-shadow"
-                >
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
-                  // style={{ background: hexWithOpacity(habit.color, 0.12) }}
-                  >
-                    {habit.icon}
-                  </div>
+        </div>
+        <div style={{ marginBottom: 16 }}></div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-semibold text-fore truncate">{habit.name}</h3>
-                      <StreakBadge streak={habit.currentStreak} size="sm" />
+        {/* Grid */}
+        <div className="h-grid">
+          {isLoading ? (
+            Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-[148px] rounded-[16px]" />)
+          ) : (
+            <>
+              {filteredHabits.map((habit, i) => {
+                const color = colors[i % colors.length]
+                const bg = bgs[i % bgs.length]
+                return (
+                  <div className="hc" key={habit.id} onClick={() => setModal({ type: "edit", habit })}>
+                    <div className="hc-glow" style={{ background: color }}></div>
+                    <div className="hc-top">
+                      <div className="hc-icon" style={{ background: bg }}>{habit.icon || "✨"}</div>
+                      <div className="hc-menu">···</div>
                     </div>
-                    <div className="flex items-center gap-3 mt-1">
-                      <span className="text-xs text-fore-3 capitalize">{habit.frequency.toLowerCase()}</span>
-                      <span className="text-xs text-fore-3">·</span>
-                      <span className="text-xs text-fore-3 flex items-center gap-1">
-                        <TrendingUp className="w-3 h-3" />
-                        {habit.completionRate}% last 30d
-                      </span>
+                    <div className="hc-name">{habit.name}</div>
+                    <div className="hc-freq capitalize">{habit.frequency.toLowerCase()}</div>
+                    <div className="hc-bar-t">
+                      <div className="hc-bar-f" style={{ width: `${habit.completionRate}%`, background: color }}></div>
+                    </div>
+                    <div className="hc-foot">
+                      <span className="hc-str">🔥 {habit.currentStreak || 0}d</span>
+                      <span className="hc-pct">{habit.completionRate}% this month</span>
                     </div>
                   </div>
+                )
+              })}
+              <div className="hc-add" onClick={() => setModal({ type: "create" })}>
+                <div className="hc-add-ico">+</div>
+                <div className="hc-add-lbl">Add new habit</div>
+              </div>
+            </>
+          )}
+        </div>
 
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <button
-                      onClick={() => setModal({ type: "edit", habit })}
-                      className="p-2 rounded-lg text-fore-3 hover:text-fore hover:bg-surface-2 transition-all"
-                    >
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(habit.id)}
-                      disabled={deletingId === habit.id}
-                      className="p-2 rounded-lg text-fore-3 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
-                    >
-                      {deletingId === habit.id ? (
-                        <div className="w-4 h-4 rounded-full border-2 border-current border-t-transparent animate-spin" />
-                      ) : (
-                        <Trash2 className="w-4 h-4" />
-                      )}
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
+        {/* Archived */}
+        {archivedHabits.length > 0 && (
+          <>
+            <div className="sh"><div className="st">Archived · {archivedHabits.length}</div><div className="sl">View all →</div></div>
+            {archivedHabits.slice(0, 3).map(habit => (
+              <div className="arch-row mb-2" key={habit.id}>
+                <div className="arch-ico">{habit.icon || "📦"}</div>
+                <div className="arch-name">{habit.name}</div>
+                <div className="arch-date">Archived recently</div>
+                <button className="missed-add" onClick={() => updateHabit(habit.id, { status: "ACTIVE" })}>Restore</button>
+              </div>
+            ))}
+          </>
         )}
       </div>
 
-      {/* Portal modal — mounts on document.body, bypasses all layout */}
       {mounted && modal && (
         <HabitModal
           modal={modal}

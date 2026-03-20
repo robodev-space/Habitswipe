@@ -1,13 +1,10 @@
 // app/(dashboard)/layout.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 // DASHBOARD LAYOUT — Wraps all protected pages
-// Redirects to /login if user is not authenticated (server-side check)
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { redirect } from "next/navigation"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { Navigation } from "@/components/shared/Navigation"
+import "./dashboard.css"
 
 export default async function DashboardLayout({
   children,
@@ -15,14 +12,13 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-screen bg-app">
-      <Navigation />
-      <main className="flex-1 md:pl-0">
-        {/* Add bottom padding on mobile for the bottom nav bar */}
-        <div className="pb-20 md:pb-0 min-h-screen">
+    <>
+      <div className="shell">
+        <Navigation />
+        <main className="main">
           {children}
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   )
 }

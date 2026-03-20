@@ -8,6 +8,7 @@
 import { useState, useEffect } from 'react'
 import { SessionProvider } from 'next-auth/react'
 import { ThemeProvider } from 'next-themes'
+import { Toaster } from 'react-hot-toast'
 
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false)
@@ -39,7 +40,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
         enableSystem
         disableTransitionOnChange // prevent flash on theme switch
       >
-        <ClientOnly>{children}</ClientOnly>
+        <ClientOnly>
+          {children}
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              className: 'dark:bg-[#1e1c3a] dark:text-white',
+              duration: 3000,
+            }}
+          />
+        </ClientOnly>
       </ThemeProvider>
     </SessionProvider>
   )

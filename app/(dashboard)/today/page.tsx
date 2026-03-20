@@ -1,189 +1,241 @@
-// app/(dashboard)/page.tsx  →  route: /
-// ─────────────────────────────────────────────────────────────────────────────
-// TODAY PAGE — The main swipe interface
-// This is what users see first after login.
-// ─────────────────────────────────────────────────────────────────────────────
-
 "use client"
 
-import { useEffect, useState } from "react"
-import { motion } from "framer-motion"
-import { SwipeDeck } from "@/components/habits/SwipeDeck"
-import { ProgressRing } from "@/components/shared/StreakBadge"
+import { useEffect, useState, useMemo } from "react"
+import { useSession } from "next-auth/react"
 import { useHabits } from "@/hooks/useHabits"
-import { Button } from "@/components/ui/Button"
-import { Plus } from "lucide-react"
-import Link from "next/link"
-import { Skeleton } from "@/components/ui/Skeleton"
+import { toast } from "react-hot-toast"
+import { Confetti } from "@/components/shared/Confetti"
 
 export default function TodayPage() {
-  const { habits, todayHabits, isLoading, isInitialized, fetchHabits } = useHabits()
+  const { data: session } = useSession()
+  const { habits, todayHabits, toggleSwipe, isLoading } = useHabits()
+  const [mood, setMood] = useState<string | null>(null)
+  const [filterOn, setFilterOn] = useState(false)
+  const [showConfetti, setShowConfetti] = useState(false)
 
+  // ─── Greet & Date ───────────────────────────────────────────────────────────
+  const h = new Date().getHours()
+  const greetTime = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening'
+  const dateLabel = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+
+  // Stats
+  const activeHabits = habits.filter(h => h.status === "ACTIVE")
+  const total = activeHabits.length
+  
+  // Real done logic depends on todayHabits from the store
+  // We'll map through activeHabits and check if their ID is in todayHabits with status "COMPLETED"
+  const completedCount = activeHabits.filter(h => 
+    todayHabits.some(th => th.habitId === h.id && th.status === "COMPLETED")
+  ).length
+
+  const pendingCount = total - completedCount
+  const pct = total === 0 ? 0 : Math.round((completedCount / total) * 100)
+  
+  const circ = 163.4
+  const offset = total === 0 ? circ : circ - (circ * pct) / 100
+
+  // ─── Handlers ───────────────────────────────────────────────────────────────
+  const handleToggle = async (habitId: string) => {
+    try {
+      const isDone = todayHabits.some(th => th.habitId === habitId && th.status === "COMPLETED")
+      await toggleSwipe(habitId, isDone ? "right" : "left")
+      if (!isDone) {
+        toast.success("Habit marked done!")
+      }
+    } catch (e) {
+      toast.error("Failed to update habit")
+    }
+  }
+
+  // Effect to trigger confetti
   useEffect(() => {
-    fetchHabits()
+    if (pct === 100 && total > 0 && !showConfetti) {
+      setShowConfetti(true)
+    }
+  }, [pct, total])
+
+  const handleMoodSelect = async (emoji: string, label: string) => {
+    setMood(label)
+    toast.success("Mood saved!")
+    try {
+      await fetch('/api/mood', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mood: label, emoji }),
+      })
+    } catch {
+      toast.error("Failed to sync mood")
+    }
+  }
+
+  // Load mood
+  useEffect(() => {
+    fetch('/api/mood').then(res => res.json()).then(data => {
+      if (data?.moodLog?.label) {
+        setMood(data.moodLog.label)
+      }
+    }).catch(console.error)
   }, [])
 
-  const totalHabits = habits.length
-  const completedToday = habits.filter((h) => h.todayLog?.status === "DONE").length
-  const percent = totalHabits > 0 ? Math.round((completedToday / totalHabits) * 100) : 0
-
   return (
-    <div className="flex flex-col h-screen max-h-screen overflow-hidden">
-      {/* ── Header ──────────────────────────────────────────────────────────── */}
-      <header className="flex items-center justify-between px-6 pt-8 pb-4">
+    <div className="tab active" id="tab-today">
+      {/* Page Header */}
+      <div className="ph">
         <div>
-          <p className="text-xs font-medium text-fore-3 uppercase tracking-wider mb-0.5">
-            Today
-          </p>
-          <h1
-            className="text-2xl text-fore leading-tight"
-            style={{ fontFamily: "var(--font-dm-serif)" }}
-          >
-            Daily Habits
-          </h1>
+          <div className="pd" id="dateLabel">{dateLabel}</div>
+          <div className="pt">
+            Good <em id="greetTime">{greetTime}</em>, {session?.user?.name?.split(' ')[0] || 'User'} ✦
+          </div>
+          <div className="ps" id="todaySub">
+            {pendingCount === 0 && total > 0
+              ? 'All habits done — incredible day! \uD83C\uDF89'
+              : `${pendingCount} habit${pendingCount !== 1 ? 's' : ''} left — ${pendingCount === 0 ? "add some habits!" : "keep going."}`}
+          </div>
         </div>
+        <button className="btn-primary" onClick={() => toast("New habit form opening...")}>
+          <svg viewBox="0 0 14 14"><path d="M7 2v10M2 7h10" /></svg>New habit
+        </button>
+      </div>
 
-        {/* Progress ring skeleton or actual */}
-        {(!isInitialized || isLoading) ? (
-          <div className="h-[52px] w-[52px] rounded-full bg-slate-100 dark:bg-slate-800 animate-pulse border-4 border-slate-200 dark:border-slate-700" />
-        ) : (
-          <ProgressRing
-            percent={percent}
-            size={52}
-            strokeWidth={4}
-            color="#6366f1"
-            label="done"
-          />
-        )}
-      </header>
+      {/* Hero ring */}
+      <div className="hero-card">
+        <div className="hero-ring">
+          <svg width="72" height="72" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="26" fill="none" stroke="rgba(255,255,255,.18)" strokeWidth="6" />
+            <circle
+              id="heroRing" cx="36" cy="36" r="26" fill="none" stroke="#fff" strokeWidth="6"
+              strokeDasharray="163.4" strokeDashoffset={offset.toFixed(1)} strokeLinecap="round" style={{ transition: 'stroke-dashoffset .7s' }}
+            />
+          </svg>
+          <div className="hero-pct" id="heroPct">{pct}%</div>
+        </div>
+        <div className="hero-text">
+          <h2 id="heroTitle">{completedCount} of {total} done today</h2>
+          <p>14-day streak active.<br />{pendingCount > 0 ? "Two more for a perfect day." : "Perfect day!"}</p>
+          <span className="hero-cta" id="heroCta">{pct === 100 && total > 0 ? 'Perfect day! ✦' : 'Keep going ✦'}</span>
+        </div>
+        {showConfetti && <Confetti />}
+      </div>
 
-      {/* ── Spacer removed as header is not absolute ─────────────────────────── */}
-      <div className="h-4 shrink-0" />
+      {/* Mood */}
+      <div className="mood-card">
+        <div className="mood-lbl">How are you feeling today?</div>
+        <div className="mood-row">
+          {[
+            { e: "😴", l: "Exhausted — rest matters too" },
+            { e: "😐", l: "Tired — push through gently" },
+            { e: "🙂", l: "Good — solid energy!" },
+            { e: "😄", l: "Energised — great momentum!" },
+            { e: "🔥", l: "On fire — unstoppable!" },
+          ].map((m) => (
+            <button
+              key={m.e}
+              className={`mood-btn ${mood === m.l ? 'active' : ''}`}
+              onClick={() => handleMoodSelect(m.e, m.l)}
+            >
+              {m.e}
+            </button>
+          ))}
+        </div>
+        <div className="mood-txt" id="moodTxt">{mood ? `Logged: ${mood}` : 'Tap to log your energy for today'}</div>
+      </div>
 
-      {/* ── Swipe area ──────────────────────────────────────────────────────── */}
-      <div className="flex-1 px-6 pb-4 relative">
-        {(!isInitialized || isLoading) ? (
-          <div className="w-full h-full relative flex items-center justify-center">
-            {/* Skeleton Card Stack */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-full max-w-sm aspect-[3/4] bg-slate-100 dark:bg-slate-800 rounded-3xl animate-pulse scale-[0.92] translate-y-8 opacity-40 border border-theme" />
-              <div className="absolute w-full max-w-sm aspect-[3/4] bg-slate-100 dark:bg-slate-800 rounded-3xl animate-pulse scale-[0.96] translate-y-4 opacity-70 border border-theme" />
-              <div className="absolute w-full max-w-sm aspect-[3/4] bg-slate-50 dark:bg-slate-900 rounded-3xl animate-pulse shadow-xl border border-theme">
-                <div className="h-full w-full flex flex-col items-center justify-center gap-6 p-8">
-                  <div className="w-28 h-28 rounded-3xl bg-slate-200 dark:bg-slate-800 animate-pulse" />
-                  <div className="w-32 h-6 bg-slate-200 dark:bg-slate-800 rounded-full animate-pulse" />
-                  <div className="w-20 h-4 bg-slate-200 dark:bg-slate-800 rounded-full animate-pulse" />
+      {/* Stats strip */}
+      <div className="stats3">
+        <div className="sc org"><div className="sc-ico">🔥</div><div className="sc-val">14d</div><div className="sc-lbl">Current streak</div></div>
+        <div className="sc ind"><div className="sc-ico">✅</div><div className="sc-val" id="doneVal">{completedCount}/{total}</div><div className="sc-lbl">Done today</div></div>
+        <div className="sc grn"><div className="sc-ico">📈</div><div className="sc-val">89%</div><div className="sc-lbl">This week</div></div>
+      </div>
+
+      {/* Week */}
+      <div className="sh"><div className="st">This week</div><div className="sl" onClick={() => toast("Full history coming soon...")}>History →</div></div>
+      <div className="week-row" style={{ marginBottom: 20 }}>
+        <div className="wd"><div className="wdot wf"><svg viewBox="0 0 13 13"><path d="M2 6.5l3 3 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg></div><div className="wdl">Mon</div></div>
+        <div className="wd"><div className="wdot wf"><svg viewBox="0 0 13 13"><path d="M2 6.5l3 3 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg></div><div className="wdl">Tue</div></div>
+        <div className="wd"><div className="wdot wp"></div><div className="wdl">Wed</div></div>
+        <div className="wd"><div className="wdot wf"><svg viewBox="0 0 13 13"><path d="M2 6.5l3 3 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg></div><div className="wdl">Thu</div></div>
+        <div className="wd"><div className="wdot wt"><div className="wt-inner"></div></div><div className="wdl wt-lbl">Today</div></div>
+        <div className="wd"><div className="wdot wm"></div><div className="wdl">Sat</div></div>
+        <div className="wd"><div className="wdot wm"></div><div className="wdl">Sun</div></div>
+      </div>
+
+      {/* Habits */}
+      <div className="sh">
+        <div className="st">Today&apos;s habits</div>
+        <div className="sl" id="filterBtn" onClick={() => setFilterOn(!filterOn)}>
+          {filterOn ? 'Show all' : 'Show pending'}
+        </div>
+      </div>
+      <div className="h-list" id="hList">
+        {isLoading && <div className="text-center text-xs text-gray-500 py-4">Loading habits...</div>}
+        {!isLoading && activeHabits.map((habit, i) => {
+          const isDone = todayHabits.some(th => th.habitId === habit.id && th.status === "COMPLETED")
+          if (filterOn && isDone) return null
+
+          // Cycles through some colors for mockup aesthetics similar to HTML snippet
+          const colors = ["#10b981", "#6366f1", "#a855f7", "#f97316", "#3b82f6", "#eab308"]
+          const color = colors[i % colors.length]
+
+          return (
+            <div
+              key={habit.id}
+              className={`h-row ${isDone ? "done" : ""}`}
+              style={{ "--color": color } as any}
+              onClick={() => handleToggle(habit.id)}
+            >
+              <div className="h-em">{habit.icon || "✨"}</div>
+              <div className="h-body">
+                <div className="h-name">{habit.name}</div>
+                <div className="h-meta">
+                  <span className="h-str">🔥 14d</span>
+                  <span className="h-tag">Daily</span>
                 </div>
               </div>
+              <div className="h-bar">
+                <div className="h-track">
+                  <div className="h-fill" style={{ width: isDone ? '100%' : '0%', background: color }}></div>
+                </div>
+                <div className="h-pc">{isDone ? "Done" : "Pending"}</div>
+              </div>
+              <button
+                className={`h-ck ${isDone ? "done-btn" : ""}`}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleToggle(habit.id)
+                }}
+              >
+                <svg viewBox="0 0 16 16"><path d="M3 8l3.5 3.5L13 4" /></svg>
+              </button>
             </div>
-          </div>
-        ) : totalHabits === 0 ? (
-          // Premium Empty state
-          <div className="flex flex-col items-center justify-center h-full">
-            <motion.div
-              className="relative w-32 h-32 mb-8"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            >
-              {/* Abstract Floating Shapes */}
-              <motion.div
-                className="absolute inset-0 bg-indigo-500 rounded-3xl mix-blend-multiply dark:mix-blend-screen opacity-20 filter blur-xl"
-                animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              />
-              <motion.div
-                className="absolute inset-2 glass rounded-2xl flex items-center justify-center text-4xl z-10"
-                animate={{ y: [-5, 5, -5], rotateZ: [-2, 2, -2] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              >
-                ✨
-              </motion.div>
-              <motion.div
-                className="absolute -bottom-4 -right-4 w-12 h-12 glass rounded-full flex items-center justify-center text-xl z-20"
-                animate={{ y: [5, -5, 5], rotateZ: [10, -10, 10] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              >
-                🎯
-              </motion.div>
-              <motion.div
-                className="absolute -top-4 -left-4 w-10 h-10 glass rounded-full flex items-center justify-center text-lg z-0"
-                animate={{ y: [-3, 3, -3], rotateZ: [-10, 10, -10] }}
-                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              >
-                ⚡
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              className="text-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <h2
-                className="text-2xl text-fore mb-2"
-                style={{ fontFamily: "var(--font-dm-serif)" }}
-              >
-                Your canvas awaits
-              </h2>
-              <p className="text-fore-2 text-sm max-w-[260px] mx-auto mb-8">
-                Design your day. Create your first habit and build a better routine today.
-              </p>
-              <Link href="/habits">
-                <motion.div whileHover="hover">
-                  <Button size="lg" className="rounded-2xl px-8 shadow-lg shadow-indigo-500/20 active:scale-95 transition-transform">
-                    <motion.div
-                      variants={{
-                        hover: { rotate: 180, scale: 1.2 }
-                      }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                      className="mr-1 inline-flex"
-                    >
-                      <Plus className="w-5 h-5" />
-                    </motion.div>
-                    Create First Habit
-                  </Button>
-                </motion.div>
-              </Link>
-            </motion.div>
-          </div>
-        ) : (
-          <SwipeDeck habits={todayHabits} />
+          )
+        })}
+        {!isLoading && activeHabits.length === 0 && (
+          <div className="text-center py-6 text-gray-400 text-sm">No habits yet. Click New Habit to start!</div>
         )}
       </div>
 
-      {/* ── Quick stats bar ──────────────────────────────────────────────────── */}
-      {(!isInitialized || isLoading) ? (
-        <div className="px-6 pb-4 flex items-center gap-2 overflow-hidden">
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-8 w-24 rounded-full bg-slate-100 dark:bg-slate-800 animate-pulse border border-theme shrink-0" />
-          ))}
+      {/* Quote */}
+      <div className="quote">
+        <blockquote>&quot;We are what we repeatedly do. Excellence, then, is not an act, but a habit.&quot;</blockquote>
+        <cite>— Aristotle</cite>
+      </div>
+
+      {/* Missed */}
+      <div className="sh"><div className="st">Missed yesterday</div><div className="sl">See all →</div></div>
+      <div id="missedList">
+        <div className="missed-row" id="miss-0">
+          <div className="missed-ico">🏊</div>
+          <div className="missed-name">Swimming</div>
+          <div className="missed-tag">3d streak lost</div>
+          <button className="missed-add" onClick={() => toast('Swimming added to today!')}>+ Add</button>
         </div>
-      ) : totalHabits > 0 && (
-        <div className="px-6 pb-4">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            {habits.map((habit) => (
-              <div
-                key={habit.id}
-                className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-theme"
-                style={{
-                  background: habit.todayLog
-                    ? habit.color + "18"
-                    : undefined,
-                  borderColor: habit.todayLog ? habit.color + "40" : undefined,
-                  color: habit.todayLog ? habit.color : undefined,
-                }}
-              >
-                <span>{habit.icon}</span>
-                <span className="max-w-[80px] truncate">{habit.name}</span>
-                {habit.todayLog?.status === "DONE" && <span>✓</span>}
-                {habit.todayLog?.status === "SKIPPED" && <span>—</span>}
-              </div>
-            ))}
-          </div>
+        <div className="missed-row" id="miss-1">
+          <div className="missed-ico">☕</div>
+          <div className="missed-name">No coffee after 2pm</div>
+          <div className="missed-tag">1d streak lost</div>
+          <button className="missed-add" onClick={() => toast('Habit added!')}>+ Add</button>
         </div>
-      )}
+      </div>
     </div>
   )
 }

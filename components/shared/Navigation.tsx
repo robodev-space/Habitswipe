@@ -1,274 +1,139 @@
 "use client"
 
-// components/shared/Navigation.tsx
-
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { signOut, useSession } from "next-auth/react"
 import { useTheme } from "next-themes"
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
 import {
   LayoutDashboard, ListChecks, User,
   Sun, Moon, LogOut, Zap, Flame, Camera
 } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Confirmation } from "../common/Confirmation"
 
 const NAV_ITEMS = [
-  { href: "/today", icon: Zap, label: "Today" },
-  { href: "/habits", icon: ListChecks, label: "Habits" },
-  { href: "/streaks", icon: Flame, label: "Streaks" },
-  { href: "/dashboard", icon: LayoutDashboard, label: "Stats" },
-  { href: "/share", icon: Camera, label: "Snap" },
-  { href: "/profile", icon: User, label: "Profile" },
+  { id: "today", href: "/today", label: "Today", badgeId: "sbadge" },
+  { id: "habits", href: "/habits", label: "Habits" },
+  { id: "streaks", href: "/streaks", label: "Streaks", className: "s-streak" },
+  { id: "stats", href: "/stats", label: "Stats" },
+  { id: "snap", href: "/snap", label: "Snap" },
+  { id: "profile", href: "/profile", label: "Profile" },
 ]
 
 export function Navigation() {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
   const { data: session } = useSession()
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   const [mounted, setMounted] = useState(false)
 
-  // Avoid hydration mismatch for theme-dependent rendering
   useEffect(() => setMounted(true), [])
 
   function handleLogout() {
     signOut({ callbackUrl: "/login" })
   }
 
-  const isDark = theme === "dark"
+  const isDark = theme === "dark" || (theme === "system" && mounted && window.matchMedia("(prefers-color-scheme: dark)").matches)
 
   return (
     <>
-      {/* ── Desktop Sidebar ──────────────────────────────────────────────── */}
-      <aside
-        className={cn(
-          "hidden md:flex flex-col w-[220px] h-screen sticky top-0 overflow-y-auto flex-shrink-0",
-          "px-3 py-5 gap-1 transition-colors duration-200",
-          // Light: clean white with hairline right border + subtle shadow
-          "bg-white border-r border-gray-100 shadow-[1px_0_0_0_rgba(0,0,0,0.04)]",
-          // Dark: near-black with faint border
-          "dark:bg-[#07060f] dark:border-white/[0.06] dark:shadow-none"
-        )}
-      >
-
-        {/* Logo */}
-        <div className="flex items-center gap-2.5 px-3 mb-7">
-          <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center shadow-sm shadow-indigo-500/30 flex-shrink-0">
-            <Zap className="w-4 h-4 text-white" fill="white" />
+      {/* ── SIDEBAR ────────────────────────────────────────────────────────────── */}
+      <nav className="sidebar">
+        <Link href="/today" className="s-logo text-inherit hover:text-inherit">
+          <div className="s-lmark">
+            <svg viewBox="0 0 14 14" fill="none">
+              <path d="M7 1.5L8.2 5.3H12L8.9 7.6L10 11.2L7 9.2L4 11.2L5.1 7.6L2 5.3H5.8L7 1.5Z" fill="white" />
+            </svg>
           </div>
-          <span
-            className="text-[17px] font-bold tracking-tight select-none
-                       text-gray-900 dark:text-white"
-            style={{ fontFamily: "var(--font-dm-serif)" }}
-          >
-            HabitSwipe
-          </span>
-        </div>
+          <span className="s-lname">HabitSwipe</span>
+        </Link>
+        <div className="s-section">Main</div>
 
-        {/* Section label */}
-        <p className="text-[10px] font-semibold uppercase tracking-widest px-3 mb-1
-                      text-gray-400 dark:text-white/25">
-          Menu
-        </p>
-
-        {/* Nav links */}
-        <nav className="flex flex-col gap-0.5 flex-1">
-          {NAV_ITEMS.map(({ href, icon: Icon, label }) => {
-            const isActive = pathname === href
-            const isStreaks = label === "Streaks"
-
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={cn(
-                  "relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium",
-                  "transition-all duration-150 group",
-                  isActive
-                    ? "text-indigo-600 dark:text-indigo-400"
-                    : "text-gray-500 hover:text-gray-900 dark:text-white/40 dark:hover:text-white/80"
-                )}
-              >
-                {/* Animated active background */}
-                {isActive && (
-                  <motion.div
-                    layoutId="sidebar-active-bg"
-                    className="absolute inset-0 rounded-xl
-                               bg-indigo-50 dark:bg-indigo-600/15"
-                    transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                  />
-                )}
-
-                {/* Hover state background */}
-                {!isActive && (
-                  <span className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity
-                                   bg-gray-50 dark:bg-white/[0.04]" />
-                )}
-
-                <Icon
-                  className={cn(
-                    "relative w-4 h-4 flex-shrink-0 transition-colors",
-                    isActive
-                      ? "text-indigo-500 dark:text-indigo-400"
-                      : isStreaks
-                        ? "text-orange-400 dark:text-orange-400/70"
-                        : "text-gray-400 dark:text-white/30 group-hover:text-gray-600 dark:group-hover:text-white/60"
-                  )}
-                />
-
-                <span className="relative">{label}</span>
-
-                {/* Active indicator dot */}
-                {isActive && (
-                  <div className="relative ml-auto w-1.5 h-1.5 rounded-full
-                                  bg-indigo-500 dark:bg-indigo-400" />
-                )}
-              </Link>
-            )
-          })}
-        </nav>
-
-        {/* ── Bottom section ──────────────────────────────────────────────── */}
-        <div className="flex flex-col gap-0.5 pt-3
-                        border-t border-gray-100 dark:border-white/[0.06]">
-
-          {/* User pill → links to profile */}
-          {session?.user && (
+        {NAV_ITEMS.map((item) => {
+          const isActive = pathname === item.href
+          return (
             <Link
-              href="/profile"
-              className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl mb-1 group transition-all
-                         hover:bg-gray-50 dark:hover:bg-white/[0.04]"
+              key={item.href}
+              href={item.href}
+              className={`s-item ${isActive ? "active" : ""} ${item.className || ""}`}
             >
-              {/* Avatar with online dot */}
-              <div className="relative flex-shrink-0">
-                <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center
-                                text-white text-[11px] font-bold">
-                  {session.user.name?.[0]?.toUpperCase() ?? "U"}
-                </div>
-                <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full
-                                bg-emerald-500 border-2 border-white dark:border-[#07060f]" />
-              </div>
-
-              <div className="flex-1 min-w-0">
-                <p className="text-[12px] font-semibold truncate leading-tight
-                              text-gray-800 dark:text-white/80">
-                  {session.user.name}
-                </p>
-                <p className="text-[10px] truncate leading-tight
-                              text-gray-400 dark:text-white/30">
-                  {session.user.email}
-                </p>
-              </div>
+              {item.id === "today" && <svg viewBox="0 0 16 16"><path d="M7 1.5L8.2 5.3H12L8.9 7.6L10 11.2L7 9.2L4 11.2L5.1 7.6L2 5.3H5.8L7 1.5Z" /></svg>}
+              {item.id === "habits" && <svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h8" /></svg>}
+              {item.id === "streaks" && <svg viewBox="0 0 16 16" style={{ stroke: "none", fill: "var(--org)" }}><path d="M8 1.5C8 1.5 11.5 5.5 11.5 8.5C11.5 10.6 9.9 12.5 8 12.5C6.1 12.5 4.5 10.6 4.5 8.5C4.5 6 6 3.5 8 1.5Z" /></svg>}
+              {item.id === "stats" && <svg viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1.5" /><rect x="9" y="1" width="6" height="6" rx="1.5" /><rect x="1" y="9" width="6" height="6" rx="1.5" /><rect x="9" y="9" width="6" height="6" rx="1.5" /></svg>}
+              {item.id === "snap" && <svg viewBox="0 0 16 16"><circle cx="8" cy="9" r="3" /><path d="M1 6h1.5l1.5-3h8l1.5 3H15v8H1z" /></svg>}
+              {item.id === "profile" && <svg viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" /><path d="M2.5 14c0-3 2.5-5 5.5-5s5.5 2 5.5 5" /></svg>}
+              
+              {item.label}
+              {item.badgeId && (
+                <span className="s-badge" id={item.badgeId} style={{ display: "none" }}></span>
+              )}
             </Link>
-          )}
+          )
+        })}
 
-          {/* Theme toggle — only render after mount to avoid hydration flash */}
-          {mounted && (
-            <button
-              onClick={() => setTheme(isDark ? "light" : "dark")}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium
-                         transition-all group
-                         text-gray-500 hover:text-gray-900 hover:bg-gray-50
-                         dark:text-white/40 dark:hover:text-white/80 dark:hover:bg-white/[0.05]"
-            >
-              {isDark
-                ? <Sun className="w-4 h-4 text-gray-400 dark:text-white/30 group-hover:text-amber-500 transition-colors" />
-                : <Moon className="w-4 h-4 text-gray-400 group-hover:text-indigo-500 transition-colors" />
-              }
-              {isDark ? "Light mode" : "Dark mode"}
-            </button>
-          )}
-
-          {/* Sign out */}
-          <button
-            onClick={() => setShowLogoutConfirm(true)}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium
-                       transition-all group
-                       text-gray-500 hover:text-red-600 hover:bg-red-50
-                       dark:text-white/40 dark:hover:text-red-400 dark:hover:bg-red-500/10"
-          >
-            <LogOut className="w-4 h-4 text-gray-400 dark:text-white/30
-                               group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors" />
-            Sign out
-          </button>
-        </div>
-      </aside>
-
-      {/* ── Mobile Bottom Bar ────────────────────────────────────────────── */}
-      <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50
-                   bg-white/90 border-t border-gray-100 backdrop-blur-xl
-                   dark:bg-[#07060f]/90 dark:border-white/[0.06]"
-        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
-      >
-        <div className="flex items-center justify-around px-2 py-2">
-          {NAV_ITEMS.map(({ href, icon: Icon, label }) => {
-            const isActive = pathname === href
-            const isStreaks = label === "Streaks"
-
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={cn(
-                  "relative flex flex-col items-center gap-1 px-2 py-1.5 rounded-xl min-w-[48px]",
-                  "transition-all duration-150",
-                  isActive
-                    ? "text-indigo-600 dark:text-indigo-400"
-                    : "text-gray-400 dark:text-white/30"
-                )}
-              >
-                {/* Animated active bg pill */}
-                {isActive && (
-                  <motion.div
-                    layoutId="mobile-active-bg"
-                    className="absolute inset-0 rounded-xl
-                               bg-indigo-50 dark:bg-indigo-600/15"
-                    transition={{ type: "spring", stiffness: 400, damping: 35 }}
-                  />
-                )}
-
-                <Icon
-                  className={cn(
-                    "relative w-5 h-5 transition-colors",
-                    isActive
-                      ? "text-indigo-500 dark:text-indigo-400"
-                      : isStreaks
-                        ? "text-orange-400/80 dark:text-orange-400/60"
-                        : ""
-                  )}
-                />
-                <span className="relative text-[9px] font-semibold tracking-wide">
-                  {label}
-                </span>
-
-                {/* Bottom dot */}
-                {isActive && (
-                  <motion.div
-                    layoutId="mobile-active-dot"
-                    className="absolute -bottom-0.5 left-1/2 -translate-x-1/2
-                               w-1 h-1 rounded-full bg-indigo-500 dark:bg-indigo-400"
-                  />
-                )}
-              </Link>
-            )
-          })}
-        </div>
+        <div className="s-gap"></div>
+        <div className="s-div"></div>
+        
+        {session?.user && (
+          <Link href="/profile" className="s-user text-inherit hover:text-inherit">
+            <div className="s-av">
+              {session.user.name?.[0]?.toUpperCase() ?? "U"}
+              <div className="s-av-dot"></div>
+            </div>
+            <div>
+              <div className="s-un">{session.user.name}</div>
+              <div className="s-ue">{session.user.email}</div>
+            </div>
+          </Link>
+        )}
+        
+        <button className="s-btn" onClick={() => setTheme(isDark ? "light" : "dark")}>
+          <svg viewBox="0 0 16 16">
+            <circle cx="8" cy="8" r="4" />
+            <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M11.54 4.46l-1.41 1.41M4.95 11.54l-1.41 1.41" />
+          </svg>
+          <span>{mounted && isDark ? "Light mode" : "Dark mode"}</span>
+        </button>
+        <button className="s-btn logout" onClick={handleLogout}>
+          <svg viewBox="0 0 16 16">
+            <path d="M10 3h3a1 1 0 011 1v8a1 1 0 01-1 1h-3M7 11l3-3-3-3M10 8H3" />
+          </svg>
+          Sign out
+        </button>
       </nav>
 
-      {/* ── Logout Confirmation Dialog ───────────────────────────────────── */}
-      <Confirmation
-        title="Sign out"
-        description="You'll be returned to the login screen. Your streaks and habits are safely saved."
-        buttonLabel="Sign out"
-        open={showLogoutConfirm}
-        setOpen={setShowLogoutConfirm}
-        onConfirm={handleLogout}
-        variant="danger"
-      />
+      {/* ── MOBILE NAV ─────────────────────────────────────────────────────────── */}
+      <nav className="mob-nav">
+        {[
+          { id: "today", href: "/today", label: "Today" },
+          { id: "habits", href: "/habits", label: "Habits" },
+          { id: "streaks", href: "/streaks", label: "Streaks" },
+          { id: "stats", href: "/stats", label: "Stats" },
+          { id: "profile", href: "/profile", label: "Profile" },
+        ].map((item) => {
+          const isActive = pathname === item.href
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`mob-item ${isActive ? "active" : ""}`}
+              style={item.id === "streaks" ? { color: "var(--org)" } : undefined}
+            >
+              {item.id === "today" && <svg viewBox="0 0 16 16"><path d="M7 1.5L8.2 5.3H12L8.9 7.6L10 11.2L7 9.2L4 11.2L5.1 7.6L2 5.3H5.8L7 1.5Z" /></svg>}
+              {item.id === "habits" && <svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h8" /></svg>}
+              {item.id === "streaks" && <svg viewBox="0 0 16 16" style={isActive ? undefined : { stroke: "var(--org)" }}><path d="M8 1.5C8 1.5 11.5 5.5 11.5 8.5C11.5 10.6 9.9 12.5 8 12.5C6.1 12.5 4.5 10.6 4.5 8.5C4.5 6 6 3.5 8 1.5Z" fill={isActive ? undefined : "var(--org)"} stroke={isActive ? undefined : "none"} /></svg>}
+              {item.id === "stats" && <svg viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1.5" /><rect x="9" y="1" width="6" height="6" rx="1.5" /><rect x="1" y="9" width="6" height="6" rx="1.5" /><rect x="9" y="9" width="6" height="6" rx="1.5" /></svg>}
+              {item.id === "profile" && <svg viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" /><path d="M2.5 14c0-3 2.5-5 5.5-5s5.5 2 5.5 5" /></svg>}
+              
+              <span>{item.label}</span>
+              
+              {isActive && <div className="mob-dot"></div>}
+              {item.id === "today" && (
+                <div className="mob-badge" id="mbadge" style={{ display: "none" }}></div>
+              )}
+            </Link>
+          )
+        })}
+      </nav>
     </>
   )
 }

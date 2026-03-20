@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useHabitStore } from "@/lib/store"
-// import { todayString } from "@/lib/utils"
+import { todayString } from "@/lib/utils"
 import { API_ROUTES } from "@/lib/constants/api-routes"
 import type { CreateHabitInput, UpdateHabitInput } from "@/types"
 
@@ -67,7 +67,7 @@ export function useHabits() {
       const res = await fetch(API_ROUTES.LOGS.BASE, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ habitId, status, date: '2026-03-18' }),
+        body: JSON.stringify({ habitId, status, date: todayString() }),
         signal,
       })
       const json = await res.json()
