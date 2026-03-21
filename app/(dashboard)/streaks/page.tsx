@@ -8,6 +8,7 @@ import type { StreakPageData } from "@/types"
 export default function StreaksPage() {
   const [data, setData] = useState<StreakPageData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [viewMode, setViewMode] = useState<"month" | "year">("month")
 
   useEffect(() => {
     const controller = new AbortController()
@@ -69,6 +70,15 @@ export default function StreaksPage() {
     heatMapRecord[item.date] = item.count
   })
 
+  // Annual view generation
+  const yearDays = Array.from({ length: 365 }).map((_, i) => {
+    const d = new Date()
+    d.setDate(d.getDate() - (364 - i))
+    return d
+  })
+  const firstDayOfYearView = yearDays[0].getDay() // 0 = Sun
+  const yearOffset = firstDayOfYearView === 0 ? 6 : firstDayOfYearView - 1
+
   // Colors for generic list styling
   const colors = ["#a855f7", "#10b981", "#6366f1", "#f97316", "#3b82f6", "#eab308"]
 
@@ -105,58 +115,106 @@ export default function StreaksPage() {
         <div className="s6c"><div className="s6i">⚡</div><div className="s6v">-</div><div className="s6l">Done today</div></div>
       </div>
 
-      {/* Calendar Heatmap */}
+      {/* Calendar Heatmap Toggle */}
       <div className="sh">
-        <div className="st">{today.toLocaleString('default', { month: 'long' })} heatmap</div>
-        <div className="sl" onClick={() => toast("Annual view coming soon!")}>View year →</div>
-      </div>
-      <div className="cal-wrap">
-        <div className="cal-hdr">
-          <div className="cal-dl">M</div><div className="cal-dl">T</div><div className="cal-dl">W</div>
-          <div className="cal-dl">T</div><div className="cal-dl">F</div><div className="cal-dl">S</div><div className="cal-dl">S</div>
+        <div className="st">{viewMode === "month" ? today.toLocaleString('default', { month: 'long' }) : today.getFullYear()} heatmap</div>
+        <div className="sl" onClick={() => setViewMode(viewMode === "month" ? "year" : "month")}>
+          {viewMode === "month" ? "View year →" : "View month →"}
         </div>
-        <div className="cal-grid" id="calGrid">
-          {/* Empty offset cells */}
-          {Array.from({ length: offset }).map((_, i) => (
-            <div key={`empty-${i}`}></div>
-          ))}
-          {/* Day cells */}
-          {Array.from({ length: daysInMonth }).map((_, i) => {
-            const dayNum = i + 1
-            const dStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`
-            const count = heatMapRecord[dStr] || 0
-            
-            let colorCls = "c0"
-            if (count === 1) colorCls = "c1"
-            else if (count === 2) colorCls = "c2"
-            else if (count === 3) colorCls = "c3"
-            else if (count === 4) colorCls = "c4"
-            else if (count >= 5) colorCls = "c5"
-            
-            const isToday = dayNum === today.getDate()
+      </div>
+      
+      {viewMode === "month" ? (
+        <div className="cal-wrap">
+          <div className="cal-hdr">
+            <div className="cal-dl">M</div><div className="cal-dl">T</div><div className="cal-dl">W</div>
+            <div className="cal-dl">T</div><div className="cal-dl">F</div><div className="cal-dl">S</div><div className="cal-dl">S</div>
+          </div>
+          <div className="cal-grid" id="calGrid">
+            {/* Empty offset cells */}
+            {Array.from({ length: offset }).map((_, i) => (
+              <div key={`empty-${i}`}></div>
+            ))}
+            {/* Day cells */}
+            {Array.from({ length: daysInMonth }).map((_, i) => {
+              const dayNum = i + 1
+              const dStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`
+              const count = heatMapRecord[dStr] || 0
+              
+              let colorCls = "c0"
+              if (count === 1) colorCls = "c1"
+              else if (count === 2) colorCls = "c2"
+              else if (count === 3) colorCls = "c3"
+              else if (count === 4) colorCls = "c4"
+              else if (count >= 5) colorCls = "c5"
+              
+              const isToday = dayNum === today.getDate()
 
-            return (
-              <div 
-                key={dayNum} 
-                className={`cal-cell ${colorCls} ${isToday ? 'cal-today' : ''}`}
-                title={`${today.toLocaleString('default', { month: 'short' })} ${dayNum}: ${count} habits completed`}
-              >
-                {dayNum}
-              </div>
-            )
-          })}
+              return (
+                <div 
+                  key={dayNum} 
+                  className={`cal-cell ${colorCls} ${isToday ? 'cal-today' : ''}`}
+                  title={`${today.toLocaleString('default', { month: 'short' })} ${dayNum}: ${count} habits completed`}
+                >
+                  {dayNum}
+                </div>
+              )
+            })}
+          </div>
+          <div className="cal-legend" style={{ marginTop: 11 }}>
+            <span className="cal-leg-lbl">Less</span>
+            <div className="cal-leg-dot" style={{ background: "var(--surf2)" }}></div>
+            <div className="cal-leg-dot" style={{ background: "#fde8cc" }}></div>
+            <div className="cal-leg-dot" style={{ background: "#fed7aa" }}></div>
+            <div className="cal-leg-dot" style={{ background: "#fb923c" }}></div>
+            <div className="cal-leg-dot" style={{ background: "#f97316" }}></div>
+            <div className="cal-leg-dot" style={{ background: "#ea580c" }}></div>
+            <span className="cal-leg-lbl">More</span>
+          </div>
         </div>
-        <div className="cal-legend" style={{ marginTop: 11 }}>
-          <span className="cal-leg-lbl">Less</span>
-          <div className="cal-leg-dot" style={{ background: "var(--surf2)" }}></div>
-          <div className="cal-leg-dot" style={{ background: "#fde8cc" }}></div>
-          <div className="cal-leg-dot" style={{ background: "#fed7aa" }}></div>
-          <div className="cal-leg-dot" style={{ background: "#fb923c" }}></div>
-          <div className="cal-leg-dot" style={{ background: "#f97316" }}></div>
-          <div className="cal-leg-dot" style={{ background: "#ea580c" }}></div>
-          <span className="cal-leg-lbl">More</span>
+      ) : (
+        <div className="cal-wrap overflow-x-auto">
+          <div style={{ display: 'grid', gridTemplateRows: 'repeat(7, 1fr)', gridAutoFlow: 'column', gap: '4px', minWidth: 'max-content', paddingBottom: '8px' }}>
+            {/* Empty boxes for alignment of the first day */}
+            {Array.from({ length: yearOffset }).map((_, i) => (
+              <div key={`y-exp-empty-${i}`} style={{ width: 14, height: 14 }}></div>
+            ))}
+            
+            {/* 365 days of cells */}
+            {yearDays.map((d, i) => {
+              const dStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+              const count = heatMapRecord[dStr] || 0
+              
+              let colorCls = "c0"
+              if (count === 1) colorCls = "c1"
+              else if (count === 2) colorCls = "c2"
+              else if (count === 3) colorCls = "c3"
+              else if (count === 4) colorCls = "c4"
+              else if (count >= 5) colorCls = "c5"
+              
+              const isToday = i === 364
+              
+              return (
+                <div 
+                  key={dStr}
+                  className={`cal-cell ${colorCls} ${isToday ? 'cal-today' : ''}`}
+                  style={{ width: 14, height: 14, padding: 0, fontSize: 0 }}
+                  title={`${d.toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' })}: ${count} habits completed`}
+                ></div>
+              )
+            })}
+          </div>
+          <div className="cal-legend" style={{ marginTop: 11, justifyContent: 'flex-end', minWidth: 'max-content' }}>
+            <span className="cal-leg-lbl">Less</span>
+            <div className="cal-leg-dot" style={{ background: "var(--surf2)" }}></div>
+            <div className="cal-leg-dot" style={{ background: "#fde8cc" }}></div>
+            <div className="cal-leg-dot" style={{ background: "#fed7aa" }}></div>
+            <div className="cal-leg-dot" style={{ background: "#fb923c" }}></div>
+            <div className="cal-leg-dot" style={{ background: "#f97316" }}></div>
+            <div className="cal-leg-dot" style={{ background: "#ea580c" }}></div>
+            <span className="cal-leg-lbl">More</span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Habit Streaks List */}
       <div className="sh"><div className="st">Habit streaks</div><div className="sl" onClick={() => toast("Sorting coming soon!")}>Sort →</div></div>
