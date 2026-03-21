@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react"
 import { useHabits } from "@/hooks/useHabits"
 import { toast } from "react-hot-toast"
 import { Confetti } from "@/components/shared/Confetti"
+import { AddHabitDialog } from "@/components/shared/AddHabitDialog"
 
 export default function TodayPage() {
   const { data: session } = useSession()
@@ -141,9 +142,11 @@ export default function TodayPage() {
               : `${pendingCount} habit${pendingCount !== 1 ? 's' : ''} left — ${pendingCount === 0 ? "add some habits!" : "keep going."}`}
           </div>
         </div>
-        <button className="btn-primary" onClick={() => toast("New habit form opening...")}>
-          <svg viewBox="0 0 14 14"><path d="M7 2v10M2 7h10" /></svg>New habit
-        </button>
+        <AddHabitDialog>
+          <button className="btn-primary">
+            <svg viewBox="0 0 14 14"><path d="M7 2v10M2 7h10" /></svg>New habit
+          </button>
+        </AddHabitDialog>
       </div>
 
       {/* Hero ring */}

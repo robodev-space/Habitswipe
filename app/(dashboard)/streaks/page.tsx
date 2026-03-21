@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { toast } from "react-hot-toast"
 import { API_ROUTES } from "@/lib/constants/api-routes"
+import { AddHabitDialog } from "@/components/shared/AddHabitDialog"
 import type { StreakPageData } from "@/types"
 
 export default function StreaksPage() {
@@ -91,6 +92,11 @@ export default function StreaksPage() {
           <div className="pt">Stay on <em style={{ color: "var(--org)" }}>fire</em> 🔥</div>
           <div className="ps">Current best: {current} days running</div>
         </div>
+        <AddHabitDialog>
+          <button className="btn-primary">
+            <svg viewBox="0 0 14 14"><path d="M7 2v10M2 7h10" /></svg>New habit
+          </button>
+        </AddHabitDialog>
       </div>
 
       {/* Hero */}

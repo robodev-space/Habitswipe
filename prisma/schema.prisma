@@ -101,6 +101,8 @@ model Habit {
   targetDays Int           @default(7)   // days per week for WEEKLY habits
   isArchived Boolean       @default(false)
   sortOrder  Int           @default(0)
+  reminderTime String?
+  emailReminders Boolean   @default(true)
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
 

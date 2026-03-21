@@ -64,6 +64,8 @@ const createSchema = z.object({
   color: z.string().regex(/^#[0-9a-f]{6}$/i).default("#6366f1"),
   frequency: z.enum(["DAILY", "WEEKLY"]).default("DAILY"),
   targetDays: z.number().min(1).max(7).default(7),
+  reminderTime: z.string().optional().nullable(),
+  emailReminders: z.boolean().default(true),
 })
 
 export async function POST(req: Request) {
@@ -86,6 +88,8 @@ export async function POST(req: Request) {
         ...data,
         userId: session.user.id,
         sortOrder: count,
+        reminderTime: data.reminderTime || null,
+        emailReminders: data.emailReminders,
       },
     })
 

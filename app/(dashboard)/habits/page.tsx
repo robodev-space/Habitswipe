@@ -7,6 +7,7 @@ import { X } from "lucide-react"
 import { HabitForm } from "@/components/habits/HabitForm"
 import { useHabits } from "@/hooks/useHabits"
 import { Skeleton } from "@/components/ui/Skeleton"
+import { AddHabitDialog } from "@/components/shared/AddHabitDialog"
 import type { HabitWithStats, CreateHabitInput } from "@/types"
 
 type Modal =
@@ -126,9 +127,11 @@ export default function HabitsPage() {
               {isLoading ? "Loading..." : `${activeHabits.length} active habit${activeHabits.length !== 1 ? 's' : ''} · managing well`}
             </div>
           </div>
-          <button className="btn-primary" onClick={() => setModal({ type: "create" })}>
-            <svg viewBox="0 0 14 14"><path d="M7 2v10M2 7h10" /></svg>New habit
-          </button>
+          <AddHabitDialog>
+            <button className="btn-primary">
+              <svg viewBox="0 0 14 14"><path d="M7 2v10M2 7h10" /></svg>New habit
+            </button>
+          </AddHabitDialog>
         </div>
 
         {/* Filter */}
@@ -176,10 +179,12 @@ export default function HabitsPage() {
                   </div>
                 )
               })}
-              <div className="hc-add" onClick={() => setModal({ type: "create" })}>
-                <div className="hc-add-ico">+</div>
-                <div className="hc-add-lbl">Add new habit</div>
-              </div>
+              <AddHabitDialog>
+                <div className="hc-add">
+                  <div className="hc-add-ico">+</div>
+                  <div className="hc-add-lbl">Add new habit</div>
+                </div>
+              </AddHabitDialog>
             </>
           )}
         </div>
