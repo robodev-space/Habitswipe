@@ -6,6 +6,7 @@ import { useHabits } from "@/hooks/useHabits"
 import { toast } from "react-hot-toast"
 import { Confetti } from "@/components/shared/Confetti"
 import { AddHabitDialog } from "@/components/shared/AddHabitDialog"
+import { HabitHistoryDrawer } from "@/components/shared/HabitHistoryDrawer"
 
 export default function TodayPage() {
   const { data: session } = useSession()
@@ -200,7 +201,17 @@ export default function TodayPage() {
       </div>
 
       {/* Week */}
-      <div className="sh"><div className="st">This week</div><div className="sl" onClick={() => toast("Full history coming soon...")}>History →</div></div>
+      <div className="sh mb-1">
+        <div className="st">This week</div>
+        <HabitHistoryDrawer>
+          <button className="flex items-center gap-1.5 text-[12.5px] font-semibold text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 px-2 py-1 rounded-lg transition-colors cursor-pointer border-none bg-transparent">
+            Full history
+            <svg viewBox="0 0 16 16" className="w-[13px] h-[13px] stroke-current fill-none stroke-2 shrink-0">
+              <path d="M4 8h8M9 5l3 3-3 3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </HabitHistoryDrawer>
+      </div>
       <div className="week-row" style={{ marginBottom: 20 }}>
         <div className="wd"><div className="wdot wf"><svg viewBox="0 0 13 13"><path d="M2 6.5l3 3 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg></div><div className="wdl">Mon</div></div>
         <div className="wd"><div className="wdot wf"><svg viewBox="0 0 13 13"><path d="M2 6.5l3 3 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg></div><div className="wdl">Tue</div></div>

@@ -90,7 +90,7 @@ export async function POST(req: Request) {
         sortOrder: count,
         reminderTime: data.reminderTime || null,
         emailReminders: data.emailReminders,
-      },
+      } as any,
     })
 
     return NextResponse.json({ data: habit }, { status: 201 })

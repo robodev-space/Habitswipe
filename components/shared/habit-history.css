@@ -1,0 +1,570 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Habit History Drawer Custom CSS
+ * Extracted from Prototype
+ * ───────────────────────────────────────────────────────────────────────────── */
+
+.hh-drawer {
+  --bg: #faf9f7;
+  --surf: #fff;
+  --surf2: #f5f3ef;
+  --bord: #ede9e3;
+  --txt: #1a1714;
+  --txt2: #6b6560;
+  --txt3: #b0a9a0;
+  --ind: #5b50e8;
+  --ind-s: #eeedfb;
+  --ind-m: #8b85f0;
+  --grn: #10b981;
+  --grn-s: #d1fae5;
+  --org: #f97316;
+  --org-s: #fff7ed;
+  --red: #ef4444;
+  --red-s: #fee2e2;
+  --font-serif: var(--font-dm-serif, 'Instrument Serif', Georgia, serif);
+  --font-sans: var(--font-inter, 'DM Sans', system-ui, sans-serif);
+
+  background: var(--surf);
+  border-radius: 22px 22px 0 0;
+  width: 100vw;
+  max-width: 560px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  color: var(--txt);
+  /* Shadcn handles the container translate, we just structure the inside */
+}
+
+/* Dark mode overrides if implemented centrally */
+.dark .hh-drawer, [data-theme="dark"] .hh-drawer {
+  --bg: #0e0d0b;
+  --surf: #161412;
+  --surf2: #1e1c18;
+  --bord: #2a2520;
+  --txt: #f0ede8;
+  --txt2: #9c948a;
+  --txt3: #5a544e;
+  --ind-s: #1e1c3a;
+  --grn-s: #0d2e22;
+  --org-s: #2a1f08;
+  --red-s: #2a1010;
+}
+
+/* ─── Trigger Button ───────────────────────────────────────────────────────── */
+.hh-hist-btn {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ind-m, #8b85f0);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: var(--font-inter, 'DM Sans', sans-serif);
+  transition: color .15s, background .15s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+.hh-hist-btn:hover {
+  color: var(--ind, #5b50e8);
+  background: var(--ind-s, #eeedfb);
+}
+.hh-hist-btn svg {
+  width: 13px;
+  height: 13px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ─── Drawer Layout ────────────────────────────────────────────────────────── */
+.hh-drawer-handle {
+  width: 38px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--bord);
+  margin: 14px auto 0;
+  flex-shrink: 0;
+}
+
+.hh-drawer-head {
+  padding: 16px 22px 14px;
+  border-bottom: 1px solid var(--bord);
+  flex-shrink: 0;
+}
+
+.hh-drawer-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ind-m);
+  margin-bottom: 3px;
+}
+
+.hh-drawer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hh-drawer-title {
+  font-family: var(--font-serif);
+  font-size: 21px;
+  font-weight: 400;
+  color: var(--txt);
+}
+
+.hh-drawer-title em {
+  font-style: italic;
+  color: var(--ind);
+}
+
+.hh-drawer-body {
+  overflow-y: auto;
+  flex: 1;
+  padding: 18px 22px 32px;
+}
+
+.hh-drawer-body::-webkit-scrollbar { width: 3px; }
+.hh-drawer-body::-webkit-scrollbar-thumb { background: var(--bord); border-radius: 3px; }
+
+/* ─── Tabs ─────────────────────────────────────────────────────────────────── */
+.hh-tab-row {
+  display: flex;
+  gap: 2px;
+  background: var(--surf2);
+  border-radius: 11px;
+  padding: 3px;
+  margin-bottom: 20px;
+}
+
+.hh-tab-btn {
+  flex: 1;
+  height: 33px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--txt3);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all .2s;
+}
+
+.hh-tab-btn.on {
+  background: var(--surf);
+  color: var(--ind);
+  box-shadow: 0 1px 5px rgba(0,0,0,.1);
+}
+
+/* ─── Summary row ──────────────────────────────────────────────────────────── */
+.hh-sum3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.hh-sc {
+  background: var(--surf2);
+  border-radius: 12px;
+  padding: 13px 10px;
+  text-align: center;
+}
+
+.hh-sv {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--txt);
+  line-height: 1;
+}
+
+.hh-sl {
+  font-size: 10px;
+  color: var(--txt3);
+  margin-top: 3px;
+}
+
+.hh-sc.og .hh-sv { color: var(--org); }
+.hh-sc.iv .hh-sv { color: var(--ind); }
+.hh-sc.gn .hh-sv { color: var(--grn); }
+
+/* ─── Week cards ───────────────────────────────────────────────────────────── */
+.hh-wk-card {
+  background: var(--surf2);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all .2s;
+  border: 1px solid transparent;
+}
+
+.hh-wk-card:hover, .hh-wk-card.open {
+  border-color: var(--bord);
+  background: var(--surf);
+}
+
+.hh-wk-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.hh-wk-range {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--txt);
+}
+
+.hh-wk-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hh-wk-rate {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+}
+
+.rate-hi { background: var(--grn-s); color: #065f46; }
+.rate-md { background: #fef3c7; color: #92400e; }
+.rate-lo { background: var(--red-s); color: #991b1b; }
+
+.dark .rate-hi { color: #a7f3d0; }
+.dark .rate-md { color: #fde68a; }
+.dark .rate-lo { color: #fecaca; }
+
+.hh-wk-chevron {
+  width: 18px;
+  height: 18px;
+  transition: transform .25s;
+  flex-shrink: 0;
+}
+
+.hh-wk-chevron svg {
+  stroke: var(--txt3);
+  fill: none;
+  width: 100%;
+  height: 100%;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hh-wk-card.open .hh-wk-chevron {
+  transform: rotate(180deg);
+}
+
+.hh-wk-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.hh-wk-dot {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+}
+
+/* expanded detail */
+.hh-wk-detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .38s cubic-bezier(.34, 1.3, .64, 1);
+}
+
+.hh-wk-card.open .hh-wk-detail {
+  max-height: 500px;
+}
+
+.hh-day-chips {
+  display: flex;
+  gap: 5px;
+  margin-top: 12px;
+  margin-bottom: 11px;
+}
+
+.hh-day-chip {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.hh-day-chip-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hh-day-chip-lbl {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--txt3);
+}
+
+.hh-day-chip-n {
+  font-size: 9px;
+  color: var(--txt3);
+  font-weight: 500;
+}
+
+.hh-habit-rows {
+  border-top: 1px solid var(--bord);
+  padding-top: 10px;
+}
+
+.hh-hr-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--bord);
+}
+
+.hh-hr-row:last-child {
+  border-bottom: none;
+}
+
+.hh-hr-ico {
+  font-size: 15px;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.hh-hr-name {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--txt);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hh-hr-track {
+  width: 78px;
+  height: 4px;
+  background: var(--bord);
+  border-radius: 2px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.hh-hr-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width .5s;
+}
+
+.hh-hr-pct {
+  font-size: 11px;
+  font-weight: 700;
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ─── Month calendar ───────────────────────────────────────────────────────── */
+.hh-cal-section {
+  margin-bottom: 18px;
+}
+
+.hh-cal-month {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--txt2);
+  margin-bottom: 8px;
+}
+
+.hh-cal-wrap {
+  background: var(--surf2);
+  border-radius: 14px;
+  padding: 13px;
+}
+
+.hh-cal-hdrs {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 4px;
+}
+
+.hh-cal-dh {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--txt3);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.hh-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.hh-cal-cell {
+  aspect-ratio: 1;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .15s;
+  position: relative;
+}
+
+.hh-cal-cell:hover {
+  transform: scale(1.12);
+  z-index: 2;
+}
+
+.cc0 { background: var(--surf2); color: var(--txt3); }
+.cc1 { background: #ddd9fd; color: #3c3489; }
+.cc2 { background: #c4c0f5; color: #3c3489; }
+.cc3 { background: #9b96ee; color: #fff; }
+.cc4 { background: #6d67e4; color: #fff; }
+.cc5 { background: var(--ind); color: #fff; }
+
+.dark .cc1 { background: #3c3489; color: #ddd9fd; }
+.dark .cc2 { background: #4f46e5; color: #c4c0f5; }
+.dark .cc3 { background: #6366f1; color: #fff; }
+.dark .cc4 { background: #818cf8; color: #fff; }
+.dark .cc5 { background: #a5b4fc; color: #1e1b4b; }
+
+.hh-cal-today {
+  outline: 2.5px solid var(--ind);
+  outline-offset: -1px;
+}
+
+.hh-tip {
+  position: absolute;
+  background: #1a1714;
+  color: #f0ede8;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 7px;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s;
+  z-index: 10;
+}
+
+.hh-tip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: #1a1714;
+}
+
+.hh-cal-cell:hover .hh-tip {
+  opacity: 1;
+}
+
+.hh-cal-legend {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.hh-cl {
+  font-size: 9.5px;
+  color: var(--txt3);
+}
+
+.hh-cl-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* ─── Insights ─────────────────────────────────────────────────────────────── */
+.hh-insight {
+  background: var(--ind-s);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 9px;
+  transition: background .3s;
+}
+
+.hh-insight:hover {
+  background: #e4e2fa;
+}
+
+.dark .hh-insight, [data-theme="dark"] .hh-insight {
+  background: #1e1c3a;
+}
+
+.dark .hh-insight:hover, [data-theme="dark"] .hh-insight:hover {
+  background: #252354;
+}
+
+.hh-ins-ico {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--ind);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hh-ins-ico svg {
+  width: 16px;
+  height: 16px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hh-ins-strong {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ind);
+  margin-bottom: 3px;
+}
+
+.hh-ins-txt {
+  font-size: 11.5px;
+  color: var(--ind-m);
+  line-height: 1.55;
+}
