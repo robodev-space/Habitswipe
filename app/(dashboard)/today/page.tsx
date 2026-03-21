@@ -21,16 +21,16 @@ export default function TodayPage() {
   // Stats
   const activeHabits = habits.filter(h => !h.isArchived)
   const total = activeHabits.length
-  
+
   // Real done logic depends on todayHabits from the store
   // We'll map through activeHabits and check if their ID is in todayHabits with status "COMPLETED"
-  const completedCount = activeHabits.filter(h => 
+  const completedCount = activeHabits.filter(h =>
     todayHabits.some(th => th.id === h.id && th.todayLog?.status === "DONE")
   ).length
 
   const pendingCount = total - completedCount
   const pct = total === 0 ? 0 : Math.round((completedCount / total) * 100)
-  
+
   const circ = 163.4
   const offset = total === 0 ? circ : circ - (circ * pct) / 100
 
@@ -56,7 +56,7 @@ export default function TodayPage() {
 
   const handleMoodSelect = async (emoji: string, label: string) => {
     setMood(label)
-    toast.success("Mood saved!")
+    toast.success(label)
     try {
       await fetch('/api/mood', {
         method: 'POST',
@@ -137,7 +137,7 @@ export default function TodayPage() {
             </button>
           ))}
         </div>
-        <div className="mood-txt" id="moodTxt">{mood ? `Logged: ${mood}` : 'Tap to log your energy for today'}</div>
+        <div className="mood-txt" id="moodTxt">{mood ? `${mood}` : 'Tap to log your energy for today'}</div>
       </div>
 
       {/* Stats strip */}
