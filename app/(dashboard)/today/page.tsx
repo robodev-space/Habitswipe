@@ -87,22 +87,27 @@ export default function TodayPage() {
       if (lastWelcome !== todayStr) {
         localStorage.setItem("lastWelcomeToast", todayStr)
         const userName = session?.user?.name || "Welcome back"
-        const userImage = session?.user?.image || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
-        
+
         toast.custom((t) => (
           <div
-            className={`${
-              t.visible ? 'animate-custom-enter' : 'animate-custom-leave'
-            } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+            className={`${t.visible ? 'animate-custom-enter' : 'animate-custom-leave'
+              } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
           >
             <div className="flex-1 w-0 p-4">
               <div className="flex items-start">
                 <div className="flex-shrink-0 pt-0.5">
-                  <img
-                    className="h-10 w-10 rounded-full object-cover"
-                    src={userImage}
-                    alt=""
-                  />
+                  {session?.user?.image ? (
+                    <img
+                      className="h-10 w-10 rounded-full object-cover"
+                      src={session.user.image}
+                      alt=""
+                    />
+                  ) : (
+                    <div className="s-av" style={{ width: "40px", height: "40px", fontSize: "16px" }}>
+                      {session?.user?.name?.[0]?.toUpperCase() ?? "U"}
+                      <div className="s-av-dot"></div>
+                    </div>
+                  )}
                 </div>
                 <div className="ml-3 flex-1">
                   <p className="text-sm font-medium text-gray-900">
@@ -127,7 +132,7 @@ export default function TodayPage() {
       }
     }
   }, [session])
-
+  console.log(session)
   return (
     <div className="tab active" id="tab-today">
       {/* Page Header */}

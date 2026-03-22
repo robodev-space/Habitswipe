@@ -134,11 +134,10 @@ export function HabitHistoryDrawer({ children }: { children: React.ReactNode }) 
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      {/* We align to the bottom via overriding Shadcn's fixed coords. The rest is fully isolated in .hh-drawer to match prototype */}
-      <DialogContent showCloseButton={false} className="!bottom-0 !top-auto !translate-y-0 !translate-x-0 !left-0 !right-0 p-0 border-none bg-transparent shadow-none max-w-none w-full sm:max-w-none flex items-end justify-center outline-none">
+      {/* We match the placement of the new add habit dialog */}
+      <DialogContent showCloseButton={false} className="p-0 border-none bg-transparent shadow-none max-w-none w-full sm:max-w-none flex items-center justify-center outline-none">
         
         <div className="hh-drawer">
-          <div className="hh-drawer-handle" onClick={() => setOpen(false)} />
 
           <div className="hh-drawer-head">
             <div className="hh-drawer-eyebrow">Your journey</div>
