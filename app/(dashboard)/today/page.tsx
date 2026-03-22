@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast"
 import { Confetti } from "@/components/shared/Confetti"
 import { AddHabitDialog } from "@/components/shared/AddHabitDialog"
 import { HabitHistoryDrawer } from "@/components/shared/HabitHistoryDrawer"
+import { MissedHabitsDrawer } from "@/components/shared/MissedHabitsDrawer"
 
 export default function TodayPage() {
   const { data: session } = useSession()
@@ -289,20 +290,38 @@ export default function TodayPage() {
       </div>
 
       {/* Missed */}
-      <div className="sh"><div className="st">Missed yesterday</div><div className="sl">See all →</div></div>
-      <div id="missedList">
-        <div className="missed-row" id="miss-0">
-          <div className="missed-ico">🏊</div>
-          <div className="missed-name">Swimming</div>
-          <div className="missed-tag">3d streak lost</div>
-          <button className="missed-add" onClick={() => toast('Swimming added to today!')}>+ Add</button>
+      <div className="today-card">
+        <div className="sec-row">
+          <div className="sec-lbl">Missed yesterday</div>
+          <MissedHabitsDrawer>
+            <button className="see-all-btn">
+              See all →
+              <svg viewBox="0 0 16 16"><path d="M4 8h8M9 5l3 3-3 3"/></svg>
+            </button>
+          </MissedHabitsDrawer>
         </div>
-        <div className="missed-row" id="miss-1">
-          <div className="missed-ico">☕</div>
-          <div className="missed-name">No coffee after 2pm</div>
-          <div className="missed-tag">1d streak lost</div>
-          <button className="missed-add" onClick={() => toast('Habit added!')}>+ Add</button>
+
+        <div className="m-row">
+          <div className="m-ico">🏊</div>
+          <div className="m-name">Swimming</div>
+          <div className="m-badge">3d streak lost</div>
+          <MissedHabitsDrawer>
+            <button className="m-add-btn">+ Add</button>
+          </MissedHabitsDrawer>
         </div>
+        <div className="m-row">
+          <div className="m-ico">☕</div>
+          <div className="m-name">No coffee after 2pm</div>
+          <div className="m-badge">1d streak lost</div>
+          <MissedHabitsDrawer>
+            <button className="m-add-btn">+ Add</button>
+          </MissedHabitsDrawer>
+        </div>
+        <MissedHabitsDrawer>
+          <div style={{ fontSize: "11.5px", color: "var(--txt3)", textAlign: "center", marginTop: "10px", cursor: "pointer", fontWeight: 500 }}>
+            + 3 more missed habits
+          </div>
+        </MissedHabitsDrawer>
       </div>
     </div>
   )
