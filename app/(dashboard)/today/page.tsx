@@ -7,14 +7,16 @@ import { toast } from "react-hot-toast"
 import { Confetti } from "@/components/shared/Confetti"
 import { AddHabitDialog } from "@/components/shared/AddHabitDialog"
 import { HabitHistoryDrawer } from "@/components/shared/HabitHistoryDrawer"
-import { MissedHabitsDrawer } from "@/components/shared/MissedHabitsDrawer"
+import { MissedHabitsDrawer, useMissedHabitsPreview } from "@/components/shared/MissedHabitsDrawer"
 
 export default function TodayPage() {
   const { data: session } = useSession()
   const { habits, todayHabits, swipeHabit, isLoading } = useHabits()
+  const { missedHabits, isLoading: missedIsLoading } = useMissedHabitsPreview()
   const [mood, setMood] = useState<string | null>(null)
   const [filterOn, setFilterOn] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
+  const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set())
 
   // ─── Greet & Date ───────────────────────────────────────────────────────────
   const h = new Date().getHours()
@@ -39,6 +41,8 @@ export default function TodayPage() {
 
   // ─── Handlers ───────────────────────────────────────────────────────────────
   const handleToggle = async (habitId: string) => {
+    if (togglingIds.has(habitId)) return
+    setTogglingIds(prev => new Set(prev).add(habitId))
     try {
       const isDone = todayHabits.some(th => th.id === habitId && th.todayLog?.status === "DONE")
       await swipeHabit(habitId, isDone ? "SKIPPED" : "DONE")
@@ -47,6 +51,8 @@ export default function TodayPage() {
       }
     } catch (e) {
       toast.error("Failed to update habit")
+    } finally {
+      setTogglingIds(prev => { const s = new Set(prev); s.delete(habitId); return s })
     }
   }
 
@@ -272,8 +278,23 @@ export default function TodayPage() {
                   e.stopPropagation()
                   handleToggle(habit.id)
                 }}
+                disabled={togglingIds.has(habit.id)}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                <svg viewBox="0 0 16 16"><path d="M3 8l3.5 3.5L13 4" /></svg>
+                {togglingIds.has(habit.id) ? (
+                  <span
+                    style={{
+                      width: 12, height: 12,
+                      border: '2px solid rgba(255,255,255,0.4)',
+                      borderTopColor: '#fff',
+                      borderRadius: '50%',
+                      display: 'inline-block',
+                      animation: 'btn-spin 0.65s linear infinite',
+                    }}
+                  />
+                ) : (
+                  <svg viewBox="0 0 16 16"><path d="M3 8l3.5 3.5L13 4" /></svg>
+                )}
               </button>
             </div>
           )
@@ -289,39 +310,66 @@ export default function TodayPage() {
         <cite>— Aristotle</cite>
       </div>
 
-      {/* Missed */}
+      {/* Missed yesterday — always visible */}
       <div className="today-card">
         <div className="sec-row">
           <div className="sec-lbl">Missed yesterday</div>
-          <MissedHabitsDrawer>
-            <button className="see-all-btn">
-              See all →
-              <svg viewBox="0 0 16 16"><path d="M4 8h8M9 5l3 3-3 3"/></svg>
-            </button>
-          </MissedHabitsDrawer>
+          {missedHabits.length > 0 && (
+            <MissedHabitsDrawer>
+              <button className="see-all-btn">
+                See all →
+                <svg viewBox="0 0 16 16"><path d="M4 8h8M9 5l3 3-3 3"/></svg>
+              </button>
+            </MissedHabitsDrawer>
+          )}
         </div>
 
-        <div className="m-row">
-          <div className="m-ico">🏊</div>
-          <div className="m-name">Swimming</div>
-          <div className="m-badge">3d streak lost</div>
-          <MissedHabitsDrawer>
-            <button className="m-add-btn">+ Add</button>
-          </MissedHabitsDrawer>
-        </div>
-        <div className="m-row">
-          <div className="m-ico">☕</div>
-          <div className="m-name">No coffee after 2pm</div>
-          <div className="m-badge">1d streak lost</div>
-          <MissedHabitsDrawer>
-            <button className="m-add-btn">+ Add</button>
-          </MissedHabitsDrawer>
-        </div>
-        <MissedHabitsDrawer>
-          <div style={{ fontSize: "11.5px", color: "var(--txt3)", textAlign: "center", marginTop: "10px", cursor: "pointer", fontWeight: 500 }}>
-            + 3 more missed habits
+        {missedIsLoading ? (
+          /* Loading skeleton */
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {[1, 2].map(i => (
+              <div key={i} className="m-row" style={{ opacity: 0.45, pointerEvents: 'none' }}>
+                <div className="m-ico" style={{ background: 'var(--surf2)' }} />
+                <div className="m-name" style={{ background: 'var(--surf2)', borderRadius: 6, height: 14, width: '40%' }} />
+              </div>
+            ))}
           </div>
-        </MissedHabitsDrawer>
+        ) : missedHabits.length === 0 ? (
+          /* Empty state */
+          <div style={{ textAlign: 'center', padding: '18px 0 6px' }}>
+            <div style={{ fontSize: 28, marginBottom: 8 }}>🎉</div>
+            <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--txt)', marginBottom: 4 }}>
+              No missed habits!
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--txt3)', lineHeight: 1.6 }}>
+              You were on fire yesterday — keep it up today.
+            </div>
+          </div>
+        ) : (
+          /* Habits preview */
+          <>
+            {missedHabits.slice(0, 2).map(h => (
+              <div key={h.id} className="m-row">
+                <div className="m-ico">{h.icon}</div>
+                <div className="m-name">{h.name}</div>
+                {h.streakLost > 0 && (
+                  <div className="m-badge">{h.streakLost}d streak lost</div>
+                )}
+                <MissedHabitsDrawer>
+                  <button className="m-add-btn">+ Add</button>
+                </MissedHabitsDrawer>
+              </div>
+            ))}
+
+            {missedHabits.length > 2 && (
+              <MissedHabitsDrawer>
+                <div style={{ fontSize: "11.5px", color: "var(--txt3)", textAlign: "center", marginTop: "10px", cursor: "pointer", fontWeight: 500 }}>
+                  + {missedHabits.length - 2} more missed habit{missedHabits.length - 2 !== 1 ? 's' : ''}
+                </div>
+              </MissedHabitsDrawer>
+            )}
+        </>
+        )}
       </div>
     </div>
   )

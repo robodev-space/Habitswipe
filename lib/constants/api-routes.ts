@@ -36,6 +36,7 @@ export const API_ROUTES = {
   HABITS: {
     BASE: `${BASE_URL}/api/habits`,
     BY_ID: (id: string) => `${BASE_URL}/api/habits/${id}`,
+    MISSED: `${BASE_URL}/api/habits/missed`,
   },
   LOGS: {
     BASE: `${BASE_URL}/api/logs`,
