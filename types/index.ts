@@ -27,6 +27,8 @@ export interface Habit {
   targetDays: number
   isArchived: boolean
   sortOrder: number
+  reminderTime: string | null   // e.g. "07:00"
+  emailReminders: boolean
   createdAt: Date
   updatedAt: Date
 }
@@ -77,6 +79,8 @@ export interface CreateHabitInput {
 export interface UpdateHabitInput extends Partial<CreateHabitInput> {
   isArchived?: boolean
   sortOrder?: number
+  reminderTime?: string | null
+  emailReminders?: boolean
 }
 
 export interface SwipeInput {

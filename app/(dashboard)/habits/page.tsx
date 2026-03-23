@@ -1,119 +1,41 @@
 "use client"
 
 import { useEffect, useState, useMemo } from "react"
-import { createPortal } from "react-dom"
-import { motion, AnimatePresence } from "framer-motion"
-import { X } from "lucide-react"
-import { HabitForm } from "@/components/habits/HabitForm"
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
 import { useHabits } from "@/hooks/useHabits"
 import { Skeleton } from "@/components/ui/Skeleton"
 import { AddHabitDialog } from "@/components/shared/AddHabitDialog"
-import type { HabitWithStats, CreateHabitInput } from "@/types"
-
-type Modal =
-  | { type: "create" }
-  | { type: "edit"; habit: HabitWithStats }
-  | null
-
-// ── Portal Modal ──────────────────────────────────────────────────────────────
-function HabitModal({
-  modal,
-  onClose,
-  onSubmit,
-}: {
-  modal: Modal
-  onClose: () => void
-  onSubmit: (data: CreateHabitInput) => Promise<void>
-}) {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-  
-  if (!modal || !mounted) return null
-
-  return createPortal(
-    <AnimatePresence>
-      <div
-        style={{
-          position: "fixed", top: 0, left: 0, width: "100%", height: "100%", zIndex: 9999,
-          display: "flex", alignItems: "center", justifyContent: "center", padding: "16px",
-          boxSizing: "border-box",
-        }}
-      >
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          onClick={onClose}
-          style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)" }}
-        />
-        <motion.div
-          initial={{ scale: 0.92, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.92, opacity: 0, y: 20 }}
-          transition={{ type: "spring", stiffness: 380, damping: 32 }}
-          onClick={(e) => e.stopPropagation()}
-          style={{
-            position: "relative", width: "100%", maxWidth: "480px", maxHeight: "90vh", overflowY: "auto",
-            borderRadius: "24px", zIndex: 1, backgroundColor: "rgb(var(--surface, 255,255,255))",
-            border: "1px solid rgb(var(--border, 230,230,230))", boxShadow: "0 25px 60px rgba(0,0,0,0.5)",
-          }}
-          className="bg-surf border-bord"
-        >
-          <div style={{ padding: "24px" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
-              <h2 className="text-[20px] font-bold text-txt" style={{ fontFamily: "var(--font-dm-serif)" }}>
-                {modal.type === "create" ? "New Habit" : "Edit Habit"}
-              </h2>
-              <button onClick={onClose} className="p-2 rounded-lg bg-transparent border-none cursor-pointer text-txt3 flex items-center justify-center">
-                <X size={20} />
-              </button>
-            </div>
-            <HabitForm
-              initialValues={modal.type === "edit" ? modal.habit : undefined}
-              onSubmit={onSubmit}
-              onCancel={onClose}
-              submitLabel={modal.type === "create" ? "Create Habit" : "Save Changes"}
-            />
-          </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>,
-    document.body
-  )
-}
+import type { HabitWithStats } from "@/types"
+import './habit.css'
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function HabitsPage() {
-  const { habits, isLoading, isInitialized, fetchHabits, createHabit, updateHabit, deleteHabit } = useHabits()
-  const [modal, setModal] = useState<Modal>(null)
-  const [mounted, setMounted] = useState(false)
+  const { habits, isLoading, fetchHabits, updateHabit, deleteHabit } = useHabits()
   const [filter, setFilter] = useState<"All" | "Daily" | "Weekly">("All")
 
-  useEffect(() => {
-    fetchHabits()
-    setMounted(true)
-  }, [])
+  // Edit dialog state
+  const [editingHabit, setEditingHabit] = useState<HabitWithStats | null>(null)
+  const [editOpen, setEditOpen] = useState(false)
 
-  async function handleCreate(data: CreateHabitInput) {
-    await createHabit(data)
-    setModal(null)
-  }
+  useEffect(() => { fetchHabits() }, [])
 
-  async function handleEdit(data: CreateHabitInput) {
-    if (modal?.type !== "edit") return
-    await updateHabit(modal.habit.id, data)
-    setModal(null)
-  }
-
-  const handleSubmit = modal?.type === "create" ? handleCreate : handleEdit
-
-  const activeHabits = habits.filter(h => !h.isArchived)
-  const archivedHabits = habits.filter(h => h.isArchived)
+  const activeHabits   = habits.filter(h => !h.isArchived)
+  const archivedHabits = habits.filter(h =>  h.isArchived)
 
   const filteredHabits = useMemo(() => {
     if (filter === "All") return activeHabits
     return activeHabits.filter(h => h.frequency === filter.toUpperCase())
   }, [activeHabits, filter])
 
-  // Mock colors matching HTML
+  // Open the edit dialog for a specific habit
+  function openEdit(habit: HabitWithStats) {
+    setEditingHabit(habit)
+    setEditOpen(true)
+  }
+
+  // Visual accent colors (card glow / icon bg)
   const colors = ["#10b981", "#6366f1", "#a855f7", "#f97316", "#3b82f6", "#eab308"]
-  const bgs = ["#d1fae5", "#eef2ff", "#fdf4ff", "#fff7ed", "#eff6ff", "#fef9c3"]
+  const bgs    = ["#d1fae5", "#eef2ff", "#fdf4ff", "#fff7ed", "#eff6ff", "#fef9c3"]
 
   return (
     <>
@@ -124,7 +46,9 @@ export default function HabitsPage() {
             <div className="pd">Your habits</div>
             <div className="pt">Build your <em>routine</em></div>
             <div className="ps">
-              {isLoading ? "Loading..." : `${activeHabits.length} active habit${activeHabits.length !== 1 ? 's' : ''} · managing well`}
+              {isLoading
+                ? "Loading..."
+                : `${activeHabits.length} active habit${activeHabits.length !== 1 ? 's' : ''} · managing well`}
             </div>
           </div>
           <AddHabitDialog>
@@ -134,14 +58,14 @@ export default function HabitsPage() {
           </AddHabitDialog>
         </div>
 
-        {/* Filter */}
+        {/* Filter pills */}
         <div className="sh">
           <div className="st">Active · {activeHabits.length}</div>
           <div className="filter-pills">
             {(["All", "Daily", "Weekly"] as const).map(f => (
-              <div 
+              <div
                 key={f}
-                className={`pill ${filter === f ? 'on' : 'off'}`} 
+                className={`pill ${filter === f ? 'on' : 'off'}`}
                 onClick={() => setFilter(f)}
               >
                 {f}
@@ -149,28 +73,70 @@ export default function HabitsPage() {
             ))}
           </div>
         </div>
-        <div style={{ marginBottom: 16 }}></div>
+        <div style={{ marginBottom: 16 }} />
 
-        {/* Grid */}
+        {/* Habit Grid */}
         <div className="h-grid">
           {isLoading ? (
-            Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-[148px] rounded-[16px]" />)
+            Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-[148px] rounded-[16px]" />
+            ))
           ) : (
             <>
               {filteredHabits.map((habit, i) => {
                 const color = colors[i % colors.length]
-                const bg = bgs[i % bgs.length]
+                const bg    = bgs[i % bgs.length]
                 return (
-                  <div className="hc" key={habit.id} onClick={() => setModal({ type: "edit", habit })}>
-                    <div className="hc-glow" style={{ background: color }}></div>
+                  <div className="hc" key={habit.id}>
+                    <div className="hc-glow" style={{ background: color }} />
                     <div className="hc-top">
                       <div className="hc-icon" style={{ background: bg }}>{habit.icon || "✨"}</div>
-                      <div className="hc-menu">···</div>
+
+                      {/* Three-dot dropdown */}
+                      <DropdownMenu.Root>
+                        <DropdownMenu.Trigger asChild>
+                          <button
+                            className="hc-menu-btn"
+                            onClick={(e) => e.stopPropagation()}
+                            aria-label="Habit options"
+                          >
+                            ···
+                          </button>
+                        </DropdownMenu.Trigger>
+
+                        <DropdownMenu.Portal>
+                          <DropdownMenu.Content
+                            className="hc-dropdown-content"
+                            align="end"
+                            sideOffset={6}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {/* ✏️ Edit — opens AddHabitDialog in edit mode */}
+                            <DropdownMenu.Item
+                              className="hc-dd-item"
+                              onSelect={() => openEdit(habit)}
+                            >
+                              <span className="hc-dd-icon">✏️</span>
+                              Edit habit
+                            </DropdownMenu.Item>
+
+                            {/* 🗑️ Delete */}
+                            <DropdownMenu.Item
+                              className="hc-dd-item hc-dd-item--danger"
+                              onSelect={() => deleteHabit(habit.id)}
+                            >
+                              <span className="hc-dd-icon">🗑️</span>
+                              Delete
+                            </DropdownMenu.Item>
+                          </DropdownMenu.Content>
+                        </DropdownMenu.Portal>
+                      </DropdownMenu.Root>
                     </div>
+
                     <div className="hc-name">{habit.name}</div>
                     <div className="hc-freq capitalize">{habit.frequency.toLowerCase()}</div>
                     <div className="hc-bar-t">
-                      <div className="hc-bar-f" style={{ width: `${habit.completionRate}%`, background: color }}></div>
+                      <div className="hc-bar-f" style={{ width: `${habit.completionRate}%`, background: color }} />
                     </div>
                     <div className="hc-foot">
                       <span className="hc-str">🔥 {habit.currentStreak || 0}d</span>
@@ -179,6 +145,8 @@ export default function HabitsPage() {
                   </div>
                 )
               })}
+
+              {/* Add new card */}
               <AddHabitDialog>
                 <div className="hc-add">
                   <div className="hc-add-ico">+</div>
@@ -189,27 +157,40 @@ export default function HabitsPage() {
           )}
         </div>
 
-        {/* Archived */}
+        {/* Archived section */}
         {archivedHabits.length > 0 && (
           <>
-            <div className="sh"><div className="st">Archived · {archivedHabits.length}</div><div className="sl">View all →</div></div>
+            <div className="sh">
+              <div className="st">Archived · {archivedHabits.length}</div>
+              <div className="sl">View all →</div>
+            </div>
             {archivedHabits.slice(0, 3).map(habit => (
               <div className="arch-row mb-2" key={habit.id}>
                 <div className="arch-ico">{habit.icon || "📦"}</div>
                 <div className="arch-name">{habit.name}</div>
                 <div className="arch-date">Archived recently</div>
-                <button className="missed-add" onClick={() => updateHabit(habit.id, { isArchived: false })}>Restore</button>
+                <button
+                  className="missed-add"
+                  onClick={() => updateHabit(habit.id, { isArchived: false })}
+                >
+                  Restore
+                </button>
               </div>
             ))}
           </>
         )}
       </div>
 
-      {mounted && modal && (
-        <HabitModal
-          modal={modal}
-          onClose={() => setModal(null)}
-          onSubmit={handleSubmit}
+      {/* Edit habit dialog — rendered once outside the grid, controlled via state */}
+      {editingHabit && (
+        <AddHabitDialog
+          editHabit={editingHabit}
+          open={editOpen}
+          onOpenChange={(v) => {
+            setEditOpen(v)
+            if (!v) setTimeout(() => setEditingHabit(null), 300)
+          }}
+          onSuccess={fetchHabits}
         />
       )}
     </>

@@ -5,61 +5,125 @@ import { useRouter } from "next/navigation"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Plus } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
+import type { HabitWithStats } from "@/types"
+import { API_ROUTES } from "@/lib/constants/api-routes"
 import "./add-habit.css"
 
+
 const ICONS = [
-  '⚡','🔥','🏃','💪','📚','🧘','🎯','✅',
-  '💧','🌅','🎵','🍎','🧠','💤','🚴','✍️',
-  '🏋️','🌿','☕','🎨','🧩','🎧','🌊','🏊',
+  '⚡', '🔥', '🏃', '💪', '📚', '🧘', '🎯', '✅',
+  '💧', '🌅', '🎵', '🍎', '🧠', '💤', '🚴', '✍️',
+  '🏋️', '🌿', '☕', '🎨', '🧩', '🎧', '🌊', '🏊',
 ]
 
 const COLORS = [
-  {hex:'#5b50e8',bg:'#eeedfb'},{hex:'#8b5cf6',bg:'#f5f3ff'},{hex:'#a855f7',bg:'#fdf4ff'},
-  {hex:'#ec4899',bg:'#fdf2f8'},{hex:'#ef4444',bg:'#fef2f2'},{hex:'#f97316',bg:'#fff7ed'},
-  {hex:'#f59e0b',bg:'#fffbeb'},{hex:'#eab308',bg:'#fefce8'},{hex:'#84cc16',bg:'#f7fee7'},
-  {hex:'#22c55e',bg:'#f0fdf4'},{hex:'#10b981',bg:'#ecfdf5'},{hex:'#14b8a6',bg:'#f0fdfa'},
-  {hex:'#06b6d4',bg:'#ecfeff'},{hex:'#3b82f6',bg:'#eff6ff'},{hex:'#0ea5e9',bg:'#f0f9ff'},
-  {hex:'#6366f1',bg:'#eef2ff'},
+  { hex: '#5b50e8', bg: '#eeedfb' }, { hex: '#8b5cf6', bg: '#f5f3ff' }, { hex: '#a855f7', bg: '#fdf4ff' },
+  { hex: '#ec4899', bg: '#fdf2f8' }, { hex: '#ef4444', bg: '#fef2f2' }, { hex: '#f97316', bg: '#fff7ed' },
+  { hex: '#f59e0b', bg: '#fffbeb' }, { hex: '#eab308', bg: '#fefce8' }, { hex: '#84cc16', bg: '#f7fee7' },
+  { hex: '#22c55e', bg: '#f0fdf4' }, { hex: '#10b981', bg: '#ecfdf5' }, { hex: '#14b8a6', bg: '#f0fdfa' },
+  { hex: '#06b6d4', bg: '#ecfeff' }, { hex: '#3b82f6', bg: '#eff6ff' }, { hex: '#0ea5e9', bg: '#f0f9ff' },
+  { hex: '#6366f1', bg: '#eef2ff' },
 ]
 
-const WEEK_DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+/** Resolve a hex string to a COLORS entry; fallback to COLORS[0] */
+function resolveColor(hex?: string) {
+  if (!hex) return COLORS[0]
+  return COLORS.find(c => c.hex.toLowerCase() === hex.toLowerCase()) ?? COLORS[0]
+}
 
 const TIME_SLOTS = [
-  { id: "morning",   emoji: "🌅", name: "Morning",   range: "6 – 10 am",  defaultTime: "07:00" },
-  { id: "afternoon", emoji: "☀️",  name: "Afternoon", range: "12 – 4 pm",  defaultTime: "12:00" },
-  { id: "evening",   emoji: "🌙", name: "Evening",   range: "6 – 10 pm",  defaultTime: "19:00" },
-  { id: "night",     emoji: "🌌", name: "Night",     range: "10 pm – 6 am", defaultTime: "23:00" },
+  { id: "morning", emoji: "🌅", name: "Morning", range: "6 – 10 am", defaultTime: "07:00" },
+  { id: "afternoon", emoji: "☀️", name: "Afternoon", range: "12 – 4 pm", defaultTime: "12:00" },
+  { id: "evening", emoji: "🌙", name: "Evening", range: "6 – 10 pm", defaultTime: "19:00" },
+  { id: "night", emoji: "🌌", name: "Night", range: "10 pm – 6 am", defaultTime: "23:00" },
 ] as const
 
-export function AddHabitDialog({ children }: { children: React.ReactNode }) {
+interface AddHabitDialogProps {
+  children?: React.ReactNode
+  /** When provided the dialog opens in EDIT mode */
+  editHabit?: HabitWithStats | null
+  /** Controlled open state (for edit mode where there's no trigger child) */
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  /** Called after a successful save in edit mode */
+  onSuccess?: () => void
+}
+
+export function AddHabitDialog({
+  children,
+  editHabit,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+  onSuccess,
+}: AddHabitDialogProps) {
   const router = useRouter()
-  const [open, setOpen] = useState(false)
-  
-  const [name, setName] = useState('')
-  const [icon, setIcon] = useState(ICONS[0])
-  const [color, setColor] = useState(COLORS[0])
-  const [freq, setFreq] = useState<"DAILY" | "WEEKLY">("DAILY")
+  const isEditMode = !!editHabit
+
+  // Support both controlled (edit) and uncontrolled (create) open state
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen
+  const setOpen = (v: boolean) => {
+    setInternalOpen(v)
+    controlledOnOpenChange?.(v)
+  }
+
+  const [name, setName] = useState(editHabit?.name ?? '')
+  const [icon, setIcon] = useState(editHabit?.icon ?? ICONS[0])
+  const [color, setColor] = useState(resolveColor(editHabit?.color))
+  const [freq, setFreq] = useState<"DAILY" | "WEEKLY">(editHabit?.frequency ?? "DAILY")
   const [days, setDays] = useState<Set<string>>(new Set(WEEK_DAYS))
 
-  const [timeSlot, setTimeSlot] = useState("morning")
-  const [reminderTime, setReminderTime] = useState("07:00")
-  const [emailReminders, setEmailReminders] = useState(true)
-  const [isNightAdded, setIsNightAdded] = useState(false)
+  /** Derive initial time slot from a time string like "07:00" */
+  function timeToSlot(t: string | null | undefined): string {
+    if (!t) return 'morning'
+    const [h] = t.split(':').map(Number)
+    if (h >= 6 && h < 12) return 'morning'
+    if (h >= 12 && h < 18) return 'afternoon'
+    if (h >= 18 && h < 22) return 'evening'
+    return 'night'
+  }
+
+  const [timeSlot, setTimeSlot] = useState(() => timeToSlot(editHabit?.reminderTime))
+  const [reminderTime, setReminderTime] = useState(editHabit?.reminderTime ?? '07:00')
+  const [emailReminders, setEmailReminders] = useState(editHabit?.emailReminders ?? true)
+  const [isNightAdded, setIsNightAdded] = useState(() =>
+    editHabit?.reminderTime ? timeToSlot(editHabit.reminderTime) === 'night' : false
+  )
   const [showNightWarning, setShowNightWarning] = useState(false)
-  
+
   const [nameErr, setNameErr] = useState('')
   const [daysErr, setDaysErr] = useState('')
   const [isShake, setIsShake] = useState(false)
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
 
   const resetForm = () => {
-    setName('')
-    setIcon(ICONS[0])
-    setColor(COLORS[0])
-    setFreq("DAILY")
-    setDays(new Set(WEEK_DAYS))
+    if (isEditMode && editHabit) {
+      // In edit mode: reset back to habit's saved values
+      setName(editHabit.name)
+      setIcon(editHabit.icon ?? ICONS[0])
+      setColor(resolveColor(editHabit.color))
+      setFreq(editHabit.frequency)
+      setDays(new Set(WEEK_DAYS))
+      const slot = timeToSlot(editHabit.reminderTime)
+      setTimeSlot(slot)
+      setReminderTime(editHabit.reminderTime ?? '07:00')
+      setEmailReminders(editHabit.emailReminders ?? true)
+      setIsNightAdded(slot === 'night')
+    } else {
+      setName('')
+      setIcon(ICONS[0])
+      setColor(COLORS[0])
+      setFreq('DAILY')
+      setDays(new Set(WEEK_DAYS))
+      setTimeSlot('morning')
+      setReminderTime('07:00')
+      setEmailReminders(true)
+      setIsNightAdded(false)
+    }
     setNameErr('')
     setDaysErr('')
     setIsShake(false)
@@ -79,6 +143,26 @@ export function AddHabitDialog({ children }: { children: React.ReactNode }) {
       else setTimeSlot("custom")
     }
   }
+
+  // When editHabit changes (different habit selected), re-seed the form
+  useEffect(() => {
+    if (open && isEditMode && editHabit) {
+      setName(editHabit.name)
+      setIcon(editHabit.icon ?? ICONS[0])
+      setColor(resolveColor(editHabit.color))
+      setFreq(editHabit.frequency)
+      setDays(new Set(WEEK_DAYS))
+      const slot = timeToSlot(editHabit.reminderTime)
+      setTimeSlot(slot)
+      setReminderTime(editHabit.reminderTime ?? '07:00')
+      setEmailReminders(editHabit.emailReminders ?? true)
+      setIsNightAdded(slot === 'night')
+      setNameErr('')
+      setDaysErr('')
+      setIsSuccess(false)
+      setIsSubmitting(false)
+    }
+  }, [open, editHabit?.id])
 
   useEffect(() => {
     if (!open) {
@@ -144,35 +228,52 @@ export function AddHabitDialog({ children }: { children: React.ReactNode }) {
     }
 
     setIsSubmitting(true)
-    
+
     try {
-      const res = await fetch("/api/habits", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(),
-          icon,
-          color: color.hex,
-          frequency: freq,
-          targetDays: freq === "DAILY" ? 7 : days.size,
-          reminderTime,
-          emailReminders,
-        }),
-      })
+      let res: Response
+
+      if (isEditMode && editHabit) {
+        // ── EDIT MODE: PATCH existing habit ───────────────────────────────
+        res = await fetch(API_ROUTES.HABITS.BY_ID(editHabit.id), {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name.trim(),
+            icon,
+            color: color.hex,
+            frequency: freq,
+            targetDays: freq === 'DAILY' ? 7 : days.size,
+            reminderTime,
+            emailReminders,
+          }),
+        })
+      } else {
+        // ── CREATE MODE: POST new habit ────────────────────────────────────
+        res = await fetch(API_ROUTES.HABITS.BASE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name.trim(),
+            icon,
+            color: color.hex,
+            frequency: freq,
+            targetDays: freq === 'DAILY' ? 7 : days.size,
+            reminderTime,
+            emailReminders,
+          }),
+        })
+      }
 
       if (!res.ok) {
-        throw new Error("Failed to create habit")
+        const json = await res.json().catch(() => ({}))
+        throw new Error(json.error ?? (isEditMode ? 'Failed to update habit' : 'Failed to create habit'))
       }
 
       setIsSuccess(true)
       spawnConfetti()
-      
-      // refresh parent routes automatically before closing!
       router.refresh()
-
-      setTimeout(() => {
-        setOpen(false)
-      }, 1600)
+      onSuccess?.()
+      setOpen(false)
     } catch (err) {
       console.error(err)
       setIsSubmitting(false)
@@ -183,19 +284,20 @@ export function AddHabitDialog({ children }: { children: React.ReactNode }) {
   const daysArr = Array.from(days)
   const freqText =
     freq === 'DAILY' ? 'Every day' :
-    daysArr.length === 7 ? 'Every day' :
-    daysArr.length === 1 ? daysArr[0] :
-    daysArr.length <= 3 ? daysArr.join(', ') :
-    `${daysArr.length} days/week`
+      daysArr.length === 7 ? 'Every day' :
+        daysArr.length === 1 ? daysArr[0] :
+          daysArr.length <= 3 ? daysArr.join(', ') :
+            `${daysArr.length} days/week`
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
-      {/* We use showCloseButton={false} to rely on our custom Cancel button, and strip out Shadcn padding to use raw design */}
+      {/* Only render a trigger in create (uncontrolled) mode */}
+      {children && !isEditMode && (
+        <DialogTrigger asChild>{children}</DialogTrigger>
+      )}
+      {/* We use showCloseButton={false} to rely on our custom Cancel button */}
       <DialogContent showCloseButton={false} className="p-0 border-none bg-transparent shadow-none max-w-none w-full sm:max-w-none flex items-center justify-center outline-none">
-        
+
         {/* Night Warning Modal */}
         <AnimatePresence>
           {showNightWarning && (
@@ -241,9 +343,15 @@ export function AddHabitDialog({ children }: { children: React.ReactNode }) {
           <div className="ah-dialog-accent" style={{ background: `linear-gradient(90deg, transparent, ${color.hex}, transparent)` }}></div>
 
           <div className="ah-dialog-scroll">
-            {/* Header */}
-            <div className="ah-eyebrow" style={{ color: color.hex }}>New habit</div>
-            <div className="ah-title">Build something <em style={{ color: color.hex }}>lasting</em></div>
+            {/* Header — changes based on mode */}
+            <div className="ah-eyebrow" style={{ color: color.hex }}>
+              {isEditMode ? 'Edit habit' : 'New habit'}
+            </div>
+            <div className="ah-title">
+              {isEditMode
+                ? <>Refine your <em style={{ color: color.hex }}>routine</em></>
+                : <>Build something <em style={{ color: color.hex }}>lasting</em></>}
+            </div>
 
             {/* Live preview */}
             <div className="ah-preview">
@@ -320,7 +428,7 @@ export function AddHabitDialog({ children }: { children: React.ReactNode }) {
                       onClick={() => setColor(c)}
                     >
                       <div className="ck" style={{ display: isActive ? 'flex' : 'none' }}>
-                        <svg viewBox="0 0 13 10"><path d="M1.5 5L5 8.5L11.5 1.5"/></svg>
+                        <svg viewBox="0 0 13 10"><path d="M1.5 5L5 8.5L11.5 1.5" /></svg>
                       </div>
                       <div className="ring" style={{ borderColor: isActive ? c.hex : 'transparent' }}></div>
                     </div>
@@ -333,15 +441,15 @@ export function AddHabitDialog({ children }: { children: React.ReactNode }) {
             <div className="ah-freq-section">
               <div className="ah-sec-lbl">Frequency</div>
               <div className="ah-freq-tray">
-                <button 
-                  className={`ah-freq-btn ${freq === "DAILY" ? "sel" : ""}`} 
+                <button
+                  className={`ah-freq-btn ${freq === "DAILY" ? "sel" : ""}`}
                   onClick={() => { setFreq("DAILY"); setDaysErr("") }}
                 >
                   <div className="fbg" style={{ background: color.hex, opacity: freq === "DAILY" ? 1 : 0 }}></div>
                   <span style={{ position: "relative" }}>Every day</span>
                 </button>
-                <button 
-                  className={`ah-freq-btn ${freq === "WEEKLY" ? "sel" : ""}`} 
+                <button
+                  className={`ah-freq-btn ${freq === "WEEKLY" ? "sel" : ""}`}
                   onClick={() => setFreq("WEEKLY")}
                 >
                   <div className="fbg" style={{ background: color.hex, opacity: freq === "WEEKLY" ? 1 : 0 }}></div>
@@ -383,7 +491,7 @@ export function AddHabitDialog({ children }: { children: React.ReactNode }) {
               <div className="ah-days-err">{daysErr}</div>
             </div>
 
-            {/* Reminders section imported from Onboarding prototype */}
+            {/* Reminders — shown in both create and edit mode */}
             <div className="ah-remind-section">
               <div className="ah-sec-lbl">Best time of day</div>
               <div className="ah-time-grid">
@@ -462,14 +570,20 @@ export function AddHabitDialog({ children }: { children: React.ReactNode }) {
           {/* Footer */}
           <div className="ah-dialog-footer">
             <button className="ah-btn-cancel" onClick={() => setOpen(false)} disabled={isSubmitting}>Cancel</button>
-            <button 
-              className={`ah-btn-submit ${isSuccess ? "ah-pop" : ""}`} 
+            <button
+              className={`ah-btn-submit ${isSuccess ? "ah-pop" : ""}`}
               onClick={handleSubmit}
               disabled={isSubmitting}
               style={{ background: isSuccess ? "#10b981" : color.hex }}
             >
               <div className="shine"></div>
-              <span>{isSuccess ? "✓ Habit created!" : "Create habit →"}</span>
+              <span>
+                {isSuccess
+                  ? (isEditMode ? '✓ Saved!' : '✓ Habit created!')
+                  : isSubmitting
+                    ? (isEditMode ? 'Saving…' : 'Creating…')
+                    : (isEditMode ? 'Save changes →' : 'Create habit →')}
+              </span>
             </button>
           </div>
 

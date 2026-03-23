@@ -1,5 +1,6 @@
 // app/api/habits/[id]/route.ts
 // ─────────────────────────────────────────────────────────────────────────────
+// GET    /api/habits/:id — Fetch a single habit with today's log + stats
 // PATCH  /api/habits/:id — Update habit (name, icon, color, archive, reorder)
 // DELETE /api/habits/:id — Permanently delete habit + all its logs
 // ─────────────────────────────────────────────────────────────────────────────
@@ -9,6 +10,7 @@ import { getServerSession } from "next-auth"
 import { z } from "zod"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { todayString } from "@/lib/utils"
 
 type Params = { params: { id: string } }
 
@@ -17,6 +19,45 @@ async function getOwnedHabit(habitId: string, userId: string) {
   const habit = await prisma.habit.findUnique({ where: { id: habitId } })
   if (!habit || habit.userId !== userId) return null
   return habit
+}
+
+// ── GET — Fetch single habit ─────────────────────────────────────────────────
+export async function GET(_req: Request, { params }: Params) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const habit = await getOwnedHabit(params.id, session.user.id)
+  if (!habit) {
+    return NextResponse.json({ error: "Habit not found" }, { status: 404 })
+  }
+
+  // Fetch with logs for stats calculation
+  const habitWithLogs = await prisma.habit.findUnique({
+    where: { id: params.id },
+    include: {
+      logs: {
+        orderBy: { date: "desc" },
+        take: 90,
+      },
+    },
+  })
+
+  const today = todayString()
+  const todayLog = habitWithLogs?.logs.find(
+    (l) => new Date(l.date).toISOString().slice(0, 10) === today
+  ) ?? null
+
+  return NextResponse.json({
+    data: {
+      ...habitWithLogs,
+      todayLog,
+      currentStreak: 0,
+      longestStreak: 0,
+      completionRate: 0,
+    },
+  })
 }
 
 // ── PATCH — Update habit ──────────────────────────────────────────────────────
@@ -28,6 +69,8 @@ const updateSchema = z.object({
   targetDays: z.number().min(1).max(7).optional(),
   isArchived: z.boolean().optional(),
   sortOrder: z.number().optional(),
+  reminderTime: z.string().nullable().optional(),   // e.g. "07:00" or null to clear
+  emailReminders: z.boolean().optional(),
 })
 
 export async function PATCH(req: Request, { params }: Params) {
