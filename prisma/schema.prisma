@@ -89,6 +89,19 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
+// ─── OTP (Sign-up / Password Reset) ──────────────────────────────────────────
+model Otp {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  code      String
+  name      String?  // Store pending user name
+  password  String?  // Store pending hashed password
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("otps")
+}
+
 // ─── HABIT ───────────────────────────────────────────────────────────────────
 // A habit belongs to one user. Frequency controls which days it appears.
 model Habit {
