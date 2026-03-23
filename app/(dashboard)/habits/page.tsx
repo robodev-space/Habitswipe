@@ -2,9 +2,11 @@
 
 import { useEffect, useState, useMemo } from "react"
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
+import { Trash2, Pencil } from "lucide-react"
 import { useHabits } from "@/hooks/useHabits"
 import { Skeleton } from "@/components/ui/Skeleton"
 import { AddHabitDialog } from "@/components/shared/AddHabitDialog"
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
 import type { HabitWithStats } from "@/types"
 import './habit.css'
 
@@ -17,25 +19,48 @@ export default function HabitsPage() {
   const [editingHabit, setEditingHabit] = useState<HabitWithStats | null>(null)
   const [editOpen, setEditOpen] = useState(false)
 
+  // Delete confirm state
+  const [deletingHabit, setDeletingHabit] = useState<HabitWithStats | null>(null)
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+
   useEffect(() => { fetchHabits() }, [])
 
-  const activeHabits   = habits.filter(h => !h.isArchived)
-  const archivedHabits = habits.filter(h =>  h.isArchived)
+  const activeHabits = habits.filter(h => !h.isArchived)
+  const archivedHabits = habits.filter(h => h.isArchived)
 
   const filteredHabits = useMemo(() => {
     if (filter === "All") return activeHabits
     return activeHabits.filter(h => h.frequency === filter.toUpperCase())
   }, [activeHabits, filter])
 
-  // Open the edit dialog for a specific habit
+  // Open edit dialog for a specific habit
   function openEdit(habit: HabitWithStats) {
     setEditingHabit(habit)
     setEditOpen(true)
   }
 
+  // Ask for confirmation before deleting
+  function confirmDelete(habit: HabitWithStats) {
+    setDeletingHabit(habit)
+    setDeleteOpen(true)
+  }
+
+  // Execute delete after confirmation
+  async function handleDelete() {
+    if (!deletingHabit) return
+    setIsDeleting(true)
+    try {
+      await deleteHabit(deletingHabit.id)
+      setDeleteOpen(false)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
   // Visual accent colors (card glow / icon bg)
   const colors = ["#10b981", "#6366f1", "#a855f7", "#f97316", "#3b82f6", "#eab308"]
-  const bgs    = ["#d1fae5", "#eef2ff", "#fdf4ff", "#fff7ed", "#eff6ff", "#fef9c3"]
+  const bgs = ["#d1fae5", "#eef2ff", "#fdf4ff", "#fff7ed", "#eff6ff", "#fef9c3"]
 
   return (
     <>
@@ -85,7 +110,7 @@ export default function HabitsPage() {
             <>
               {filteredHabits.map((habit, i) => {
                 const color = colors[i % colors.length]
-                const bg    = bgs[i % bgs.length]
+                const bg = bgs[i % bgs.length]
                 return (
                   <div className="hc" key={habit.id}>
                     <div className="hc-glow" style={{ background: color }} />
@@ -111,21 +136,21 @@ export default function HabitsPage() {
                             sideOffset={6}
                             onClick={(e) => e.stopPropagation()}
                           >
-                            {/* ✏️ Edit — opens AddHabitDialog in edit mode */}
+                            {/* ✏️ Edit */}
                             <DropdownMenu.Item
                               className="hc-dd-item"
                               onSelect={() => openEdit(habit)}
                             >
-                              <span className="hc-dd-icon">✏️</span>
+                              <span className="hc-dd-icon"><Pencil size={14} /></span>
                               Edit habit
                             </DropdownMenu.Item>
 
-                            {/* 🗑️ Delete */}
+                            {/* Delete — opens confirm */}
                             <DropdownMenu.Item
                               className="hc-dd-item hc-dd-item--danger"
-                              onSelect={() => deleteHabit(habit.id)}
+                              onSelect={() => confirmDelete(habit)}
                             >
-                              <span className="hc-dd-icon">🗑️</span>
+                              <span className="hc-dd-icon"><Trash2 size={14} /></span>
                               Delete
                             </DropdownMenu.Item>
                           </DropdownMenu.Content>
@@ -181,7 +206,7 @@ export default function HabitsPage() {
         )}
       </div>
 
-      {/* Edit habit dialog — rendered once outside the grid, controlled via state */}
+      {/* ── Edit habit dialog ─────────────────────────────────────────────────── */}
       {editingHabit && (
         <AddHabitDialog
           editHabit={editingHabit}
@@ -193,6 +218,23 @@ export default function HabitsPage() {
           onSuccess={fetchHabits}
         />
       )}
+
+      {/* ── Delete confirmation dialog ────────────────────────────────────────── */}
+      <ConfirmDialog
+        open={deleteOpen}
+        onOpenChange={(v) => {
+          setDeleteOpen(v)
+          if (!v) setTimeout(() => setDeletingHabit(null), 300)
+        }}
+        variant="danger"
+        icon={<Trash2 size={22} strokeWidth={2} color="#ef4444" />}
+        title={`Delete "${deletingHabit?.name}"?`}
+        description="This will permanently delete the habit and all its history. This action cannot be undone."
+        confirmLabel="Yes, delete"
+        cancelLabel="Keep it"
+        isLoading={isDeleting}
+        onConfirm={handleDelete}
+      />
     </>
   )
 }

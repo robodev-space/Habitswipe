@@ -1,0 +1,158 @@
+/* components/shared/confirm-dialog.css
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Styles for the ConfirmDialog component.
+ * Design mirrors the "night warning" modal inside AddHabitDialog.
+ * ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Overlay stack ─────────────────────────────────────────────────────────── */
+.cd-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.cd-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ── Card ──────────────────────────────────────────────────────────────────── */
+.cd-card {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  background: var(--surf, #fff);
+  border-radius: 28px;
+  padding: 28px 24px 24px;
+  box-shadow:
+    0 4px 6px -1px rgba(0,0,0,.06),
+    0 24px 60px rgba(0,0,0,.22);
+  border: 1px solid var(--bord, #ede9e3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* ── Icon circle ───────────────────────────────────────────────────────────── */
+.cd-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  flex-shrink: 0;
+}
+
+/* The span wraps whatever ReactNode (Lucide SVG) is passed as icon */
+.cd-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ── Text ──────────────────────────────────────────────────────────────────── */
+.cd-title {
+  font-family: var(--font-dm-serif, 'DM Serif Display', Georgia, serif);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--txt, #1a1714);
+  line-height: 1.2;
+  margin: 0 0 10px;
+}
+
+.cd-desc {
+  font-size: 13.5px;
+  color: var(--txt2, #6b6560);
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────────────── */
+.cd-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.cd-btn {
+  height: 46px;
+  border-radius: 14px;
+  border: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-inter, 'DM Sans', sans-serif);
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.cd-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cd-btn-cancel {
+  background: var(--surf2, #f5f3ef);
+  color: var(--txt2, #6b6560);
+  border: 1px solid var(--bord, #ede9e3);
+}
+
+.cd-btn-cancel:hover:not(:disabled) {
+  color: var(--txt, #1a1714);
+  border-color: var(--txt3, #b0a9a0);
+}
+
+.cd-btn-confirm {
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.cd-btn-confirm::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.15), rgba(255,255,255,0));
+  transform: translateX(-100%);
+  transition: transform 0s;
+}
+
+.cd-btn-confirm:hover:not(:disabled)::after {
+  transform: translateX(100%);
+  transition: transform 0.55s;
+}
+
+.cd-btn-confirm:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* ── Loading spinner ───────────────────────────────────────────────────────── */
+@keyframes cd-spin {
+  to { transform: rotate(360deg); }
+}
+
+.cd-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: cd-spin 0.65s linear infinite;
+  flex-shrink: 0;
+}
