@@ -7,8 +7,10 @@ import { useTheme } from "next-themes"
 import { useState, useEffect } from "react"
 import {
   LayoutDashboard, ListChecks, User,
-  Sun, Moon, LogOut, Zap, Flame, Camera
+  Sun, Moon, LogOut, Zap, Flame, Camera,
+  AlertTriangle
 } from "lucide-react"
+import { ConfirmDialog } from "./ConfirmDialog"
 
 const NAV_ITEMS = [
   { id: "today", href: "/today", label: "Today", badgeId: "sbadge" },
@@ -24,10 +26,15 @@ export function Navigation() {
   const { theme, setTheme } = useTheme()
   const { data: session } = useSession()
   const [mounted, setMounted] = useState(false)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
   useEffect(() => setMounted(true), [])
 
   function handleLogout() {
+    setShowLogoutConfirm(true)
+  }
+
+  const executeLogout = () => {
     signOut({ callbackUrl: "/login" })
   }
 
@@ -134,6 +141,17 @@ export function Navigation() {
           )
         })}
       </nav>
+
+      <ConfirmDialog
+        open={showLogoutConfirm}
+        onOpenChange={setShowLogoutConfirm}
+        variant="warning"
+        icon={<LogOut size={22} strokeWidth={2} color="#f59e0b" />}
+        title="Sign out?"
+        description="You'll be returned to the login screen. Your progress is safely saved."
+        confirmLabel="Sign out"
+        onConfirm={executeLogout}
+      />
     </>
   )
 }

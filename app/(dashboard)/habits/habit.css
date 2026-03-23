@@ -3,47 +3,47 @@
     width: 28px;
     height: 28px;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.04);
-    color: rgba(255, 255, 255, 0.35);
+    border: 1px solid rgb(var(--border) / 0.5);
+    background: rgb(var(--surface-2));
+    color: rgb(var(--foreground-3));
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     font-size: 15px;
     letter-spacing: 1px;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hc-menu-btn:hover,
 .hc-menu-btn[data-state="open"] {
-    background: rgba(255, 255, 255, 0.09);
-    border-color: rgba(255, 255, 255, 0.16);
-    color: rgba(255, 255, 255, 0.9);
+    background: rgb(var(--surface));
+    border-color: rgb(var(--accent) / 0.3);
+    color: rgb(var(--accent));
+    box-shadow: 0 4px 12px -2px rgb(var(--accent) / 0.1);
 }
 
 /* ── Dropdown panel ──────────────────────────────── */
 .hc-dropdown-content {
     width: 192px;
-    background: #1e1e25;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgb(var(--surface));
+    border: 1px solid rgb(var(--border));
     border-radius: 14px;
-    padding: 5px;
-    box-shadow:
-        0 4px 6px rgba(0, 0, 0, 0.3),
-        0 12px 32px rgba(0, 0, 0, 0.5),
-        inset 0 0 0 0.5px rgba(255, 255, 255, 0.04);
+    padding: 6px;
+    box-shadow: 
+        0 10px 15px -3px rgb(0 0 0 / 0.1),
+        0 4px 6px -4px rgb(0 0 0 / 0.1),
+        0 0 0 1px rgb(var(--border) / 0.1);
     z-index: 9999;
-    animation: ddOpen 0.16s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: ddOpen 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     transform-origin: top right;
 }
 
 @keyframes ddOpen {
     from {
         opacity: 0;
-        transform: scale(0.93) translateY(-5px);
+        transform: scale(0.95) translateY(-8px);
     }
-
     to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -54,68 +54,82 @@
 .hc-dd-item {
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: 10px;
     padding: 8px 10px;
-    border-radius: 9px;
-    font-size: 13px;
+    border-radius: 10px;
+    font-size: 13.5px;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.65);
+    color: rgb(var(--foreground-2));
     cursor: pointer;
     outline: none;
     user-select: none;
-    transition: background 0.1s, color 0.1s;
+    transition: all 0.15s ease;
 }
 
 .hc-dd-item[data-highlighted] {
-    background: rgba(255, 255, 255, 0.07);
-    color: rgba(255, 255, 255, 0.95);
+    background: rgb(var(--background-2));
+    color: rgb(var(--foreground));
 }
 
 .hc-dd-icon {
-    width: 26px;
-    height: 26px;
-    border-radius: 7px;
-    background: rgba(255, 255, 255, 0.06);
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgb(var(--background-2));
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 14px;
     flex-shrink: 0;
-    transition: background 0.1s;
+    transition: background 0.15s;
+    color: rgb(var(--foreground-2));
 }
 
 .hc-dd-item[data-highlighted] .hc-dd-icon {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgb(var(--surface));
+    color: rgb(var(--accent));
+    box-shadow: 0 2px 4px rgb(0 0 0 / 0.05);
 }
 
 .hc-dd-shortcut {
     margin-left: auto;
     font-size: 10px;
-    color: rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.05);
+    color: rgb(var(--foreground-3));
+    background: rgb(var(--background-2));
     padding: 2px 6px;
     border-radius: 4px;
     letter-spacing: 0.04em;
-    font-weight: 400;
+    font-weight: 500;
 }
 
 /* ── Separator ───────────────────────────────────── */
 .hc-dd-sep {
     height: 1px;
-    background: rgba(255, 255, 255, 0.06);
-    margin: 4px 2px;
+    background: rgb(var(--border) / 0.5);
+    margin: 6px 4px;
 }
 
 /* ── Danger item ─────────────────────────────────── */
 .hc-dd-item--danger {
-    color: rgba(255, 100, 100, 0.7);
+    color: #ef4444;
 }
 
 .hc-dd-item--danger[data-highlighted] {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.dark .hc-dd-item--danger[data-highlighted] {
     background: rgba(239, 68, 68, 0.1);
-    color: #ff7575;
+    color: #f87171;
 }
 
 .hc-dd-item--danger[data-highlighted] .hc-dd-icon {
-    background: rgba(239, 68, 68, 0.12);
+    background: #fff;
+    color: #ef4444;
 }
+
+.dark .hc-dd-item--danger[data-highlighted] .hc-dd-icon {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}

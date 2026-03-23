@@ -1,12 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
+import { useSession, signOut } from "next-auth/react"
 import { useTheme } from "next-themes"
 import { toast } from "react-hot-toast"
 import { format } from "date-fns"
+import { LogOut, Trash2 } from "lucide-react"
 import { API_ROUTES } from "@/lib/constants/api-routes"
-import { LogoutDialog } from "@/components/shared/LogoutDialog"
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
 
 interface ProfileData {
   id: string
@@ -26,6 +27,8 @@ export default function ProfilePage() {
   // Toggles
   const [notifOn, setNotifOn] = useState(true)
   const [showLogout, setShowLogout] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -56,6 +59,16 @@ export default function ProfilePage() {
   const toggleNotif = () => {
     setNotifOn(!notifOn)
     toast.success(!notifOn ? "🔔 Notifications enabled" : "🔕 Notifications disabled")
+  }
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true)
+    // Mock deletion
+    setTimeout(() => {
+      toast.error("Account deletion is disabled for this demo.")
+      setIsDeleting(false)
+      setShowDeleteConfirm(false)
+    }, 1500)
   }
 
   if (isLoading || !mounted) {
@@ -147,10 +160,37 @@ export default function ProfilePage() {
             <div className="sg-txt"><div className="sg-lbl">Sign out</div></div>
             <div className="sg-right" style={{ color: "var(--red)" }}><svg viewBox="0 0 16 16" style={{ stroke: "var(--red)" }}><path d="M6 4l4 4-4 4" /></svg></div>
           </div>
+          <div className="sg-row danger" onClick={() => setShowDeleteConfirm(true)}>
+            <div className="sg-ico" style={{ background: "var(--red-s)" }}>⚠️</div>
+            <div className="sg-txt"><div className="sg-lbl">Delete account</div><div className="sg-sub">Permanently erase all data</div></div>
+            <div className="sg-right" style={{ color: "var(--red)" }}><svg viewBox="0 0 16 16" style={{ stroke: "var(--red)" }}><path d="M6 4l4 4-4 4" /></svg></div>
+          </div>
         </div>
       </div>
 
-      <LogoutDialog isOpen={showLogout} onClose={() => setShowLogout(false)} />
+      <ConfirmDialog
+        open={showLogout}
+        onOpenChange={setShowLogout}
+        variant="warning"
+        icon={<LogOut size={22} strokeWidth={2} color="#f59e0b" />}
+        title="Sign out?"
+        description="You'll be returned to the login screen. Your progress is safely saved."
+        confirmLabel="Sign out"
+        onConfirm={() => signOut({ callbackUrl: "/login" })}
+      />
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        variant="danger"
+        icon={<Trash2 size={22} strokeWidth={2} color="#ef4444" />}
+        title="Delete your account?"
+        description="This will permanently delete all your habits, streaks, and history. This action cannot be undone."
+        confirmLabel="Delete account"
+        cancelLabel="Keep account"
+        isLoading={isDeleting}
+        onConfirm={handleDeleteAccount}
+      />
     </>
   )
 }
