@@ -8,7 +8,8 @@ import bcrypt from "bcryptjs"
 import { z } from "zod"
 import crypto from "crypto"
 import { prisma } from "@/lib/prisma"
-import { emailService } from "@/lib/services/email.service"
+// import { emailService } from "@/lib/services/email.service"
+import { emailService } from "@/lib/services/email.resend.service"
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
 
     // 3. Generate 6-digit OTP
     const code = crypto.randomInt(100000, 999999).toString()
-    
+
     // 4. Set expiry (90 seconds = 1.5 minutes)
     const expiresAt = new Date(Date.now() + 90 * 1000)
 
@@ -48,7 +49,7 @@ export async function POST(req: Request) {
 
     // 6. Send Email
     const emailRes = await emailService.sendOtpEmail(email, code, name)
-    
+
     if (!emailRes.success) {
       return NextResponse.json(
         { error: "Failed to send verification email. Please try again." },
@@ -56,9 +57,9 @@ export async function POST(req: Request) {
       )
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: "OTP sent to your email. It expires in 90 seconds.",
-      email 
+      email
     }, { status: 200 })
 
   } catch (err) {

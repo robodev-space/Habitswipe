@@ -482,7 +482,7 @@ export default function RegisterPage() {
 
                     <button
                       onClick={handleResend}
-                      disabled={timer > 0}
+                      // disabled={timer > 0}
                       className="text-[12.5px] font-semibold text-indigo-600 hover:text-indigo-700 disabled:text-gray-300 disabled:cursor-not-allowed transition-colors px-3 py-1.5 rounded-lg hover:bg-indigo-50 disabled:hover:bg-transparent"
                     >
                       Resend code
