@@ -17,28 +17,28 @@ import "./onboarding.css"
 // ── Data ────────────────────────────────────────────────────────────────────
 
 const GOALS = [
-  { id: "health",  icon: "💪", title: "Health & fitness",   desc: "Exercise, sleep, nutrition" },
-  { id: "mind",    icon: "🧘", title: "Mental wellness",    desc: "Mindfulness, stress, mood" },
-  { id: "learn",   icon: "📚", title: "Learning & growth",  desc: "Reading, skills, languages" },
-  { id: "work",    icon: "🎯", title: "Productivity",       desc: "Focus, goals, deep work" },
-  { id: "finance", icon: "💰", title: "Finance",            desc: "Saving, budgeting, investing" },
-  { id: "custom",  icon: "✨", title: "Something else",     desc: "I'll build my own habits" },
+  { id: "health", icon: "💪", title: "Health & fitness", desc: "Exercise, sleep, nutrition" },
+  { id: "mind", icon: "🧘", title: "Mental wellness", desc: "Mindfulness, stress, mood" },
+  { id: "learn", icon: "📚", title: "Learning & growth", desc: "Reading, skills, languages" },
+  { id: "work", icon: "🎯", title: "Productivity", desc: "Focus, goals, deep work" },
+  { id: "finance", icon: "💰", title: "Finance", desc: "Saving, budgeting, investing" },
+  { id: "custom", icon: "✨", title: "Something else", desc: "I'll build my own habits" },
 ] as const
 
 const EMOJIS = ["🧘", "🏃", "💧", "📚", "✍️", "😴", "🥗", "🎵", "🧹", "💊", "☕", "🌿"] as const
 
 const FREQUENCIES = [
-  { id: "daily",    label: "Every\nday" },
+  { id: "daily", label: "Every\nday" },
   { id: "weekdays", label: "Week-\ndays" },
-  { id: "3x",       label: "3× a\nweek" },
-  { id: "custom",   label: "Custom" },
+  { id: "3x", label: "3× a\nweek" },
+  { id: "custom", label: "Custom" },
 ] as const
 
 const TIME_SLOTS = [
-  { id: "morning",   emoji: "🌅", name: "Morning",   range: "6 – 10 am",  defaultTime: "07:00" },
-  { id: "afternoon", emoji: "☀️",  name: "Afternoon", range: "12 – 4 pm",  defaultTime: "12:00" },
-  { id: "evening",   emoji: "🌙", name: "Evening",   range: "6 – 10 pm",  defaultTime: "19:00" },
-  { id: "night",     emoji: "🌌", name: "Night",     range: "10 pm – 6 am", defaultTime: "23:00" },
+  { id: "morning", emoji: "🌅", name: "Morning", range: "6 – 10 am", defaultTime: "07:00" },
+  { id: "afternoon", emoji: "☀️", name: "Afternoon", range: "12 – 4 pm", defaultTime: "12:00" },
+  { id: "evening", emoji: "🌙", name: "Evening", range: "6 – 10 pm", defaultTime: "19:00" },
+  { id: "night", emoji: "🌌", name: "Night", range: "10 pm – 6 am", defaultTime: "23:00" },
 ] as const
 
 const DAYS = [
@@ -79,13 +79,13 @@ const BTN_LABELS: Record<number, string> = {
 const slideForward = {
   initial: { opacity: 0, x: 32 },
   animate: { opacity: 1, x: 0 },
-  exit:    { opacity: 0, x: -32 },
+  exit: { opacity: 0, x: -32 },
 }
 
 const slideBackward = {
   initial: { opacity: 0, x: -32 },
   animate: { opacity: 1, x: 0 },
-  exit:    { opacity: 0, x: 32 },
+  exit: { opacity: 0, x: 32 },
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -203,14 +203,14 @@ export default function OnboardingPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          goal: "custom",
-          habitName: "Morning meditation",
-          habitIcon: "🧘",
-          habitColor: "#4f46e5",
-          frequency: "DAILY",
-          targetDays: 7,
-          reminderTime: "07:00",
-          emailReminders: true,
+          // goal: "custom",
+          // habitName: "Morning meditation",
+          // habitIcon: "🧘",
+          // habitColor: "#4f46e5",
+          // frequency: "DAILY",
+          // targetDays: 7,
+          // reminderTime: "07:00",
+          // emailReminders: true,
         }),
       })
       await updateSession()
@@ -329,287 +329,287 @@ export default function OnboardingPage() {
           {/* Stage */}
           <div className="ob-stage">
             <AnimatePresence mode="wait">
-          {/* ── STEP 1: Goal ── */}
-          {step === 1 && (
-            <motion.div
-              key="step1"
-              className="ob-step-panel"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-            >
-              <div className="ob-eyebrow">Step 1 of 4</div>
-              <h1 className="ob-headline">
-                What&apos;s your main<br /><em>goal right now?</em>
-              </h1>
-              <p className="ob-sub">
-                We&apos;ll suggest the right habits to get you started. Pick the one that matters most.
-              </p>
+              {/* ── STEP 1: Goal ── */}
+              {step === 1 && (
+                <motion.div
+                  key="step1"
+                  className="ob-step-panel"
+                  variants={variants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  <div className="ob-eyebrow">Step 1 of 4</div>
+                  <h1 className="ob-headline">
+                    What&apos;s your main<br /><em>goal right now?</em>
+                  </h1>
+                  <p className="ob-sub">
+                    We&apos;ll suggest the right habits to get you started. Pick the one that matters most.
+                  </p>
 
-              <div className="ob-card">
-                <div className="ob-goal-grid">
-                  {GOALS.map((g) => (
-                    <div
-                      key={g.id}
-                      className={`ob-goal-card ${goal === g.id ? "sel" : ""}`}
-                      onClick={() => setGoal(g.id)}
-                    >
-                      <div className="ob-check-mark" />
-                      <div className="ob-goal-icon-wrap">{g.icon}</div>
-                      <div className="ob-goal-title">{g.title}</div>
-                      <div className="ob-goal-desc">{g.desc}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="ob-social-strip ob-social-strip-inline">
-                <div className="ob-avatar-stack">
-                  <div className="ob-av g1">A</div>
-                  <div className="ob-av g2">M</div>
-                  <div className="ob-av g3">P</div>
-                  <div className="ob-av g4">R</div>
-                </div>
-                <span>Join 12,400+ people building better habits</span>
-              </div>
-            </motion.div>
-          )}
-
-          {/* ── STEP 2: First habit ── */}
-          {step === 2 && (
-            <motion.div
-              key="step2"
-              className="ob-step-panel"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-            >
-              <div className="ob-eyebrow">Step 2 of 4</div>
-              <h1 className="ob-headline">
-                Name your<br /><em>first habit</em>
-              </h1>
-              <p className="ob-sub">
-                Start with just one. Consistency with one habit builds the confidence for more.
-              </p>
-
-              <div className="ob-card ob-card-scroll">
-                <div className="ob-field-label">Habit name</div>
-                <input
-                  className="ob-text-input"
-                  type="text"
-                  placeholder="e.g. Morning meditation…"
-                  maxLength={48}
-                  value={habitName}
-                  onChange={(e) => { setHabitName(e.target.value); setNameError(false) }}
-                  autoFocus
-                />
-                {nameError && (
-                  <div className="ob-field-error">Please give your habit a name</div>
-                )}
-
-                <div className="ob-field-label">Pick an icon</div>
-                <div className="ob-emoji-scroll">
-                  {EMOJIS.map((emoji) => (
-                    <div
-                      key={emoji}
-                      className={`ob-e-btn ${habitIcon === emoji ? "sel" : ""}`}
-                      onClick={() => setHabitIcon(emoji)}
-                    >
-                      {emoji}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="ob-field-label">How often?</div>
-                <div className="ob-freq-grid mb-5">
-                  {FREQUENCIES.map((f) => (
-                    <div
-                      key={f.id}
-                      className={`ob-freq-btn ${frequency === f.id ? "sel" : ""}`}
-                      onClick={() => {
-                        setFrequency(f.id);
-                        if (f.id === "daily") setSelectedDays(["mon", "tue", "wed", "thu", "fri", "sat", "sun"])
-                        else if (f.id === "weekdays") setSelectedDays(["mon", "tue", "wed", "thu", "fri"])
-                        else if (f.id === "3x") setSelectedDays(["mon", "wed", "fri"])
-                      }}
-                      style={{ whiteSpace: "pre-line" }}
-                    >
-                      {f.label}
-                    </div>
-                  ))}
-                </div>
-
-                {frequency !== "daily" && (
-                  <motion.div 
-                    initial={{ opacity: 0, height: 0 }} 
-                    animate={{ opacity: 1, height: "auto" }}
-                    className="overflow-hidden mb-1"
-                  >
-                    <div className="ob-field-label">Which days?</div>
-                    <div className="flex justify-between items-center gap-1">
-                      {DAYS.map(day => (
-                        <button
-                          key={day.id}
-                          className={`w-[36px] h-[36px] flex items-center justify-center rounded-full text-[13px] font-bold transition-all ${selectedDays.includes(day.id) ? 'bg-indigo-600 text-white shadow-[0_4px_12px_rgba(79,70,229,0.2)]' : 'bg-[#F4F2FF] text-[#6B7280] hover:bg-[#E0DEF7]'}`}
-                          onClick={() => {
-                            if (selectedDays.includes(day.id)) {
-                              setSelectedDays(selectedDays.filter(d => d !== day.id))
-                            } else {
-                              setSelectedDays([...selectedDays, day.id])
-                            }
-                            setFrequency("custom")
-                          }}
+                  <div className="ob-card">
+                    <div className="ob-goal-grid">
+                      {GOALS.map((g) => (
+                        <div
+                          key={g.id}
+                          className={`ob-goal-card ${goal === g.id ? "sel" : ""}`}
+                          onClick={() => setGoal(g.id)}
                         >
-                          {day.label}
-                        </button>
+                          <div className="ob-check-mark" />
+                          <div className="ob-goal-icon-wrap">{g.icon}</div>
+                          <div className="ob-goal-title">{g.title}</div>
+                          <div className="ob-goal-desc">{g.desc}</div>
+                        </div>
                       ))}
                     </div>
-                  </motion.div>
-                )}
-              </div>
-            </motion.div>
-          )}
-
-          {/* ── STEP 3: Reminder ── */}
-          {step === 3 && (
-            <motion.div
-              key="step3"
-              className="ob-step-panel"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-            >
-              <div className="ob-eyebrow">Step 3 of 4</div>
-              <h1 className="ob-headline">
-                When should we<br /><em>remind you?</em>
-              </h1>
-              <p className="ob-sub">
-                A well-timed nudge makes habits stick. People with reminders are 3× more likely to complete their habits.
-              </p>
-
-              <div className="ob-card">
-                <div className="ob-field-label" style={{ marginBottom: 12 }}>Best time of day</div>
-                <div className="ob-time-grid">
-                  {TIME_SLOTS.map((t) => {
-                    if (t.id === "night" && !isNightAdded) {
-                      return (
-                        <div
-                          key={t.id}
-                          className="ob-time-card flex flex-col items-center justify-center border border-dashed border-indigo-200 bg-transparent hover:bg-indigo-50/50 opacity-80"
-                          onClick={() => setShowNightWarning(true)}
-                        >
-                          <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mb-2">
-                            <Plus className="w-4 h-4 text-indigo-600" />
-                          </div>
-                          <div className="ob-time-name text-indigo-400">Add Night</div>
-                        </div>
-                      )
-                    }
-
-                    return (
-                      <div
-                        key={t.id}
-                        className={`ob-time-card ${timeSlot === t.id ? "sel" : ""}`}
-                        onClick={() => {
-                          setTimeSlot(t.id)
-                          setReminderTime(t.defaultTime)
-                        }}
-                      >
-                        <div className="ob-time-emoji">{t.emoji}</div>
-                        <div className="ob-time-name">{t.name}</div>
-                        <div className="ob-time-range">{t.range}</div>
-                      </div>
-                    )
-                  })}
-                </div>
-
-                <div className="ob-custom-time-wrap">
-                  <div className="ob-custom-time-label">Exact reminder time</div>
-                  <input
-                    className="ob-time-picker-input"
-                    type="time"
-                    value={reminderTime}
-                    onChange={(e) => handleReminderTimeChange(e.target.value)}
-                  />
-                </div>
-
-                <div className="ob-remind-toggle-wrap">
-                  <div>
-                    <div className="ob-remind-title">Email reminders</div>
-                    <div className="ob-remind-sub">Daily digest + streak alerts</div>
                   </div>
-                  <label className="ob-toggle-wrap">
+
+                  <div className="ob-social-strip ob-social-strip-inline">
+                    <div className="ob-avatar-stack">
+                      <div className="ob-av g1">A</div>
+                      <div className="ob-av g2">M</div>
+                      <div className="ob-av g3">P</div>
+                      <div className="ob-av g4">R</div>
+                    </div>
+                    <span>Join 12,400+ people building better habits</span>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* ── STEP 2: First habit ── */}
+              {step === 2 && (
+                <motion.div
+                  key="step2"
+                  className="ob-step-panel"
+                  variants={variants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  <div className="ob-eyebrow">Step 2 of 4</div>
+                  <h1 className="ob-headline">
+                    Name your<br /><em>first habit</em>
+                  </h1>
+                  <p className="ob-sub">
+                    Start with just one. Consistency with one habit builds the confidence for more.
+                  </p>
+
+                  <div className="ob-card ob-card-scroll">
+                    <div className="ob-field-label">Habit name</div>
                     <input
-                      type="checkbox"
-                      checked={emailReminders}
-                      onChange={(e) => setEmailReminders(e.target.checked)}
+                      className="ob-text-input"
+                      type="text"
+                      placeholder="e.g. Morning meditation…"
+                      maxLength={48}
+                      value={habitName}
+                      onChange={(e) => { setHabitName(e.target.value); setNameError(false) }}
+                      autoFocus
                     />
-                    <div className="ob-toggle-track" />
-                    <div className="ob-toggle-thumb" />
-                  </label>
-                </div>
-              </div>
-            </motion.div>
-          )}
+                    {nameError && (
+                      <div className="ob-field-error">Please give your habit a name</div>
+                    )}
 
-          {/* ── STEP 4: Ready ── */}
-          {step === 4 && (
-            <motion.div
-              key="step4"
-              className="ob-step-panel"
-              variants={variants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-            >
-              <span className="ob-confetti-emoji">🎉</span>
-              <h1 className="ob-ready-title">
-                You&apos;re all set,<br /><em>let&apos;s go!</em>
-              </h1>
-              <p className="ob-ready-sub">
-                Here&apos;s what we&apos;ve set up for you. You can add more habits anytime.
-              </p>
+                    <div className="ob-field-label">Pick an icon</div>
+                    <div className="ob-emoji-scroll">
+                      {EMOJIS.map((emoji) => (
+                        <div
+                          key={emoji}
+                          className={`ob-e-btn ${habitIcon === emoji ? "sel" : ""}`}
+                          onClick={() => setHabitIcon(emoji)}
+                        >
+                          {emoji}
+                        </div>
+                      ))}
+                    </div>
 
-              <div className="ob-summary-card">
-                <div className="ob-summary-row">
-                  <div className="ob-sum-icon">{habitIcon}</div>
-                  <div className="ob-sum-info">
-                    <div className="ob-sum-name">{habitName.trim() || "Morning meditation"}</div>
-                    <div className="ob-sum-meta">
-                      <span>{FREQ_LABELS[frequency] || "Every day"}</span>
-                      <span>·</span>
-                      <span>{formatTime12(reminderTime)} reminder</span>
+                    <div className="ob-field-label">How often?</div>
+                    <div className="ob-freq-grid mb-5">
+                      {FREQUENCIES.map((f) => (
+                        <div
+                          key={f.id}
+                          className={`ob-freq-btn ${frequency === f.id ? "sel" : ""}`}
+                          onClick={() => {
+                            setFrequency(f.id);
+                            if (f.id === "daily") setSelectedDays(["mon", "tue", "wed", "thu", "fri", "sat", "sun"])
+                            else if (f.id === "weekdays") setSelectedDays(["mon", "tue", "wed", "thu", "fri"])
+                            else if (f.id === "3x") setSelectedDays(["mon", "wed", "fri"])
+                          }}
+                          style={{ whiteSpace: "pre-line" }}
+                        >
+                          {f.label}
+                        </div>
+                      ))}
+                    </div>
+
+                    {frequency !== "daily" && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        className="overflow-hidden mb-1"
+                      >
+                        <div className="ob-field-label">Which days?</div>
+                        <div className="flex justify-between items-center gap-1">
+                          {DAYS.map(day => (
+                            <button
+                              key={day.id}
+                              className={`w-[36px] h-[36px] flex items-center justify-center rounded-full text-[13px] font-bold transition-all ${selectedDays.includes(day.id) ? 'bg-indigo-600 text-white shadow-[0_4px_12px_rgba(79,70,229,0.2)]' : 'bg-[#F4F2FF] text-[#6B7280] hover:bg-[#E0DEF7]'}`}
+                              onClick={() => {
+                                if (selectedDays.includes(day.id)) {
+                                  setSelectedDays(selectedDays.filter(d => d !== day.id))
+                                } else {
+                                  setSelectedDays([...selectedDays, day.id])
+                                }
+                                setFrequency("custom")
+                              }}
+                            >
+                              {day.label}
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* ── STEP 3: Reminder ── */}
+              {step === 3 && (
+                <motion.div
+                  key="step3"
+                  className="ob-step-panel"
+                  variants={variants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  <div className="ob-eyebrow">Step 3 of 4</div>
+                  <h1 className="ob-headline">
+                    When should we<br /><em>remind you?</em>
+                  </h1>
+                  <p className="ob-sub">
+                    A well-timed nudge makes habits stick. People with reminders are 3× more likely to complete their habits.
+                  </p>
+
+                  <div className="ob-card">
+                    <div className="ob-field-label" style={{ marginBottom: 12 }}>Best time of day</div>
+                    <div className="ob-time-grid">
+                      {TIME_SLOTS.map((t) => {
+                        if (t.id === "night" && !isNightAdded) {
+                          return (
+                            <div
+                              key={t.id}
+                              className="ob-time-card flex flex-col items-center justify-center border border-dashed border-indigo-200 bg-transparent hover:bg-indigo-50/50 opacity-80"
+                              onClick={() => setShowNightWarning(true)}
+                            >
+                              <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mb-2">
+                                <Plus className="w-4 h-4 text-indigo-600" />
+                              </div>
+                              <div className="ob-time-name text-indigo-400">Add Night</div>
+                            </div>
+                          )
+                        }
+
+                        return (
+                          <div
+                            key={t.id}
+                            className={`ob-time-card ${timeSlot === t.id ? "sel" : ""}`}
+                            onClick={() => {
+                              setTimeSlot(t.id)
+                              setReminderTime(t.defaultTime)
+                            }}
+                          >
+                            <div className="ob-time-emoji">{t.emoji}</div>
+                            <div className="ob-time-name">{t.name}</div>
+                            <div className="ob-time-range">{t.range}</div>
+                          </div>
+                        )
+                      })}
+                    </div>
+
+                    <div className="ob-custom-time-wrap">
+                      <div className="ob-custom-time-label">Exact reminder time</div>
+                      <input
+                        className="ob-time-picker-input"
+                        type="time"
+                        value={reminderTime}
+                        onChange={(e) => handleReminderTimeChange(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="ob-remind-toggle-wrap">
+                      <div>
+                        <div className="ob-remind-title">Email reminders</div>
+                        <div className="ob-remind-sub">Daily digest + streak alerts</div>
+                      </div>
+                      <label className="ob-toggle-wrap">
+                        <input
+                          type="checkbox"
+                          checked={emailReminders}
+                          onChange={(e) => setEmailReminders(e.target.checked)}
+                        />
+                        <div className="ob-toggle-track" />
+                        <div className="ob-toggle-thumb" />
+                      </label>
                     </div>
                   </div>
-                  <span className="ob-sum-tag">Day 1</span>
-                </div>
-                <div className="ob-summary-row">
-                  <div className="ob-sum-icon" style={{ background: "#EDE9FE" }}>🎯</div>
-                  <div className="ob-sum-info">
-                    <div className="ob-sum-name">Your goal</div>
-                    <div className="ob-sum-meta">
-                      <span>{GOAL_LABELS[goal] || "My goals"}</span>
+                </motion.div>
+              )}
+
+              {/* ── STEP 4: Ready ── */}
+              {step === 4 && (
+                <motion.div
+                  key="step4"
+                  className="ob-step-panel"
+                  variants={variants}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  <span className="ob-confetti-emoji">🎉</span>
+                  <h1 className="ob-ready-title">
+                    You&apos;re all set,<br /><em>let&apos;s go!</em>
+                  </h1>
+                  <p className="ob-ready-sub">
+                    Here&apos;s what we&apos;ve set up for you. You can add more habits anytime.
+                  </p>
+
+                  <div className="ob-summary-card">
+                    <div className="ob-summary-row">
+                      <div className="ob-sum-icon">{habitIcon}</div>
+                      <div className="ob-sum-info">
+                        <div className="ob-sum-name">{habitName.trim() || "Morning meditation"}</div>
+                        <div className="ob-sum-meta">
+                          <span>{FREQ_LABELS[frequency] || "Every day"}</span>
+                          <span>·</span>
+                          <span>{formatTime12(reminderTime)} reminder</span>
+                        </div>
+                      </div>
+                      <span className="ob-sum-tag">Day 1</span>
+                    </div>
+                    <div className="ob-summary-row">
+                      <div className="ob-sum-icon" style={{ background: "#EDE9FE" }}>🎯</div>
+                      <div className="ob-sum-info">
+                        <div className="ob-sum-name">Your goal</div>
+                        <div className="ob-sum-meta">
+                          <span>{GOAL_LABELS[goal] || "My goals"}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
 
-              <div className="ob-tip">
-                <div className="ob-tip-title">Did you know?</div>
-                <div className="ob-tip-text">
-                  It takes an average of 66 days to form a habit. We&apos;ll be with you every step of the way.
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                  <div className="ob-tip">
+                    <div className="ob-tip-title">Did you know?</div>
+                    <div className="ob-tip-text">
+                      It takes an average of 66 days to form a habit. We&apos;ll be with you every step of the way.
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Bottom bar */}
