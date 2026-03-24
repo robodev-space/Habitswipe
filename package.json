@@ -65,6 +65,7 @@
     "zustand": "^4.5.7"
   },
   "devDependencies": {
-    "@types/canvas-confetti": "^1.9.0"
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/nodemailer": "^7.0.11"
   }
 }
