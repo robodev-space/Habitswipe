@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma"
 import { todayString } from "@/lib/utils"
 
 const moodSchema = z.object({
+  id: z.number(),
   mood: z.string().min(1),
   emoji: z.string().min(1),
 })
@@ -43,21 +44,25 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json()
-    const { mood, emoji } = moodSchema.parse(body)
+    const { id, mood, emoji } = moodSchema.parse(body)
     const today = new Date(todayString())
 
-    const log = await prisma.moodLog.upsert({
+    // Check if mood already logged today
+    const existing = await prisma.moodLog.findUnique({
       where: {
         userId_date: {
           userId: session.user.id,
           date: today,
         },
       },
-      update: {
-        mood,
-        emoji,
-      },
-      create: {
+    })
+
+    if (existing) {
+      return NextResponse.json({ error: "Mood already logged today" }, { status: 409 })
+    }
+
+    const log = await prisma.moodLog.create({
+      data: {
         userId: session.user.id,
         date: today,
         mood,
@@ -65,7 +70,7 @@ export async function POST(req: Request) {
       },
     })
 
-    return NextResponse.json({ data: log }, { status: 200 })
+    return NextResponse.json({ data: log }, { status: 201 })
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.errors[0].message }, { status: 400 })

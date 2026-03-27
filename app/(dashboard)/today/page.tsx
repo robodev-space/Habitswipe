@@ -8,6 +8,7 @@ import { Confetti } from "@/components/shared/Confetti"
 import { AddHabitDialog } from "@/components/shared/AddHabitDialog"
 import { HabitHistoryDrawer } from "@/components/shared/HabitHistoryDrawer"
 import { MissedHabitsDrawer, useMissedHabitsPreview } from "@/components/shared/MissedHabitsDrawer"
+import { API_ROUTES } from "@/lib/constants/api-routes"
 
 export default function TodayPage() {
   const { data: session } = useSession()
@@ -63,28 +64,39 @@ export default function TodayPage() {
     }
   }, [pct, total])
 
-  const handleMoodSelect = async (emoji: string, label: string) => {
+  const handleMoodSelect = async (id: number, label: string, emoji: string) => {
+    if (mood) return; // Prevent multiple clicks
     setMood(label)
     toast.success(label)
     try {
-      await fetch('/api/mood', {
+      const res = await fetch(API_ROUTES.ToDAY.MOOD, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mood: label, emoji }),
+        body: JSON.stringify({ id, mood: label, emoji }),
       })
+      const data = await res.json()
+      console.log(data)
     } catch {
       toast.error("Failed to sync mood")
+    }
+  }
+  const loadMood = async () => {
+    try {
+      const res = await fetch(API_ROUTES.ToDAY.MOOD)
+      const data = await res.json()
+      if (data?.data?.mood) {
+        setMood(data.data.mood)
+      }
+    } catch {
+      toast.error("Failed to load mood")
     }
   }
 
   // Load mood
   useEffect(() => {
-    fetch('/api/mood').then(res => res.json()).then(data => {
-      if (data?.moodLog?.label) {
-        setMood(data.moodLog.label)
-      }
-    }).catch(console.error)
+    loadMood()
   }, [])
+
 
   // Welcome toast (first time daily)
   useEffect(() => {
@@ -187,16 +199,17 @@ export default function TodayPage() {
         <div className="mood-lbl">How are you feeling today?</div>
         <div className="mood-row">
           {[
-            { e: "😴", l: "Exhausted — rest matters too" },
-            { e: "😐", l: "Tired — push through gently" },
-            { e: "🙂", l: "Good — solid energy!" },
-            { e: "😄", l: "Energised — great momentum!" },
-            { e: "🔥", l: "On fire — unstoppable!" },
+            { id: 1, e: "😴", l: "Exhausted — rest matters too" },
+            { id: 2, e: "😐", l: "Tired — push through gently" },
+            { id: 3, e: "🙂", l: "Good — solid energy!" },
+            { id: 4, e: "😄", l: "Energised — great momentum!" },
+            { id: 5, e: "🔥", l: "On fire — unstoppable!" },
           ].map((m) => (
             <button
               key={m.e}
-              className={`mood-btn ${mood === m.l ? 'active' : ''}`}
-              onClick={() => handleMoodSelect(m.e, m.l)}
+              className={`mood-btn ${mood === m.l ? 'selected' : ''}`}
+              onClick={() => handleMoodSelect(m.id, m.l, m.e)}
+              disabled={!!mood}
             >
               {m.e}
             </button>
@@ -318,7 +331,7 @@ export default function TodayPage() {
             <MissedHabitsDrawer>
               <button className="see-all-btn">
                 See all →
-                <svg viewBox="0 0 16 16"><path d="M4 8h8M9 5l3 3-3 3"/></svg>
+                <svg viewBox="0 0 16 16"><path d="M4 8h8M9 5l3 3-3 3" /></svg>
               </button>
             </MissedHabitsDrawer>
           )}
@@ -368,7 +381,7 @@ export default function TodayPage() {
                 </div>
               </MissedHabitsDrawer>
             )}
-        </>
+          </>
         )}
       </div>
     </div>

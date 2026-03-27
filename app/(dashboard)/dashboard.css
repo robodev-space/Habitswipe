@@ -111,7 +111,9 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
 .mood-row{display:flex;gap:7px}
 .mood-btn{flex:1;padding:8px 2px;border-radius:10px;border:1.5px solid var(--bord);background:transparent;cursor:pointer;font-size:18px;text-align:center;transition:all .2s;line-height:1;font-family:var(--sans)}
 .mood-btn:hover{border-color:var(--ind);background:var(--ind-s);transform:scale(1.1)}
-.mood-btn.active, .mood-btn.selected{border-color:var(--ind);background:var(--ind-s);transform:scale(1.12)}
+.mood-btn.active, .mood-btn.selected{border-color:var(--ind);background:var(--ind-s);transform:scale(1.12);box-shadow:0 4px 12px rgba(91,80,232,.18)}
+.mood-btn:disabled{cursor:default;pointer-events:none;opacity:.4}
+.mood-btn.selected:disabled{opacity:1}
 .mood-txt{font-size:10.5px;color:var(--txt3);text-align:center;margin-top:8px;height:16px;transition:all .25s}
 
 /* Stats strip */

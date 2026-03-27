@@ -31,7 +31,7 @@ const BASE_URL = getBaseUrl()
 export const API_ROUTES = {
   AUTH: {
     REGISTER: `${BASE_URL}/api/auth/register`,
-    SESSION: `${BASE_URL}/api/auth/session`, 
+    SESSION: `${BASE_URL}/api/auth/session`,
   },
   HABITS: {
     BASE: `${BASE_URL}/api/habits`,
@@ -57,4 +57,7 @@ export const API_ROUTES = {
   ONBOARDING: {
     BASE: `${BASE_URL}/api/onboarding`,
   },
+  ToDAY: {
+    MOOD: `${BASE_URL}/api/mood`,
+  }
 } as const
