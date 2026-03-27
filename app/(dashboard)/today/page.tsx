@@ -12,8 +12,10 @@ import { API_ROUTES } from "@/lib/constants/api-routes"
 
 export default function TodayPage() {
   const { data: session } = useSession()
-  const { habits, todayHabits, swipeHabit, isLoading } = useHabits()
-  const { missedHabits, isLoading: missedIsLoading } = useMissedHabitsPreview()
+  const { habits, todayHabits, swipeHabit, isLoading, isInitialized, fetchHabits } = useHabits()
+  const { missedHabits, isLoading: missedIsLoading, addToToday, refetch: refetchMissed } = useMissedHabitsPreview()
+  const [addingMissedIds, setAddingMissedIds] = useState<Set<string>>(new Set())
+  const [addedMissedIds, setAddedMissedIds] = useState<Set<string>>(new Set())
   const [mood, setMood] = useState<string | null>(null)
   const [filterOn, setFilterOn] = useState(false)
   const [showConfetti, setShowConfetti] = useState(false)
@@ -31,7 +33,7 @@ export default function TodayPage() {
   // Real done logic depends on todayHabits from the store
   // We'll map through activeHabits and check if their ID is in todayHabits with status "COMPLETED"
   const completedCount = activeHabits.filter(h =>
-    todayHabits.some(th => th.id === h.id && th.todayLog?.status === "DONE")
+    habits.some(th => th.id === h.id && th.todayLog?.status === "DONE")
   ).length
 
   const pendingCount = total - completedCount
@@ -45,7 +47,7 @@ export default function TodayPage() {
     if (togglingIds.has(habitId)) return
     setTogglingIds(prev => new Set(prev).add(habitId))
     try {
-      const isDone = todayHabits.some(th => th.id === habitId && th.todayLog?.status === "DONE")
+      const isDone = habits.some(h => h.id === habitId && h.todayLog?.status === "DONE")
       await swipeHabit(habitId, isDone ? "SKIPPED" : "DONE")
       if (!isDone) {
         toast.success("Habit marked done!")
@@ -91,6 +93,28 @@ export default function TodayPage() {
       toast.error("Failed to load mood")
     }
   }
+
+  const handleAddMissed = async (habitId: string, name: string) => {
+    if (addingMissedIds.has(habitId) || addedMissedIds.has(habitId)) return
+    setAddingMissedIds(prev => new Set(prev).add(habitId))
+    try {
+      await addToToday(habitId)
+      setAddedMissedIds(prev => new Set(prev).add(habitId))
+      toast.success(`${name} added to today!`)
+      // Refresh both lists
+      fetchHabits()
+      refetchMissed()
+    } catch {
+      toast.error('Failed to add habit')
+    } finally {
+      setAddingMissedIds(prev => { const s = new Set(prev); s.delete(habitId); return s })
+    }
+  }
+
+  // Load habits on mount
+  useEffect(() => {
+    fetchHabits()
+  }, [])
 
   // Load mood
   useEffect(() => {
@@ -257,7 +281,7 @@ export default function TodayPage() {
       <div className="h-list" id="hList">
         {isLoading && <div className="text-center text-xs text-gray-500 py-4">Loading habits...</div>}
         {!isLoading && activeHabits.map((habit, i) => {
-          const isDone = todayHabits.some(th => th.id === habit.id && th.todayLog?.status === "DONE")
+          const isDone = habits.find(h => h.id === habit.id)?.todayLog?.status === "DONE"
           if (filterOn && isDone) return null
 
           // Cycles through some colors for mockup aesthetics similar to HTML snippet
@@ -364,13 +388,20 @@ export default function TodayPage() {
             {missedHabits.slice(0, 2).map(h => (
               <div key={h.id} className="m-row">
                 <div className="m-ico">{h.icon}</div>
-                <div className="m-name">{h.name}</div>
-                {h.streakLost > 0 && (
-                  <div className="m-badge">{h.streakLost}d streak lost</div>
-                )}
-                <MissedHabitsDrawer>
-                  <button className="m-add-btn">+ Add</button>
-                </MissedHabitsDrawer>
+                <div className="m-name">{h.name}
+                  {h.streakLost > 0 && (
+                    <span className="m-badge">🔥 {h.streakLost}d lost</span>
+                  )}
+                </div>
+                <button
+                  className="m-add-btn"
+                  disabled={addingMissedIds.has(h.id) || addedMissedIds.has(h.id)}
+                  onClick={() => handleAddMissed(h.id, h.name)}
+                >
+                  {addingMissedIds.has(h.id) ? (
+                    <span style={{ width: 10, height: 10, border: '2px solid rgba(99,102,241,0.3)', borderTopColor: 'var(--ind)', borderRadius: '50%', display: 'inline-block', animation: 'btn-spin 0.65s linear infinite' }} />
+                  ) : addedMissedIds.has(h.id) ? '✓ Added' : '+ Add'}
+                </button>
               </div>
             ))}
 
