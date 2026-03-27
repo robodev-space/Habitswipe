@@ -206,11 +206,11 @@
 }
 
 .ah-icon-btn {
-  height: 38px;
+  height: 42px;
   border-radius: 10px;
-  border: none;
+  border: 1.5px solid transparent;
   background: transparent;
-  font-size: 19px;
+  font-size: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -220,17 +220,29 @@
 }
 
 .ah-icon-btn:hover {
-  background: rgba(0, 0, 0, 0.06);
-  transform: scale(1.1);
+  border-color: var(--bord, #ede9e3);
+  background: var(--surf, #fff);
+  transform: scale(1.08);
 }
 
 [data-theme="dark"] .ah-icon-btn:hover,
 .dark .ah-icon-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  /* background: var(--surf, #161412); */
+  border-color: var(--bord, #2a2520);
 }
 
 .ah-icon-btn.sel {
-  transform: scale(1.14);
+  border-color: var(--bord, #ede9e3);
+  background: var(--surf, #fff);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transform: scale(1.1);
+}
+
+[data-theme="dark"] .ah-icon-btn.sel,
+.dark .ah-icon-btn.sel {
+  background: var(--surf, #161412);
+  border-color: var(--bord, #2a2520);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* ─── Color tray ───────────────────────────────────────────────────────────── */
@@ -293,17 +305,9 @@
   stroke-linejoin: round;
 }
 
-.ah-color-dot .ring {
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  pointer-events: none;
-  border: 2px solid transparent;
-  transition: border-color 0.2s;
-}
-
-.ah-color-dot.sel .ring {
-  border-color: inherit;
+.ah-color-dot.sel {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 2px var(--surf2, #f5f3ef), 0 0 0 3.5px currentColor;
 }
 
 /* ─── Frequency ────────────────────────────────────────────────────────────── */
@@ -547,7 +551,13 @@
 }
 
 .ah-time-card:hover {
-  background: rgba(0,0,0,0.03);
+  background: var(--surf, #f5f3ef);
+  filter: brightness(0.97);
+}
+
+[data-theme="dark"] .ah-time-card:hover,
+.dark .ah-time-card:hover {
+  filter: brightness(1.08);
 }
 
 .ah-time-card.sel {
@@ -583,7 +593,7 @@
 }
 
 .ah-time-card-add:hover {
-  background: rgba(0,0,0,0.02);
+  background: rgba(0, 0, 0, 0.02);
 }
 
 .ah-time-add-circle {
@@ -599,6 +609,23 @@
 
 .ah-time-name-add {
   color: var(--txt2, #6b6560);
+}
+
+/* ── Time card — dark theme ── */
+[data-theme="dark"] .ah-time-card,
+.dark .ah-time-card {
+  background: var(--surf2, #1e1c18);
+}
+
+[data-theme="dark"] .ah-time-card-add,
+.dark .ah-time-card-add {
+  border-color: var(--bord, #2a2520);
+  background: transparent;
+}
+
+[data-theme="dark"] .ah-time-add-circle,
+.dark .ah-time-add-circle {
+  background: var(--surf, #161412);
 }
 
 .ah-custom-time-wrap {
@@ -623,14 +650,51 @@
   background: var(--surf, #fff);
   border: 2px solid var(--bord, #ede9e3);
   border-radius: 10px;
-  padding: 8px 14px;
+  padding: 8px 12px;
   font-family: inherit;
   font-size: 15px;
   font-weight: 700;
   color: var(--txt, #1a1714);
   outline: none;
   cursor: pointer;
-  transition: border-color .2s;
+  transition: border-color .2s, background .2s, color .2s;
+  min-width: 120px;
+  text-align: center;
+}
+
+.ah-time-picker-input:focus {
+  border-color: var(--ind, #5b50e8);
+  box-shadow: 0 0 0 3px rgba(91, 80, 232, .12);
+}
+
+.ah-time-picker-input::-webkit-calendar-picker-indicator {
+  opacity: 0.55;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.ah-time-picker-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .ah-time-picker-input,
+.dark .ah-time-picker-input {
+  background: var(--surf2, #1e1c18);
+  border-color: var(--bord, #2a2520);
+  color: var(--txt, #f0ede8);
+}
+
+[data-theme="dark"] .ah-time-picker-input::-webkit-calendar-picker-indicator,
+.dark .ah-time-picker-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.55;
+}
+
+[data-theme="dark"] .ah-time-picker-input::-webkit-calendar-picker-indicator:hover,
+.dark .ah-time-picker-input::-webkit-calendar-picker-indicator:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .ah-remind-toggle-wrap {
@@ -641,6 +705,19 @@
   border-radius: 12px;
   padding: 16px 18px;
   border: 1px solid var(--bord, #ede9e3);
+  transition: background .3s, border-color .3s;
+}
+
+[data-theme="dark"] .ah-remind-toggle-wrap,
+.dark .ah-remind-toggle-wrap {
+  background: var(--surf2, #1e1c18);
+  border-color: var(--bord, #2a2520);
+}
+
+[data-theme="dark"] .ah-custom-time-wrap,
+.dark .ah-custom-time-wrap {
+  background: var(--surf2, #1e1c18);
+  border-color: var(--bord, #2a2520);
 }
 
 .ah-remind-title {
@@ -678,7 +755,7 @@
   transition: background .2s;
 }
 
-.ah-toggle-wrap input:checked + .ah-toggle-track {
+.ah-toggle-wrap input:checked+.ah-toggle-track {
   background: var(--ind, #5b50e8);
 }
 
@@ -691,10 +768,10 @@
   background: white;
   border-radius: 50%;
   transition: transform .2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,.15);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .15);
   pointer-events: none;
 }
 
-.ah-toggle-wrap input:checked ~ .ah-toggle-thumb {
+.ah-toggle-wrap input:checked~.ah-toggle-thumb {
   transform: translateX(20px);
 }

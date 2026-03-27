@@ -522,7 +522,7 @@ export function AddHabitDialog({
                       }}
                       style={{
                         borderColor: isActive ? color.hex : '',
-                        background: isActive ? color.bg : ''
+                        background: isActive ? `${color.hex}20` : ''
                       }}
                     >
                       <div className="ah-time-emoji">{t.emoji}</div>
@@ -540,11 +540,6 @@ export function AddHabitDialog({
                   type="time"
                   value={reminderTime}
                   onChange={(e) => handleReminderTimeChange(e.target.value)}
-                  style={{
-                    borderColor: color.hex,
-                    color: color.hex,
-                    backgroundColor: color.bg
-                  }}
                 />
               </div>
 
