@@ -1,7 +1,6 @@
 "use client"
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
-import { Button } from "@/components/ui/Button"
 import Link from "next/link"
 import { ArrowRight, Sparkles, Zap } from "lucide-react"
 import { useEffect } from "react"
@@ -10,13 +9,11 @@ export function Hero() {
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
 
-  // Smooth the mouse movement
   const springX = useSpring(mouseX, { stiffness: 50, damping: 20 })
   const springY = useSpring(mouseY, { stiffness: 50, damping: 20 })
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      // Normalize mouse position between -100 and 100
       const x = (e.clientX / window.innerWidth) * 200 - 100
       const y = (e.clientY / window.innerHeight) * 200 - 100
       mouseX.set(x)
@@ -31,7 +28,6 @@ export function Hero() {
     <section className="relative pt-24 sm:pt-32 pb-16 sm:pb-20 px-6 sm:px-8 overflow-hidden bg-black min-h-[90vh] flex items-center">
       {/* ── Background Layer ────────────────────────────────────────────────── */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        {/* Subtle Dotted Grid */}
         <div
           className="absolute inset-0 opacity-[0.15]"
           style={{
@@ -40,7 +36,6 @@ export function Hero() {
           }}
         />
 
-        {/* Interactive Aurora Mesh Blobs */}
         <motion.div
           className="absolute rounded-full bg-indigo-500/20 blur-[130px]"
           style={{
@@ -65,7 +60,6 @@ export function Hero() {
           }}
         />
 
-        {/* Animated ambient blobs */}
         <motion.div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-indigo-500/5 blur-[150px]"
           animate={{
@@ -78,18 +72,31 @@ export function Hero() {
 
       {/* ── Content ─────────────────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto text-center relative z-10 w-full flex flex-col items-center">
+        {/* Company Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-6"
+        >
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-400 bg-white/[0.04] border border-white/[0.06] backdrop-blur-sm">
+            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+            Innovation Studio
+          </span>
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, delay: 0.05 }}
           className="mb-8"
         >
           <h1 className="text-balance leading-[0.95] tracking-[-0.04em]">
             <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-[7rem] xl:text-[8rem] font-[900] text-white select-none">
-              Build the
+              We Build
             </span>
             <span className="mt-1 block text-5xl sm:text-6xl md:text-7xl lg:text-[7.5rem] xl:text-[8rem] font-[900] bg-gradient-to-r from-blue-400 via-indigo-400 to-cyan-400 bg-clip-text text-transparent select-none">
-              Future.
+              Products.
             </span>
           </h1>
         </motion.div>
@@ -100,7 +107,7 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-zinc-400 text-[15px] sm:text-base md:text-lg lg:text-xl max-w-xl mx-auto mb-10 leading-relaxed font-light text-balance"
         >
-          Home of the vibe habit movement. The <span className="text-white font-medium">agentic habit platform</span> for builders.
+          Karotive Labs crafts <span className="text-white font-medium">intelligent, beautiful products</span> that help people build better habits and live better lives.
         </motion.p>
 
         <motion.div
@@ -109,22 +116,22 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 group"
         >
-          <Link href="/register">
+          <a href="#products">
             <button className="relative group h-13 px-8 py-3.5 rounded-xl text-[15px] font-semibold text-white overflow-hidden transition-all active:scale-95 flex items-center gap-2 shadow-xl shadow-indigo-600/25">
               <span className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600" />
               <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-              <span className="relative">Get Started</span>
+              <span className="relative">Explore Products</span>
               <ArrowRight className="relative w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </button>
-          </Link>
-          <Link href="/login">
+          </a>
+          <a href="#contact">
             <button className="h-13 px-8 py-3.5 rounded-xl text-[15px] font-medium text-zinc-300 bg-white/[0.05] border border-white/[0.08] hover:bg-white/[0.09] hover:border-indigo-500/30 hover:text-white transition-all">
-              Log in
+              Contact Us
             </button>
-          </Link>
+          </a>
         </motion.div>
 
-        {/* Interactive Dashboard Preview / Video Screen */}
+        {/* Animated Preview */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 40 }}
           whileInView={{ opacity: 1, scale: 1, y: 0 }}
@@ -137,21 +144,16 @@ export function Hero() {
           className="mt-12 sm:mt-20 relative w-full flex justify-center"
         >
           <div className="w-full max-w-5xl aspect-video rounded-[2rem] sm:rounded-[3rem] border border-white/5 shadow-[0_32px_128px_-16px_rgba(0,0,0,1)] overflow-hidden relative group/preview bg-zinc-950/50 backdrop-blur-sm">
-            {/* Subtle Inner Glow */}
             <div className="absolute inset-0 bg-indigo-500/[0.03] pointer-events-none" />
 
-            {/* Content Layers */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-full h-full relative">
-                {/* Background Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent pointer-events-none" />
 
-                {/* Centered Premium Mark */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-30">
                   <Zap className="w-24 h-24 sm:w-40 sm:h-40 text-blue-400 blur-[2px]" />
                 </div>
 
-                {/* Floating Dashboard Card */}
                 <div className="absolute inset-0 flex items-center justify-center p-6 sm:p-12">
                   <motion.div
                     className="w-full max-w-sm glass rounded-3xl border border-white/10 p-6 sm:p-8 shadow-2xl bg-zinc-900/40 backdrop-blur-2xl"
@@ -159,12 +161,12 @@ export function Hero() {
                     transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                   >
                     <div className="flex items-center gap-4 mb-6">
-                      <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center">
-                        <Zap className="w-6 h-6 text-blue-400" />
+                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+                        <span className="text-white font-black text-lg">K</span>
                       </div>
                       <div>
-                        <div className="h-2 w-24 bg-white/20 rounded-full mb-2" />
-                        <div className="h-2 w-16 bg-white/10 rounded-full" />
+                        <div className="h-2.5 w-28 bg-white/20 rounded-full mb-2" />
+                        <div className="h-2 w-20 bg-white/10 rounded-full" />
                       </div>
                     </div>
                     <div className="space-y-3">
@@ -189,7 +191,6 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Glow Accent */}
           <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[90%] h-48 bg-indigo-500/20 blur-[120px] -z-10 rounded-full" />
         </motion.div>
       </div>
