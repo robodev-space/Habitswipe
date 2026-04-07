@@ -9,6 +9,7 @@ import { AddHabitDialog } from "@/components/shared/AddHabitDialog"
 import { HabitHistoryDrawer } from "@/components/shared/HabitHistoryDrawer"
 import { MissedHabitsDrawer, useMissedHabitsPreview } from "@/components/shared/MissedHabitsDrawer"
 import { API_ROUTES } from "@/lib/constants/api-routes"
+import { HabitIcon } from "@/components/shared/HabitIcons"
 
 // ─── Skeleton Components ─────────────────────────────────────────────────────
 
@@ -476,7 +477,9 @@ export default function TodayPage() {
                       <svg viewBox="0 0 16 16"><path d="M3 8l3.5 3.5L13 4" /></svg>
                     )}
                   </button>
-                  <div className="h-em">{habit.icon || "✨"}</div>
+                  <div className="h-em" style={{ background: `${color}12` }}>
+                    <HabitIcon emoji={habit.icon} color={color} size={18} />
+                  </div>
                   <div className="h-body">
                     <div className="h-name">{habit.name}</div>
                     <div className="h-freq">{habit.frequency === 'WEEKLY' ? 'Weekly' : 'Daily'}</div>
