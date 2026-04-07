@@ -194,7 +194,7 @@ export default function TodayPage() {
     setMood(label)
     toast.success(label)
     try {
-      const res = await fetch(API_ROUTES.ToDAY.MOOD, {
+      const res = await fetch(API_ROUTES.TODAY.MOOD, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, mood: label, emoji }),
@@ -208,7 +208,7 @@ export default function TodayPage() {
   const loadMood = async () => {
     setMoodLoading(true)
     try {
-      const res = await fetch(API_ROUTES.ToDAY.MOOD)
+      const res = await fetch(API_ROUTES.TODAY.MOOD)
       const data = await res.json()
       if (data?.data?.mood) {
         setMood(data.data.mood)

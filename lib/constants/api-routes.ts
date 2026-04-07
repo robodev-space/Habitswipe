@@ -57,7 +57,8 @@ export const API_ROUTES = {
   ONBOARDING: {
     BASE: `${BASE_URL}/api/onboarding`,
   },
-  ToDAY: {
+  TODAY: {
     MOOD: `${BASE_URL}/api/mood`,
+    HISTORY: `${BASE_URL}/api/history`,
   }
 } as const

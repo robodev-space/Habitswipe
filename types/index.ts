@@ -171,6 +171,50 @@ export interface StreakPageData {
   monthlyPerformance: MonthlyPerformancePoint[]
 }
 
+// ─── History Drawer types ──────────────────────────────────────────────────
+export interface HistoryDay {
+  l: string               // "M", "T" etc
+  n: number               // completed count
+  t: number               // total count
+}
+
+export interface HistoryWeek {
+  range: string           // "Mar 17–23"
+  rate: number            // 89
+  rateClass: string       // "rate-hi", "rate-md", "rate-lo"
+  days: HistoryDay[]
+  habits: {
+    icon: string
+    name: string
+    pct: number
+    color: string
+  }[]
+}
+
+export interface MonthHeatmap {
+  name: string            // "March 2026"
+  offset: number          // 4
+  data: number[]          // count per day
+  today: number           // index of today or -1
+}
+
+export interface InsightItem {
+  title: string
+  text: string
+  icon?: string           // SVG markup string or emoji
+}
+
+export interface HistoryData {
+  weeks: HistoryWeek[]
+  months: MonthHeatmap[]
+  summary: {
+    bestStreak: number
+    thisMonthRate: number
+    perfectDays: number
+  }
+  insights: InsightItem[]
+}
+
 
 
 // ─── Swipe card state ────────────────────────────────────────────────────────
