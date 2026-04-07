@@ -10,6 +10,8 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
+export const dynamic = "force-dynamic"
+
 function dateString(d: Date) {
   return d.toISOString().slice(0, 10)
 }

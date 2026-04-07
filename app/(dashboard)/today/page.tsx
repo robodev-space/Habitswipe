@@ -134,7 +134,7 @@ function SkeletonMissed() {
 export default function TodayPage() {
   const { data: session } = useSession()
   const { habits, todayHabits, swipeHabit, isLoading, isInitialized, fetchHabits } = useHabits()
-  const { missedHabits, isLoading: missedIsLoading, addToToday, refetch: refetchMissed } = useMissedHabitsPreview()
+  const { missedHabits, isLoading: missedIsLoading, acknowledgeMissed, refetch: refetchMissed } = useMissedHabitsPreview()
   const [addingMissedIds, setAddingMissedIds] = useState<Set<string>>(new Set())
   const [addedMissedIds, setAddedMissedIds] = useState<Set<string>>(new Set())
   const [mood, setMood] = useState<string | null>(null)
@@ -222,7 +222,7 @@ export default function TodayPage() {
     if (addingMissedIds.has(habitId) || addedMissedIds.has(habitId)) return
     setAddingMissedIds(prev => new Set(prev).add(habitId))
     try {
-      await addToToday(habitId)
+      await acknowledgeMissed(habitId)
       setAddedMissedIds(prev => new Set(prev).add(habitId))
       toast.success(`${name} added to today!`)
       // Refresh both lists

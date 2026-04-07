@@ -71,7 +71,7 @@ function MissedCard({
 }
 
 function DrawerContent({ onClose }: { onClose: () => void }) {
-  const { missedHabits, isLoading, yesterday, addToToday } = useMissedHabits()
+  const { missedHabits, isLoading, yesterday, acknowledgeMissed } = useMissedHabits()
   const [filter, setFilter] = useState("all")
   const [dismissed, setDismissed] = useState<Set<string>>(new Set())
   const [added, setAdded] = useState<Set<string>>(new Set())
@@ -105,7 +105,7 @@ function DrawerContent({ onClose }: { onClose: () => void }) {
     if (loadingIds.has(id)) return
     setLoadingIds(prev => new Set(prev).add(id))
     try {
-      await addToToday(id)
+      await acknowledgeMissed(id)
       setAdded(prev => new Set(prev).add(id))
       toast.success(`${name} added to today!`)
       setTimeout(() => {
@@ -122,12 +122,17 @@ function DrawerContent({ onClose }: { onClose: () => void }) {
     }
   }
 
-  const handleSkip = (id: string) => {
+  const handleSkip = async (id: string) => {
     setLeaving(id)
     setTimeout(() => {
       setDismissed(prev => new Set(prev).add(id))
       setLeaving(null)
     }, 300)
+    try {
+      await acknowledgeMissed(id)
+    } catch (err) {
+      // Ignore background persistence errors on skip
+    }
   }
 
   return (
@@ -149,7 +154,7 @@ function DrawerContent({ onClose }: { onClose: () => void }) {
               <div key={i} className="mc" style={{ height: 82, opacity: 0.5, background: 'var(--surf2)', border: 'none', animation: 'pulse 1.5s infinite' }} />
             ))}
           </div>
-        ) : visible.length === 0 ? (
+        ) : all.length === 0 ? (
           <div className="empty">
             <span className="empty-emoji">🎉</span>
             <div className="empty-h">All <em>caught up!</em></div>
@@ -181,23 +186,26 @@ function DrawerContent({ onClose }: { onClose: () => void }) {
                 </button>
               ))}
             </div>
-          </>
-        )}
 
-        {!isLoading && visible.length > 0 && (
-          <>
             <div className="md-sec">Add back to today</div>
-            {visible.map(h => (
-              <MissedCard
-                key={h.id}
-                habit={h}
-                isAdded={added.has(h.id)}
-                isLoading={loadingIds.has(h.id)}
-                isLeaving={leaving === h.id}
-                onAdd={() => handleAdd(h.id, h.name)}
-                onSkip={() => handleSkip(h.id)}
-              />
-            ))}
+            
+            {visible.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '20px 0', color: 'var(--txt3)', fontSize: 14 }}>
+                No habits match this filter.
+              </div>
+            ) : (
+              visible.map(h => (
+                <MissedCard
+                  key={h.id}
+                  habit={h}
+                  isAdded={added.has(h.id)}
+                  isLoading={loadingIds.has(h.id)}
+                  isLeaving={leaving === h.id}
+                  onAdd={() => handleAdd(h.id, h.name)}
+                  onSkip={() => handleSkip(h.id)}
+                />
+              ))
+            )}
           </>
         )}
       </div>

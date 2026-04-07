@@ -26,7 +26,7 @@ interface UseMissedHabitsResult {
   isLoading: boolean
   yesterday: string
   refetch: () => void
-  addToToday: (habitId: string) => Promise<void>
+  acknowledgeMissed: (habitId: string) => Promise<void>
 }
 
 export function useMissedHabits(): UseMissedHabitsResult {
@@ -54,27 +54,30 @@ export function useMissedHabits(): UseMissedHabitsResult {
     fetchMissed()
   }, [fetchMissed])
 
-  const addToToday = useCallback(async (habitId: string) => {
+  const acknowledgeMissed = useCallback(async (habitId: string) => {
+    // Requires yesterday string from state, so we need to capture it from closure or as an arg.
+    // Actually, yesterday is already in the hook's state. But since useCallback deps don't include it, 
+    // let's pass yesterday locally or add it to deps! Wait!
     const res = await fetch(API_ROUTES.LOGS.BASE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         habitId,
-        status: "DONE",
-        date: todayString(),
+        status: "SKIPPED",
+        date: yesterday,
       }),
     })
     if (!res.ok) {
       const json = await res.json()
       throw new Error(json.error || "Failed to add habit")
     }
-  }, [])
+  }, [yesterday])
 
   return {
     missedHabits,
     isLoading,
     yesterday,
     refetch: fetchMissed,
-    addToToday,
+    acknowledgeMissed,
   }
 }

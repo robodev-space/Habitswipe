@@ -16,6 +16,8 @@ import {
   // calculateCompletionRate,
 } from "@/lib/utils"
 
+export const dynamic = "force-dynamic"
+
 // ── GET — List habits ─────────────────────────────────────────────────────────
 export async function GET() {
   const session = await getServerSession(authOptions)

@@ -10,6 +10,8 @@ import { z } from "zod"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
+export const dynamic = "force-dynamic"
+
 const swipeSchema = z.object({
   habitId: z.string(),
   status: z.enum(["DONE", "SKIPPED"]),
