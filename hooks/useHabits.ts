@@ -73,6 +73,9 @@ export function useHabits() {
       const json = await res.json()
       if (!res.ok) throw new Error(json.error)
 
+      // Refetch stats to update global completion % and day totals
+      store.fetchStats()
+
       return !!json.allCompleted
     } catch (err) {
       // If API fails, re-fetch to restore correct state

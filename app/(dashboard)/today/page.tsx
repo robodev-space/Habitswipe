@@ -10,6 +10,8 @@ import { HabitHistoryDrawer } from "@/components/shared/HabitHistoryDrawer"
 import { MissedHabitsDrawer, useMissedHabitsPreview } from "@/components/shared/MissedHabitsDrawer"
 import { API_ROUTES } from "@/lib/constants/api-routes"
 import { HabitIcon } from "@/components/shared/HabitIcons"
+import { Moon, BatteryMedium, Smile, Zap, Flame, CheckSquare, TrendingUp } from "lucide-react"
+import { todayString } from "@/lib/utils"
 
 // ─── Skeleton Components ─────────────────────────────────────────────────────
 
@@ -133,7 +135,7 @@ function SkeletonMissed() {
 
 export default function TodayPage() {
   const { data: session } = useSession()
-  const { habits, todayHabits, swipeHabit, isLoading, isInitialized, fetchHabits } = useHabits()
+  const { habits, todayHabits, swipeHabit, isLoading, isInitialized, fetchHabits, stats, fetchStats } = useHabits()
   const { missedHabits, isLoading: missedIsLoading, acknowledgeMissed, refetch: refetchMissed } = useMissedHabitsPreview()
   const [addingMissedIds, setAddingMissedIds] = useState<Set<string>>(new Set())
   const [addedMissedIds, setAddedMissedIds] = useState<Set<string>>(new Set())
@@ -238,6 +240,7 @@ export default function TodayPage() {
   // Load habits on mount
   useEffect(() => {
     fetchHabits()
+    fetchStats()
   }, [])
 
   // Load mood
@@ -365,7 +368,7 @@ export default function TodayPage() {
               { id: 5, e: "🔥", l: "On fire — unstoppable!" },
             ].map((m) => (
               <button
-                key={m.e}
+                key={m.id}
                 className={`mood-btn ${mood === m.l ? 'selected' : ''}`}
                 onClick={() => handleMoodSelect(m.id, m.l, m.e)}
                 disabled={!!mood}
@@ -379,13 +382,25 @@ export default function TodayPage() {
       )}
 
       {/* ═══ Stats Strip ═══ */}
-      {isLoading ? (
+      {isLoading || !stats ? (
         <SkeletonStats />
       ) : (
         <div className="stats3 skeleton-loaded">
-          <div className="sc org"><div className="sc-ico">🔥</div><div className="sc-val">14d</div><div className="sc-lbl">Current streak</div></div>
-          <div className="sc ind"><div className="sc-ico">✅</div><div className="sc-val" id="doneVal">{completedCount}/{total}</div><div className="sc-lbl">Done today</div></div>
-          <div className="sc grn"><div className="sc-ico">📈</div><div className="sc-val">89%</div><div className="sc-lbl">This week</div></div>
+          <div className="sc org">
+            <div className="sc-ico"><Flame size={16} strokeWidth={2.5} /></div>
+            <div className="sc-val">{stats.currentBestStreak}d</div>
+            <div className="sc-lbl">Current streak</div>
+          </div>
+          <div className="sc ind">
+            <div className="sc-ico"><CheckSquare size={16} strokeWidth={2.5} /></div>
+            <div className="sc-val" id="doneVal">{stats.completedToday}/{stats.totalHabits}</div>
+            <div className="sc-lbl">Done today</div>
+          </div>
+          <div className="sc grn">
+            <div className="sc-ico"><TrendingUp size={16} strokeWidth={2.5} /></div>
+            <div className="sc-val">{stats.completionPercent}%</div>
+            <div className="sc-lbl">This week</div>
+          </div>
         </div>
       )}
 
@@ -411,13 +426,30 @@ export default function TodayPage() {
             </HabitHistoryDrawer>
           </div>
           <div className="week-row" style={{ marginBottom: 20 }}>
-            <div className="wd"><div className="wdot wf"><svg viewBox="0 0 13 13"><path d="M2 6.5l3 3 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg></div><div className="wdl">Mon</div></div>
-            <div className="wd"><div className="wdot wf"><svg viewBox="0 0 13 13"><path d="M2 6.5l3 3 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg></div><div className="wdl">Tue</div></div>
-            <div className="wd"><div className="wdot wp"></div><div className="wdl">Wed</div></div>
-            <div className="wd"><div className="wdot wf"><svg viewBox="0 0 13 13"><path d="M2 6.5l3 3 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg></div><div className="wdl">Thu</div></div>
-            <div className="wd"><div className="wdot wt"><div className="wt-inner"></div></div><div className="wdl wt-lbl">Today</div></div>
-            <div className="wd"><div className="wdot wm"></div><div className="wdl">Sat</div></div>
-            <div className="wd"><div className="wdot wm"></div><div className="wdl">Sun</div></div>
+            {stats?.weeklyData?.map((day) => {
+              const todayStr = todayString()
+              const isToday = day.fullDate === todayStr
+              const isFuture = day.fullDate > todayStr
+              const allDone = day.completed >= day.total && day.total > 0
+              const someDone = day.completed > 0 && day.completed < day.total
+
+              let dotClass = "wm"
+              if (isToday) dotClass = "wt"
+              else if (isFuture) dotClass = "wm"
+              else if (allDone) dotClass = "wf"
+              else if (someDone) dotClass = "wp"
+              else dotClass = "wm"
+
+              return (
+                <div className="wd" key={day.fullDate}>
+                  <div className={`wdot ${dotClass}`}>
+                    {dotClass === "wf" && <svg viewBox="0 0 13 13"><path d="M2 6.5l3 3 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                    {dotClass === "wt" && <div className="wt-inner"></div>}
+                  </div>
+                  <div className={`wdl ${isToday ? 'wt-lbl' : ''}`}>{day.date}</div>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}

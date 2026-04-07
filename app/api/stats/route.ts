@@ -5,11 +5,14 @@
 
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
-import { format, subDays, eachDayOfInterval } from "date-fns"
+import { format, subDays, eachDayOfInterval, startOfWeek, endOfWeek } from "date-fns"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-// import { todayString, calculateCurrentStreak } from "@/lib/utils"
+import { todayString } from "@/lib/utils"
+import { computeCurrentStreak } from "@/lib/streaks"
 import type { DashboardStats } from "@/types"
+
+export const dynamic = "force-dynamic"
 
 export async function GET() {
   const session = await getServerSession(authOptions)
@@ -17,10 +20,9 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const today = '2026-03-18'
-  // const today = todayString()
+  const today = todayString()
 
-  // Fetch all active habits with their logs for the last 7 days
+  // Fetch all active habits with their logs for the last 30 days
   const habits = await prisma.habit.findMany({
     where: { userId: session.user.id, isArchived: false },
     include: {
@@ -42,22 +44,39 @@ export async function GET() {
   const completedToday = todayLogs.filter((l) => l?.status === "DONE").length
   const skippedToday = todayLogs.filter((l) => l?.status === "SKIPPED").length
   const pendingToday = totalHabits - completedToday - skippedToday
-  const completionPercent =
-    totalHabits > 0 ? Math.round((completedToday / totalHabits) * 100) : 0
 
-  // Best current streak across all habits
-  const currentBestStreak = Math.max(
-    0,
-    ...habits.map((h) => 1)
-  )
-
-  // Weekly data — last 7 days
-  const last7 = eachDayOfInterval({
-    start: subDays(new Date(), 6),
-    end: new Date(),
+  // Weekly data — current week (Mon-Sun)
+  const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 }) // 1 = Monday
+  const weekEnd = endOfWeek(new Date(), { weekStartsOn: 1 })
+  const thisWeek = eachDayOfInterval({
+    start: weekStart,
+    end: weekEnd,
   })
 
-  const weeklyData = last7.map((day) => {
+  // Calculate This Week's completion percentage (Mon to Today)
+  const daysSoFar = thisWeek.filter(d => format(d, "yyyy-MM-dd") <= today)
+  let totalLogsPossible = 0
+  let totalCompletions = 0
+
+  daysSoFar.forEach(day => {
+    const dateStr = format(day, "yyyy-MM-dd")
+    totalLogsPossible += totalHabits
+    totalCompletions += habits.filter(h => 
+      h.logs.some(l => new Date(l.date).toISOString().slice(0, 10) === dateStr && l.status === "DONE")
+    ).length
+  })
+
+  const completionPercent =
+    totalLogsPossible > 0 ? Math.round((totalCompletions / totalLogsPossible) * 100) : 0
+
+  // Best current streak across all habits
+  const currentBestStreak = habits.length > 0 ? Math.max(
+    0,
+    ...habits.map((h) => computeCurrentStreak(h.logs.filter(l => l.status === "DONE").map(l => l.date)))
+  ) : 0
+
+  // Already calculated weekly intervals above!
+  const weeklyData = thisWeek.map((day) => {
     const dateStr = format(day, "yyyy-MM-dd")
     const completed = habits.filter((h) =>
       h.logs.some(
@@ -69,6 +88,7 @@ export async function GET() {
 
     return {
       date: format(day, "EEE"), // "Mon", "Tue" etc
+      fullDate: dateStr,        // Add fullDate for easier matching in the UI
       completed,
       total: totalHabits,
     }

@@ -102,6 +102,7 @@ export interface DashboardStats {
 
 export interface WeeklyDataPoint {
   date: string      // "Mon", "Tue" etc
+  fullDate: string  // "2026-03-24"
   completed: number
   total: number
 }

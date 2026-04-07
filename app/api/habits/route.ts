@@ -9,6 +9,7 @@ import { getServerSession } from "next-auth"
 import { z } from "zod"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { computeCurrentStreak, computeLongestStreak, computeCompletionRate } from "@/lib/streaks"
 import {
   todayString,
   // calculateCurrentStreak,
@@ -43,16 +44,14 @@ export async function GET() {
     const todayLog = habit.logs.find(
       (l) => new Date(l.date).toISOString().slice(0, 10) === today
     ) ?? null
+    const doneDates = habit.logs.filter(l => l.status === "DONE").map(l => l.date)
 
     return {
       ...habit,
       todayLog,
-      // currentStreak: calculateCurrentStreak(habit.logs),
-      // longestStreak: calculateLongestStreak(habit.logs),
-      // completionRate: calculateCompletionRate(habit.logs),
-      currentStreak: 1,
-      longestStreak: 2,
-      completionRate: 3,
+      currentStreak: computeCurrentStreak(doneDates),
+      longestStreak: computeLongestStreak(doneDates),
+      completionRate: computeCompletionRate(habit.logs),
     }
   })
 
