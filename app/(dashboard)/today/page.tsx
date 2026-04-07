@@ -530,14 +530,7 @@ export default function TodayPage() {
       )}
 
       {/* ═══ Quote ═══ */}
-      {isLoading ? (
-        <SkeletonQuote />
-      ) : (
-        <div className="quote skeleton-loaded">
-          <blockquote>&quot;We are what we repeatedly do. Excellence, then, is not an act, but a habit.&quot;</blockquote>
-          <cite>— Aristotle</cite>
-        </div>
-      )}
+
 
       {/* ═══ Missed Yesterday ═══ */}
       {missedIsLoading ? (
@@ -599,6 +592,14 @@ export default function TodayPage() {
               )}
             </>
           )}
+        </div>
+      )}
+      {isLoading ? (
+        <SkeletonQuote />
+      ) : (
+        <div className="quote skeleton-loaded">
+          <blockquote>&quot;We are what we repeatedly do. Excellence, then, is not an act, but a habit.&quot;</blockquote>
+          <cite>— Aristotle</cite>
         </div>
       )}
     </div>
