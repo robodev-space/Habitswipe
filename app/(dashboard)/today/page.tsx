@@ -84,19 +84,13 @@ function SkeletonHabits() {
     <div className="skeleton-habits">
       {[1, 2, 3].map(i => (
         <div key={i} className="skel-habit-row">
-          <div className="skel-emoji" />
+          <div className="skel-check" style={{ width: 28, height: 28, borderRadius: '50%' }} />
+          <div className="skel-emoji" style={{ width: 34, height: 34, borderRadius: 10 }} />
           <div className="skel-body">
-            <div className="skel-name" style={{ width: `${60 + i * 10}%` }} />
-            <div className="skel-meta-row">
-              <div className="skel-streak" />
-              <div className="skel-tag" />
-            </div>
+            <div className="skel-name" style={{ width: `${55 + i * 12}%` }} />
+            <div className="skel-tag" style={{ width: 35, marginTop: 4 }} />
           </div>
-          <div className="skel-bar-area">
-            <div className="skel-track" />
-            <div className="skel-pc" />
-          </div>
-          <div className="skel-check" />
+          <div style={{ width: 52, height: 22, background: 'var(--surf2)', borderRadius: 20 }} />
         </div>
       ))}
     </div>
@@ -449,9 +443,8 @@ export default function TodayPage() {
               const isDone = habits.find(h => h.id === habit.id)?.todayLog?.status === "DONE"
               if (filterOn && isDone) return null
 
-              // Cycles through some colors for mockup aesthetics similar to HTML snippet
               const colors = ["#10b981", "#6366f1", "#a855f7", "#f97316", "#3b82f6", "#eab308"]
-              const color = colors[i % colors.length]
+              const color = habit.color || colors[i % colors.length]
 
               return (
                 <div
@@ -460,20 +453,6 @@ export default function TodayPage() {
                   style={{ "--color": color } as any}
                   onClick={() => handleToggle(habit.id)}
                 >
-                  <div className="h-em">{habit.icon || "✨"}</div>
-                  <div className="h-body">
-                    <div className="h-name">{habit.name}</div>
-                    <div className="h-meta">
-                      <span className="h-str">🔥 14d</span>
-                      <span className="h-tag">Daily</span>
-                    </div>
-                  </div>
-                  <div className="h-bar">
-                    <div className="h-track">
-                      <div className="h-fill" style={{ width: isDone ? '100%' : '0%', background: color }}></div>
-                    </div>
-                    <div className="h-pc">{isDone ? "Done" : "Pending"}</div>
-                  </div>
                   <button
                     className={`h-ck ${isDone ? "done-btn" : ""}`}
                     onClick={(e) => {
@@ -481,14 +460,13 @@ export default function TodayPage() {
                       handleToggle(habit.id)
                     }}
                     disabled={togglingIds.has(habit.id)}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     {togglingIds.has(habit.id) ? (
                       <span
                         style={{
-                          width: 12, height: 12,
-                          border: '2px solid rgba(255,255,255,0.4)',
-                          borderTopColor: '#fff',
+                          width: 10, height: 10,
+                          border: '2px solid var(--bord)',
+                          borderTopColor: isDone ? '#fff' : 'var(--ind)',
                           borderRadius: '50%',
                           display: 'inline-block',
                           animation: 'btn-spin 0.65s linear infinite',
@@ -498,6 +476,14 @@ export default function TodayPage() {
                       <svg viewBox="0 0 16 16"><path d="M3 8l3.5 3.5L13 4" /></svg>
                     )}
                   </button>
+                  <div className="h-em">{habit.icon || "✨"}</div>
+                  <div className="h-body">
+                    <div className="h-name">{habit.name}</div>
+                    <div className="h-freq">{habit.frequency === 'WEEKLY' ? 'Weekly' : 'Daily'}</div>
+                  </div>
+                  <div className={`h-status ${isDone ? "is-done" : ""}`}>
+                    {isDone ? "✓ Done" : "Pending"}
+                  </div>
                 </div>
               )
             })}
