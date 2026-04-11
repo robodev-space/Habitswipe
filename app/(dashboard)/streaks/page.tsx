@@ -9,7 +9,7 @@ import type { StreakPageData } from "@/types"
 export default function StreaksPage() {
   const [data, setData] = useState<StreakPageData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [viewMode, setViewMode] = useState<"month" | "year">("month")
+  const [viewMode, setViewMode] = useState<"month" | "year">("year")
 
   useEffect(() => {
     const controller = new AbortController()
@@ -34,15 +34,60 @@ export default function StreaksPage() {
   if (isLoading) {
     return (
       <div className="tab active" id="tab-streaks">
-        <div className="ph">
-          <div>
-            <div className="pd">Your streaks</div>
-            <div className="pt">Loading <em>insights...</em></div>
+        {/* Header Skeleton */}
+        <div className="skeleton-header">
+          <div className="skel-hdr-left">
+            <div className="skel-date"></div>
+            <div className="skel-title"></div>
+          </div>
+          <div className="skel-btn"></div>
+        </div>
+
+        {/* Hero Skeleton */}
+        <div className="skeleton-streak-hero">
+          <div className="skel-sh-big"></div>
+          <div className="skel-sh-sub"></div>
+        </div>
+
+        {/* Stats Grid Skeleton */}
+        <div className="skeleton-stats">
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="skel-stat">
+              <div className="skel-ico"></div>
+              <div className="skel-val"></div>
+              <div className="skel-lbl"></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Heatmap Skeleton */}
+        <div className="sh">
+          <div className="st" style={{ width: 120, height: 12, background: 'var(--surf2)', borderRadius: 6 }}></div>
+          <div className="sl" style={{ width: 80, height: 12, background: 'var(--surf2)', borderRadius: 6 }}></div>
+        </div>
+        <div className="skeleton-cal">
+          <div className="skel-cal-grid">
+            {Array.from({ length: 35 }).map((_, i) => (
+              <div key={i} className="skel-cal-cell"></div>
+            ))}
           </div>
         </div>
-        <div className="animate-pulse bg-surf2 rounded-[20px] h-[220px] mb-5"></div>
-        <div className="grid grid-cols-3 gap-2 mb-5">
-          {[1,2,3,4,5,6].map(i => <div key={i} className="bg-surf2 h-[80px] rounded-[10px]"></div>)}
+
+        {/* Habit List Skeleton */}
+        <div className="sh">
+          <div className="st" style={{ width: 100, height: 12, background: 'var(--surf2)', borderRadius: 6 }}></div>
+        </div>
+        <div className="str-list">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="skel-str-item">
+              <div className="skel-str-ico"></div>
+              <div className="skel-str-bod">
+                <div className="skel-str-name"></div>
+                <div className="skel-str-bar"></div>
+                <div className="skel-str-meta"></div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     )
@@ -55,7 +100,7 @@ export default function StreaksPage() {
   const perfect = data?.perfectDays || 0
   // For 'Done today' we would theoretically need `useHabits`. 
   // We'll stub 'Completion' and 'Best month' and 'Done today' slightly.
-  
+
   // Heatmap generation logic
   // Assume current month
   const today = new Date()
@@ -63,7 +108,7 @@ export default function StreaksPage() {
   const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).getDay()
   // Adjust so Monday is 0
   const offset = firstDay === 0 ? 6 : firstDay - 1
-  
+
   // Map globalHeatmap to an easy lookup `{ "YYYY-MM-DD": count }`
   const heatMapRecord: Record<string, number> = {}
   data?.globalHeatmap?.forEach(item => {
@@ -84,7 +129,7 @@ export default function StreaksPage() {
   const colors = ["#a855f7", "#10b981", "#6366f1", "#f97316", "#3b82f6", "#eab308"]
 
   return (
-    <div className="tab active" id="tab-streaks">
+    <div className="tab active skeleton-loaded" id="tab-streaks">
       {/* Header */}
       <div className="ph">
         <div>
@@ -128,7 +173,7 @@ export default function StreaksPage() {
           {viewMode === "month" ? "View year →" : "View month →"}
         </div>
       </div>
-      
+
       {viewMode === "month" ? (
         <div className="cal-wrap">
           <div className="cal-hdr">
@@ -145,19 +190,19 @@ export default function StreaksPage() {
               const dayNum = i + 1
               const dStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`
               const count = heatMapRecord[dStr] || 0
-              
+
               let colorCls = "c0"
               if (count === 1) colorCls = "c1"
               else if (count === 2) colorCls = "c2"
               else if (count === 3) colorCls = "c3"
               else if (count === 4) colorCls = "c4"
               else if (count >= 5) colorCls = "c5"
-              
+
               const isToday = dayNum === today.getDate()
 
               return (
-                <div 
-                  key={dayNum} 
+                <div
+                  key={dayNum}
                   className={`cal-cell ${colorCls} ${isToday ? 'cal-today' : ''}`}
                   title={`${today.toLocaleString('default', { month: 'short' })} ${dayNum}: ${count} habits completed`}
                 >
@@ -184,23 +229,23 @@ export default function StreaksPage() {
             {Array.from({ length: yearOffset }).map((_, i) => (
               <div key={`y-exp-empty-${i}`} style={{ width: 14, height: 14 }}></div>
             ))}
-            
+
             {/* 365 days of cells */}
             {yearDays.map((d, i) => {
               const dStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
               const count = heatMapRecord[dStr] || 0
-              
+
               let colorCls = "c0"
               if (count === 1) colorCls = "c1"
               else if (count === 2) colorCls = "c2"
               else if (count === 3) colorCls = "c3"
               else if (count === 4) colorCls = "c4"
               else if (count >= 5) colorCls = "c5"
-              
+
               const isToday = i === 364
-              
+
               return (
-                <div 
+                <div
                   key={dStr}
                   className={`cal-cell ${colorCls} ${isToday ? 'cal-today' : ''}`}
                   style={{ width: 14, height: 14, padding: 0, fontSize: 0 }}
@@ -227,7 +272,7 @@ export default function StreaksPage() {
       <div className="str-list">
         {data?.habits?.map((habit, i) => {
           const color = colors[i % colors.length]
-          
+
           return (
             <div className="str-item" key={habit.habitId}>
               <div className="str-ico">{habit.icon || "🔥"}</div>
