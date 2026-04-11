@@ -120,6 +120,15 @@ export default function ProfilePage() {
         </div>
 
         <div className="sg">
+          <div className="sg-head">Subscription</div>
+          <div className="sg-row" onClick={() => window.location.href = '/subscription'}>
+            <div className="sg-ico" style={{ background: "var(--ind-s)" }}>⭐</div>
+            <div className="sg-txt"><div className="sg-lbl">Current Plan</div><div className="sg-sub">Basic · Free</div></div>
+            <div className="sg-right">Upgrade <svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" /></svg></div>
+          </div>
+        </div>
+
+        <div className="sg">
           <div className="sg-head">Preferences</div>
           <div className="sg-row" onClick={toggleTheme}>
             <div className="sg-ico" style={{ background: "var(--amb-s)" }}>🌙</div>

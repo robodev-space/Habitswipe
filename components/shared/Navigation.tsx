@@ -17,7 +17,7 @@ const NAV_ITEMS = [
   { id: "habits", href: "/habits", label: "Habits" },
   { id: "streaks", href: "/streaks", label: "Streaks", className: "s-streak" },
   { id: "stats", href: "/stats", label: "Stats" },
-  { id: "Plan", href: "/subscription", label: "Plan" },
+  { id: "plan", href: "/subscription", label: "Plan" },
   // { id: "snap", href: "/snap", label: "Snap" },
   { id: "profile", href: "/profile", label: "Profile" },
 ]
@@ -67,7 +67,7 @@ export function Navigation() {
               {item.id === "habits" && <svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h8" /></svg>}
               {item.id === "streaks" && <svg viewBox="0 0 16 16" style={{ stroke: "none", fill: "var(--org)" }}><path d="M8 1.5C8 1.5 11.5 5.5 11.5 8.5C11.5 10.6 9.9 12.5 8 12.5C6.1 12.5 4.5 10.6 4.5 8.5C4.5 6 6 3.5 8 1.5Z" /></svg>}
               {item.id === "stats" && <svg viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1.5" /><rect x="9" y="1" width="6" height="6" rx="1.5" /><rect x="1" y="9" width="6" height="6" rx="1.5" /><rect x="9" y="9" width="6" height="6" rx="1.5" /></svg>}
-              {item.id === "snap" && <svg viewBox="0 0 16 16"><circle cx="8" cy="9" r="3" /><path d="M1 6h1.5l1.5-3h8l1.5 3H15v8H1z" /></svg>}
+              {item.id === "plan" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
               {item.id === "profile" && <svg viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" /><path d="M2.5 14c0-3 2.5-5 5.5-5s5.5 2 5.5 5" /></svg>}
 
               {item.label}
@@ -79,6 +79,16 @@ export function Navigation() {
         })}
 
         <div className="s-gap"></div>
+        
+        <Link href="/subscription" className="pro-nudge">
+          <div className="pro-nudge-title">
+            <Zap size={14} fill="white" /> Go Pro
+          </div>
+          <div className="pro-nudge-desc">
+            Unlock yearly stats and unlimited habits.
+          </div>
+        </Link>
+
         <div className="s-div"></div>
 
         {session?.user && (
@@ -116,6 +126,7 @@ export function Navigation() {
           { id: "habits", href: "/habits", label: "Habits" },
           { id: "streaks", href: "/streaks", label: "Streaks" },
           { id: "stats", href: "/stats", label: "Stats" },
+          { id: "plan", href: "/subscription", label: "Plan" },
           { id: "profile", href: "/profile", label: "Profile" },
         ].map((item) => {
           const isActive = pathname === item.href
@@ -128,8 +139,9 @@ export function Navigation() {
             >
               {item.id === "today" && <svg viewBox="0 0 16 16"><path d="M7 1.5L8.2 5.3H12L8.9 7.6L10 11.2L7 9.2L4 11.2L5.1 7.6L2 5.3H5.8L7 1.5Z" /></svg>}
               {item.id === "habits" && <svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h8" /></svg>}
-              {item.id === "streaks" && <svg viewBox="0 0 16 16" style={isActive ? undefined : { stroke: "var(--org)" }}><path d="M8 1.5C8 1.5 11.5 5.5 11.5 8.5C11.5 10.6 9.9 12.5 8 12.5C6.1 12.5 4.5 10.6 4.5 8.5C4.5 6 6 3.5 8 1.5Z" fill={isActive ? undefined : "var(--org)"} stroke={isActive ? undefined : "none"} /></svg>}
+               {item.id === "streaks" && <svg viewBox="0 0 16 16" style={isActive ? undefined : { stroke: "var(--org)" }}><path d="M8 1.5C8 1.5 11.5 5.5 11.5 8.5C11.5 10.6 9.9 12.5 8 12.5C6.1 12.5 4.5 10.6 4.5 8.5C4.5 6 6 3.5 8 1.5Z" fill={isActive ? undefined : "var(--org)"} stroke={isActive ? undefined : "none"} /></svg>}
               {item.id === "stats" && <svg viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1.5" /><rect x="9" y="1" width="6" height="6" rx="1.5" /><rect x="1" y="9" width="6" height="6" rx="1.5" /><rect x="9" y="9" width="6" height="6" rx="1.5" /></svg>}
+              {item.id === "plan" && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>}
               {item.id === "profile" && <svg viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" /><path d="M2.5 14c0-3 2.5-5 5.5-5s5.5 2 5.5 5" /></svg>}
 
               <span>{item.label}</span>
