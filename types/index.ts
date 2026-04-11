@@ -107,6 +107,34 @@ export interface WeeklyDataPoint {
   total: number
 }
 
+// ─── Analytics stats ────────────────────────────────────────────────────────
+export interface AnalyticsStats {
+  periodLabel: string         // "March 2026" or "Year 2026"
+  completionRate: number      // Current month or year
+  completionRateTrend: number // +4% vs last period
+  totalCheckIns: number
+  totalCheckInsTrend: number
+  perfectDays: number
+  perfectDaysTrend: number
+  longestStreak: number       // All-time best streak across habits
+  bestHabitName: string       // Habit name for the longest streak
+  chartLabels: string[]       // ["Mon", "Tue"...] or ["Jan", "Feb"...]
+  chartData: number[]         // Array of completions per label
+  overallRate: number
+  morningRate: number
+  eveningRate: number
+  habitDistribution: { name: string; value: number; color: string }[]
+  habitPerformance: HabitPerformanceItem[]
+}
+
+export interface HabitPerformanceItem {
+  id: string
+  name: string
+  icon: string
+  color: string
+  completionRate: number      // Current month
+}
+
 // Add this BEFORE HabitStreakDetail
 export interface StreakMilestone {
   id: string

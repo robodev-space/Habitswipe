@@ -17,7 +17,8 @@ const NAV_ITEMS = [
   { id: "habits", href: "/habits", label: "Habits" },
   { id: "streaks", href: "/streaks", label: "Streaks", className: "s-streak" },
   { id: "stats", href: "/stats", label: "Stats" },
-  { id: "snap", href: "/snap", label: "Snap" },
+  { id: "Plan", href: "/subscription", label: "Plan" },
+  // { id: "snap", href: "/snap", label: "Snap" },
   { id: "profile", href: "/profile", label: "Profile" },
 ]
 
@@ -68,7 +69,7 @@ export function Navigation() {
               {item.id === "stats" && <svg viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1.5" /><rect x="9" y="1" width="6" height="6" rx="1.5" /><rect x="1" y="9" width="6" height="6" rx="1.5" /><rect x="9" y="9" width="6" height="6" rx="1.5" /></svg>}
               {item.id === "snap" && <svg viewBox="0 0 16 16"><circle cx="8" cy="9" r="3" /><path d="M1 6h1.5l1.5-3h8l1.5 3H15v8H1z" /></svg>}
               {item.id === "profile" && <svg viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" /><path d="M2.5 14c0-3 2.5-5 5.5-5s5.5 2 5.5 5" /></svg>}
-              
+
               {item.label}
               {item.badgeId && (
                 <span className="s-badge" id={item.badgeId} style={{ display: "none" }}></span>
@@ -79,7 +80,7 @@ export function Navigation() {
 
         <div className="s-gap"></div>
         <div className="s-div"></div>
-        
+
         {session?.user && (
           <Link href="/profile" className="s-user text-inherit hover:text-inherit">
             <div className="s-av">
@@ -92,7 +93,7 @@ export function Navigation() {
             </div>
           </Link>
         )}
-        
+
         <button className="s-btn" onClick={() => setTheme(isDark ? "light" : "dark")}>
           <svg viewBox="0 0 16 16">
             <circle cx="8" cy="8" r="4" />
@@ -130,9 +131,9 @@ export function Navigation() {
               {item.id === "streaks" && <svg viewBox="0 0 16 16" style={isActive ? undefined : { stroke: "var(--org)" }}><path d="M8 1.5C8 1.5 11.5 5.5 11.5 8.5C11.5 10.6 9.9 12.5 8 12.5C6.1 12.5 4.5 10.6 4.5 8.5C4.5 6 6 3.5 8 1.5Z" fill={isActive ? undefined : "var(--org)"} stroke={isActive ? undefined : "none"} /></svg>}
               {item.id === "stats" && <svg viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1.5" /><rect x="9" y="1" width="6" height="6" rx="1.5" /><rect x="1" y="9" width="6" height="6" rx="1.5" /><rect x="9" y="9" width="6" height="6" rx="1.5" /></svg>}
               {item.id === "profile" && <svg viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" /><path d="M2.5 14c0-3 2.5-5 5.5-5s5.5 2 5.5 5" /></svg>}
-              
+
               <span>{item.label}</span>
-              
+
               {isActive && <div className="mob-dot"></div>}
               {item.id === "today" && (
                 <div className="mob-badge" id="mbadge" style={{ display: "none" }}></div>
