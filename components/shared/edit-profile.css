@@ -1,0 +1,184 @@
+/* components/shared/edit-profile.css */
+/* ─────────────────────────────────────────────────────────────────────────────
+   EDIT PROFILE DIALOG — Styling for the user profile editor
+   Matches the ConfirmDialog and Dashboard aesthetic.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.ep-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.ep-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ep-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--txt3);
+  margin-left: 2px;
+  text-align: left;
+}
+
+.ep-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ep-input {
+  width: 100%;
+  padding: 13px 16px;
+  background: rgba(20, 18, 16, 0.4); /* Darker for contrast */
+  border: 1px solid var(--bord);
+  border-radius: 14px;
+  color: var(--txt);
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ep-input:focus {
+  outline: none;
+  border-color: var(--ind);
+  background: rgba(20, 18, 16, 0.6);
+  box-shadow: 0 0 0 4px var(--ind-s), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ep-input.has-icon {
+  padding-left: 40px;
+}
+
+.ep-icon-inner {
+  position: absolute;
+  left: 14px;
+  color: var(--txt3);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.ep-textarea {
+  resize: none;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+.ep-char-count {
+  font-size: 11px;
+  color: var(--txt3);
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* ── Custom Username Field ────────────────────────────────────────────── */
+.ep-username-prefix {
+  position: absolute;
+  left: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ind);
+  pointer-events: none;
+}
+
+.ep-input-username {
+  padding-left: 30px;
+}
+
+/* ── Actions ───────────────────────────────────────────────────────────── */
+.ep-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.ep-btn {
+  padding: 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.ep-btn-cancel {
+  background: transparent;
+  color: var(--txt3);
+  border: 1px solid var(--bord);
+}
+
+.ep-btn-cancel:hover {
+  background: var(--surf2);
+  color: var(--txt);
+  border-color: var(--txt3);
+}
+
+.ep-btn-save {
+  background: linear-gradient(135deg, var(--ind) 0%, var(--org) 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(91, 80, 232, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.ep-btn-save::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(rgba(255,255,255,0.1), transparent);
+  pointer-events: none;
+}
+
+.ep-btn-save:hover {
+  background: #4a40d4;
+  transform: translateY(-1px);
+}
+
+.ep-btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Loading spinner */
+.ep-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: ep-spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes ep-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Dialog Card Polish ────────────────────────────────────────────── */
+.ep-card {
+  backdrop-filter: blur(12px);
+  background: rgba(26, 23, 20, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .ep-card {
+    width: 95% !important;
+    margin: 10px;
+    padding: 24px !important;
+  }
+}

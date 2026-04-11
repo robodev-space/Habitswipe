@@ -8,13 +8,24 @@ import { format } from "date-fns"
 import { LogOut, Trash2 } from "lucide-react"
 import { API_ROUTES } from "@/lib/constants/api-routes"
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
+import { EditProfileDialog } from "@/components/shared/EditProfileDialog"
 
 interface ProfileData {
   id: string
   name: string | null
   email: string | null
+  username: string | null
+  phone: string | null
+  bio: string | null
   createdAt: string
   _count: { habits: number; logs: number }
+  stats: {
+    currentStreak: number
+    bestStreak: number
+    totalCheckIns: number
+    perfectDays: number
+    completionRate: number
+  }
 }
 
 export default function ProfilePage() {
@@ -28,13 +39,11 @@ export default function ProfilePage() {
   const [notifOn, setNotifOn] = useState(true)
   const [showLogout, setShowLogout] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [isEditOpen, setIsEditOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  useEffect(() => {
-    setMounted(true)
-    const controller = new AbortController()
-
-    fetch(API_ROUTES.PROFILE.BASE, { signal: controller.signal })
+  const fetchProfile = (signal?: AbortSignal) => {
+    fetch(API_ROUTES.PROFILE.BASE, { signal })
       .then((r) => r.json())
       .then((json) => {
         if (json.data) setProfile(json.data)
@@ -44,7 +53,12 @@ export default function ProfilePage() {
         console.error("Profile fetch error:", err)
       })
       .finally(() => setIsLoading(false))
+  }
 
+  useEffect(() => {
+    setMounted(true)
+    const controller = new AbortController()
+    fetchProfile(controller.signal)
     return () => controller.abort()
   }, [])
 
@@ -90,33 +104,36 @@ export default function ProfilePage() {
             <div className="pd">Your profile</div>
             <div className="pt">Hey, <em>{session?.user?.name?.split(' ')[0] || 'User'}</em> 👋</div>
           </div>
-          <button className="btn-ghost" onClick={() => toast("Edit profile coming soon...")}>Edit profile</button>
+          <button className="btn-ghost" onClick={() => setIsEditOpen(true)}>Edit profile</button>
         </div>
 
         <div className="prof-hero">
-          <div className="prof-av-wrap">
+          <div className="prof-av-wrap" onClick={() => setIsEditOpen(true)} style={{ cursor: "pointer" }}>
             <div className="prof-av">{session?.user?.name?.[0]?.toUpperCase() || 'U'}</div>
             <div className="prof-online"></div>
           </div>
-          <div className="prof-name">{session?.user?.name}</div>
-          <div className="prof-email">{session?.user?.email}</div>
+          <div className="prof-name">{profile?.name || session?.user?.name}</div>
+          <div className="prof-username" style={{ fontSize: "13px", color: "var(--ind)", fontWeight: 600, marginBottom: "2px" }}>
+            @{profile?.username || 'user'}
+          </div>
+          <div className="prof-email">{profile?.email || session?.user?.email}</div>
           <div className="prof-since">
-            Member since {profile?.createdAt ? format(new Date(profile.createdAt), "MMMM yyyy") : "January 2026"} · Asia/Kolkata
+            Member since {profile?.createdAt ? format(new Date(profile.createdAt), "MMMM yyyy") : "January 2026"} · {Intl.DateTimeFormat().resolvedOptions().timeZone}
           </div>
           <div className="prof-badges">
-            <div className="pb pb-gold">🏅 14-day streak</div>
+            <div className="pb pb-gold">🏅 {profile?.stats?.currentStreak || 0}-day streak</div>
             <div className="pb pb-ind">⚡ Power user</div>
-            <div className="pb pb-grn">✅ 89% rate</div>
+            <div className="pb pb-grn">✅ {profile?.stats?.completionRate || 0}% rate</div>
           </div>
         </div>
 
         <div className="ps6">
-          <div className="ps6-c"><div className="ps6-v" style={{ color: "var(--org)" }}>14d</div><div className="ps6-l">Streak</div></div>
-          <div className="ps6-c"><div className="ps6-v">{profile?._count?.logs || 0}</div><div className="ps6-l">Check-ins</div></div>
+          <div className="ps6-c"><div className="ps6-v" style={{ color: "var(--org)" }}>{profile?.stats?.currentStreak || 0}d</div><div className="ps6-l">Streak</div></div>
+          <div className="ps6-c"><div className="ps6-v">{profile?.stats?.totalCheckIns || 0}</div><div className="ps6-l">Check-ins</div></div>
           <div className="ps6-c"><div className="ps6-v" style={{ color: "var(--ind)" }}>{profile?._count?.habits || 0}</div><div className="ps6-l">Habits</div></div>
-          <div className="ps6-c"><div className="ps6-v" style={{ color: "var(--grn)" }}>89%</div><div className="ps6-l">Completion</div></div>
-          <div className="ps6-c"><div className="ps6-v">22d</div><div className="ps6-l">Best streak</div></div>
-          <div className="ps6-c"><div className="ps6-v">12</div><div className="ps6-l">Perfect days</div></div>
+          <div className="ps6-c"><div className="ps6-v" style={{ color: "var(--grn)" }}>{profile?.stats?.completionRate || 0}%</div><div className="ps6-l">Completion</div></div>
+          <div className="ps6-c"><div className="ps6-v">{profile?.stats?.bestStreak || 0}d</div><div className="ps6-l">Best streak</div></div>
+          <div className="ps6-c"><div className="ps6-v">{profile?.stats?.perfectDays || 0}</div><div className="ps6-l">Perfect days</div></div>
         </div>
 
         <div className="sg">
@@ -140,9 +157,9 @@ export default function ProfilePage() {
             <div className="sg-txt"><div className="sg-lbl">Notifications</div><div className="sg-sub">Daily reminders at 8am</div></div>
             <div className={`toggle ${notifOn ? "on" : ""}`} onClick={(e) => { e.stopPropagation(); toggleNotif() }}></div>
           </div>
-          <div className="sg-row" onClick={() => toast("Timezone: Asia/Kolkata (IST)")}>
+          <div className="sg-row" onClick={() => toast(`Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`)}>
             <div className="sg-ico" style={{ background: "var(--grn-s)" }}>🌍</div>
-            <div className="sg-txt"><div className="sg-lbl">Timezone</div><div className="sg-sub">Asia/Kolkata (IST)</div></div>
+            <div className="sg-txt"><div className="sg-lbl">Timezone</div><div className="sg-sub">{Intl.DateTimeFormat().resolvedOptions().timeZone}</div></div>
             <div className="sg-right">Change <svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" /></svg></div>
           </div>
           <div className="sg-row" onClick={() => toast("Day starts at midnight")}>
@@ -199,6 +216,18 @@ export default function ProfilePage() {
         cancelLabel="Keep account"
         isLoading={isDeleting}
         onConfirm={handleDeleteAccount}
+      />
+
+      <EditProfileDialog
+        open={isEditOpen}
+        onOpenChange={setIsEditOpen}
+        initialData={{
+          name: profile?.name || null,
+          username: profile?.username || null,
+          phone: profile?.phone || null,
+          bio: profile?.bio || null,
+        }}
+        onSuccess={() => fetchProfile()}
       />
     </>
   )
