@@ -9,6 +9,7 @@ import { LogOut, Trash2 } from "lucide-react"
 import { API_ROUTES } from "@/lib/constants/api-routes"
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
 import { EditProfileDialog } from "@/components/shared/EditProfileDialog"
+import { Skeleton } from "@/components/ui/Skeleton"
 
 interface ProfileData {
   id: string
@@ -28,6 +29,70 @@ interface ProfileData {
     perfectDays: number
     completionRate: number
   }
+}
+
+function ProfileSkeleton() {
+  return (
+    <div className="tab active" id="tab-profile">
+      {/* Header Skeleton */}
+      <div className="ph">
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-8 w-48" />
+        </div>
+        <Skeleton className="h-10 w-28 rounded-xl" />
+      </div>
+
+      {/* Hero Skeleton */}
+      <div className="prof-hero pb-8">
+        <div className="prof-av-wrap mb-4">
+          <Skeleton className="w-[84px] h-[84px] rounded-full" />
+        </div>
+        <Skeleton className="h-7 w-48 mx-auto mb-2" />
+        <Skeleton className="h-4 w-32 mx-auto mb-2" />
+        <Skeleton className="h-4 w-56 mx-auto mb-4" />
+        <Skeleton className="h-4 w-64 mx-auto mb-6 opacity-60" />
+        <div className="flex justify-center gap-2">
+          <Skeleton className="h-6 w-24 rounded-full" />
+          <Skeleton className="h-6 w-24 rounded-full" />
+          <Skeleton className="h-6 w-24 rounded-full" />
+        </div>
+      </div>
+
+      {/* Stats Grid Skeleton */}
+      <div className="ps6">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="ps6-c">
+            <Skeleton className="h-7 w-12 mb-1 mx-auto" />
+            <Skeleton className="h-3 w-16 mx-auto opacity-70" />
+          </div>
+        ))}
+      </div>
+
+      {/* Sections Skeleton */}
+      {[
+        { title: "Subscription", rows: 1 },
+        { title: "Preferences", rows: 4 },
+        { title: "Account", rows: 4 }
+      ].map((section, idx) => (
+        <div key={idx} className="sg">
+          <div className="sg-head opacity-70">
+            <Skeleton className="h-3 w-20" />
+          </div>
+          {[...Array(section.rows)].map((_, i) => (
+            <div key={i} className="sg-row border-none">
+              <Skeleton className="w-10 h-10 rounded-xl flex-shrink-0" />
+              <div className="sg-txt flex-1 ml-3">
+                <Skeleton className="h-4 w-32 mb-2" />
+                <Skeleton className="h-3 w-48 opacity-60" />
+              </div>
+              <Skeleton className="w-10 h-6 rounded-full" />
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  )
 }
 
 export default function ProfilePage() {
@@ -88,14 +153,7 @@ export default function ProfilePage() {
   }
 
   if (isLoading || !mounted) {
-    return (
-      <div className="tab active" id="tab-profile">
-        <div className="ph">
-          <div><div className="pd">Your profile</div><div className="pt">Loading...</div></div>
-        </div>
-        <div className="animate-pulse bg-surf2 rounded-[20px] h-[300px] mb-5"></div>
-      </div>
-    )
+    return <ProfileSkeleton />
   }
 
   return (
