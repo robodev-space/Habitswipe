@@ -102,8 +102,8 @@ export function EditProfileDialog({
         <div className="ep-dialog">
           <div className="ep-accent"></div>
           
-          <div className="ep-scroll">
-            <div className="flex justify-between items-start mb-6">
+          <div className="ep-header">
+            <div className="flex justify-between items-start w-full">
               <div>
                 <div className="ep-eyebrow">Settings</div>
                 <h2 className="ep-title">Refine your <em>profile</em></h2>
@@ -115,7 +115,9 @@ export function EditProfileDialog({
                 <X size={18} className="text-[var(--txt3)]" />
               </button>
             </div>
-
+          </div>
+          
+          <div className="ep-scroll">
             <form onSubmit={handleSubmit}>
               <div className="mb-4 pb-2 border-b border-[var(--bord)]">
                 <span className="text-[10px] font-bold text-[var(--ind)] uppercase tracking-widest">Account Details</span>

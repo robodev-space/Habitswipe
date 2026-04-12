@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth"
 import { z } from "zod"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { todayString } from "@/lib/utils"
+import { getUserToday } from "@/lib/date-utils"
 
 const moodSchema = z.object({
   id: z.number(),
@@ -18,7 +18,13 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const today = new Date(todayString())
+  // Fetch user profile for timezone & dayStartHour
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { timezone: true, dayStartHour: true }
+  })
+
+  const today = new Date(getUserToday(user?.timezone ?? "UTC", user?.dayStartHour ?? 0))
 
   try {
     const log = await prisma.moodLog.findUnique({
@@ -45,7 +51,14 @@ export async function POST(req: Request) {
   try {
     const body = await req.json()
     const { id, mood, emoji } = moodSchema.parse(body)
-    const today = new Date(todayString())
+
+    // Fetch user profile for timezone & dayStartHour
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { timezone: true, dayStartHour: true }
+    })
+
+    const today = new Date(getUserToday(user?.timezone ?? "UTC", user?.dayStartHour ?? 0))
 
     // Check if mood already logged today
     const existing = await prisma.moodLog.findUnique({

@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { Navigation } from "@/components/shared/Navigation"
+import { TimezoneDetector } from "@/components/shared/TimezoneDetector"
 import "./dashboard.css"
 
 export default async function DashboardLayout({
@@ -13,6 +14,7 @@ export default async function DashboardLayout({
 }) {
   return (
     <>
+      <TimezoneDetector />
       <div className="shell">
         <Navigation />
         <main className="main">

@@ -5,8 +5,10 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { format, subDays, startOfDay, eachDayOfInterval } from "date-fns"
+import { formatInTimeZone } from "date-fns-tz"
 import { prisma } from "@/lib/prisma"
 import { MILESTONE_DAYS } from "@/types"
+import { getUserToday } from "./date-utils"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CORE CALCULATION
@@ -18,6 +20,12 @@ import { MILESTONE_DAYS } from "@/types"
  * Call this every time a HabitLog is created or updated.
  */
 export async function recalculateStreak(habitId: string, userId: string) {
+  // Fetch user profile for timezone/dayStart
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { timezone: true, dayStartHour: true }
+  })
+
   // Fetch all DONE logs for this habit, sorted oldest → newest
   const logs = await prisma.habitLog.findMany({
     where: { habitId, status: "DONE" },
@@ -25,7 +33,10 @@ export async function recalculateStreak(habitId: string, userId: string) {
     select: { date: true },
   })
 
-  const currentStreak = computeCurrentStreak(logs.map((l) => l.date))
+  const currentTz = user?.timezone ?? "UTC"
+  const currentStartHour = user?.dayStartHour ?? 0
+
+  const currentStreak = computeCurrentStreak(logs.map((l) => l.date), currentTz, currentStartHour)
   const longestStreak = computeLongestStreak(logs.map((l) => l.date))
   const lastStreakDate = logs.length > 0 ? logs[logs.length - 1].date : null
 
@@ -45,28 +56,32 @@ export async function recalculateStreak(habitId: string, userId: string) {
  * Current streak = consecutive DONE days ending today (or yesterday).
  * If the user hasn't logged today yet, we still count yesterday's streak.
  */
-export function computeCurrentStreak(dates: Date[]): number {
+export function computeCurrentStreak(dates: Date[], timezone: string = "UTC", startHour: number = 0): number {
   if (dates.length === 0) return 0
 
-  const doneDates = new Set(dates.map((d) => format(new Date(d), "yyyy-MM-dd")))
+  const doneDates = new Set(dates.map((d) => {
+    // We assume incoming dates are UTC midnights from the DB
+    return d.toISOString().slice(0, 10)
+  }))
 
   let streak = 0
-  let check = startOfDay(new Date())
+  const todayStr = getUserToday(timezone, startHour)
+  let check = new Date(todayStr)
 
   // Allow streak to include today OR start from yesterday
   // (user might not have logged today yet)
   while (true) {
-    const dateStr = format(check, "yyyy-MM-dd")
+    const dateStr = check.toISOString().slice(0, 10)
     if (doneDates.has(dateStr)) {
       streak++
       check = subDays(check, 1)
     } else if (streak === 0) {
       // Try yesterday before giving up (today might not be logged yet)
-      check = subDays(check, 1)
-      const yesterdayStr = format(check, "yyyy-MM-dd")
+      const yesterday = subDays(check, 1)
+      const yesterdayStr = yesterday.toISOString().slice(0, 10)
       if (doneDates.has(yesterdayStr)) {
         streak++
-        check = subDays(check, 1)
+        check = subDays(yesterday, 1)
       } else {
         break
       }
@@ -108,10 +123,18 @@ export function computeLongestStreak(dates: Date[]): number {
 /**
  * Completion rate over the last 30 days (0–100).
  */
-export function computeCompletionRate(logs: { date: Date; status: string }[], days = 30): number {
+export function computeCompletionRate(
+  logs: { date: Date; status: string }[], 
+  days = 30, 
+  timezone: string = "UTC",
+  startHour: number = 0
+): number {
+  const todayStr = getUserToday(timezone, startHour)
+  const today = new Date(todayStr)
+  
   const allDays = eachDayOfInterval({
-    start: subDays(new Date(), days - 1),
-    end: new Date(),
+    start: subDays(today, days - 1),
+    end: today,
   })
 
   const doneSet = new Set(

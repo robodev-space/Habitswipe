@@ -135,7 +135,7 @@ function SkeletonMissed() {
 
 export default function TodayPage() {
   const { data: session } = useSession()
-  const { habits, todayHabits, swipeHabit, isLoading, isInitialized, fetchHabits, stats, fetchStats } = useHabits()
+  const { habits, todayHabits, swipeHabit, isLoading, isInitialized, fetchHabits, stats, fetchStats, preferences } = useHabits()
   const { missedHabits, isLoading: missedIsLoading, acknowledgeMissed, refetch: refetchMissed } = useMissedHabitsPreview()
   const [addingMissedIds, setAddingMissedIds] = useState<Set<string>>(new Set())
   const [addedMissedIds, setAddedMissedIds] = useState<Set<string>>(new Set())
@@ -146,9 +146,30 @@ export default function TodayPage() {
   const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set())
 
   // ─── Greet & Date ───────────────────────────────────────────────────────────
-  const h = new Date().getHours()
-  const greetTime = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening'
-  const dateLabel = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+  const tz = preferences?.timezone || "UTC"
+  const startHour = preferences?.dayStartHour || 0
+
+  // Calculate greeting and date based on user's local day
+  const userTodayStr = todayString(tz, startHour)
+  const userDate = new Date(userTodayStr)
+  
+  // Greeting based on current hour in user's timezone
+  const userNow = new Intl.DateTimeFormat('en-US', { 
+    timeZone: tz, 
+    hour: 'numeric', 
+    hour12: false 
+  }).format(new Date())
+  
+  const hour = parseInt(userNow)
+  const greetTime = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening'
+  
+  const dateLabel = userDate.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    month: 'long', 
+    day: 'numeric', 
+    year: 'numeric',
+    timeZone: 'UTC' // because userDate is already normalized to UTC midnight of local today
+  })
 
   // Stats
   const activeHabits = habits.filter(h => !h.isArchived)
@@ -427,7 +448,7 @@ export default function TodayPage() {
           </div>
           <div className="week-row" style={{ marginBottom: 20 }}>
             {stats?.weeklyData?.map((day) => {
-              const todayStr = todayString()
+              const todayStr = userTodayStr
               const isToday = day.fullDate === todayStr
               const isFuture = day.fullDate > todayStr
               const allDone = day.completed >= day.total && day.total > 0

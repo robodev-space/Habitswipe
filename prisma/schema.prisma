@@ -37,6 +37,7 @@ model User {
   emailReminders     Boolean  @default(true)
   timezone           String   @default("UTC")
   dayStartHour       Int      @default(0) // 0-23 (midnight is 0)
+  theme              String   @default("system") // "light", "dark", or "system"
 
   // NextAuth relations
   accounts Account[]

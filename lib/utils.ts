@@ -5,8 +5,30 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function todayString() {
-  return new Date().toISOString().slice(0, 10)
+/**
+ * Returns YYYY-MM-DD for today.
+ * On browser, it uses local time. On server, it defaults to UTC.
+ */
+export function todayString(timezone: string = "UTC", startHour: number = 0) {
+  const now = new Date();
+  
+  // Logical offset handling
+  const logicalDate = new Date(now.getTime() - (startHour * 60 * 60 * 1000));
+  
+  // If we have a timezone, we should ideally use it.
+  // Using Intl is a lightweight way to get local date string without extra libs.
+  try {
+    const formatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    return formatter.format(logicalDate);
+  } catch (e) {
+    // Fallback to ISO string slice
+    return logicalDate.toISOString().slice(0, 10);
+  }
 }
 export const HABIT_ICONS = [
   "⚡", "🔥", "🏃", "💪", "📚", "🧘", "🎯", "✅",

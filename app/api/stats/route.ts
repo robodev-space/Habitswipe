@@ -16,6 +16,7 @@ import {
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { todayString } from "@/lib/utils"
+import { getUserToday } from "@/lib/date-utils"
 import { computeCurrentStreak, computeLongestStreak } from "@/lib/streaks"
 import type { DashboardStats, AnalyticsStats, LogStatus } from "@/types"
 
@@ -28,8 +29,18 @@ export async function GET(request: Request) {
   }
 
   const userId = session.user.id
-  const today = new Date()
-  const todayStr = todayString()
+  
+  // Fetch user profile for timezone & dayStartHour
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { timezone: true, dayStartHour: true }
+  })
+
+  const tz = user?.timezone ?? "UTC"
+  const startHour = user?.dayStartHour ?? 0
+  
+  const todayStr = getUserToday(tz, startHour)
+  const today = new Date(todayStr)
 
   const { searchParams } = new URL(request.url)
   const period = searchParams.get("period") || "month"

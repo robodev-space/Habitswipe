@@ -17,6 +17,7 @@ interface HabitStore {
   isLoading: boolean
   isInitialized: boolean
   error: string | null
+  preferences: { timezone: string; dayStartHour: number } | null
 
   // ── Actions ───────────────────────────────────────────────────────────────
   fetchHabits: () => Promise<void>
@@ -39,6 +40,7 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
   isLoading: true,
   isInitialized: false,
   error: null,
+  preferences: null,
 
   fetchHabits: async () => {
     const signal = get().getAbortSignal("fetchHabits")
@@ -49,11 +51,21 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
       if (!res.ok) throw new Error(json.error)
 
       const habits: HabitWithStats[] = json.data
+      const prefData = json.data?.[0]?.userId ? { 
+        timezone: (json.data[0] as any).user?.timezone || "UTC",
+        dayStartHour: (json.data[0] as any).user?.dayStartHour || 0
+      } : null
 
       // todayHabits = habits that haven't been logged today yet (todayLog set by API)
       const todayHabits = habits.filter((h) => !h.todayLog)
 
-      set({ habits, todayHabits, isLoading: false, isInitialized: true })
+      set({ 
+        habits, 
+        todayHabits, 
+        preferences: prefData,
+        isLoading: false, 
+        isInitialized: true 
+      })
     } catch (err: any) {
       set({ error: err.message, isLoading: false, isInitialized: true })
     }

@@ -32,6 +32,8 @@ export async function GET() {
       bio: true,
       timezone: true,
       dayStartHour: true,
+      emailReminders: true,
+      theme: true,
       referralCode: true,
       referredBy: true,
       createdAt: true,
@@ -125,21 +127,24 @@ export async function GET() {
 
 // ── PATCH ─────────────────────────────────────────────────────────────────────
 const updateSchema = z.object({
-  name: z.string().min(1, "Name is required").max(50).optional(),
+  name: z.string().max(50).optional().or(z.literal("")),
   username: z
     .string()
-    .min(3, "Min 3 characters")
     .max(20, "Max 20 characters")
     .regex(/^[a-zA-Z0-9_]+$/, "Only letters, numbers, underscore")
-    .optional(),
+    .optional()
+    .or(z.literal("")),
   phone: z
     .string()
     .regex(/^\+?[0-9\s\-()]{7,15}$/, "Invalid phone number")
     .optional()
-    .nullable(),
-  bio: z.string().max(160, "Max 160 characters").optional().nullable(),
+    .nullable()
+    .or(z.literal("")),
+  bio: z.string().max(160, "Max 160 characters").optional().nullable().or(z.literal("")),
+  emailReminders: z.boolean().optional(),
+  theme: z.enum(["light", "dark", "system"]).optional(),
   timezone: z.string().optional(),
-  dayStartHour: z.number().int().min(0).max(23).optional(),
+  dayStartHour: z.coerce.number().int().min(0).max(23).optional(),
 })
 
 export async function PATCH(req: Request) {
@@ -176,11 +181,10 @@ export async function PATCH(req: Request) {
         name: true,
         email: true,
         username: true,
-        image: true,
-        phone: true,
-        bio: true,
         timezone: true,
         dayStartHour: true,
+        emailReminders: true,
+        theme: true,
         referralCode: true,
       },
     })

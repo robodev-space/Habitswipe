@@ -10,12 +10,7 @@ import { z } from "zod"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { computeCurrentStreak, computeLongestStreak, computeCompletionRate } from "@/lib/streaks"
-import {
-  todayString,
-  // calculateCurrentStreak,
-  // calculateLongestStreak,
-  // calculateCompletionRate,
-} from "@/lib/utils"
+import { getUserToday } from "@/lib/date-utils"
 
 export const dynamic = "force-dynamic"
 
@@ -26,7 +21,14 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const today = todayString()
+  // Fetch user profile for timezone & dayStartHour
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { timezone: true, dayStartHour: true }
+  })
+  
+  const today = getUserToday(user?.timezone ?? "UTC", user?.dayStartHour ?? 0)
+  const todayStart = new Date(today) // UTC start of user's local today
 
   const habits = await prisma.habit.findMany({
     where: { userId: session.user.id, isArchived: false },
@@ -42,7 +44,7 @@ export async function GET() {
   // Enrich each habit with computed stats
   const enriched = habits.map((habit) => {
     const todayLog = habit.logs.find(
-      (l) => new Date(l.date).toISOString().slice(0, 10) === today
+      (l) => l.date.toISOString().slice(0, 10) === today
     ) ?? null
     const doneDates = habit.logs.filter(l => l.status === "DONE").map(l => l.date)
 

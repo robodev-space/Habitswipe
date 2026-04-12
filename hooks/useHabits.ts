@@ -91,6 +91,7 @@ export function useHabits() {
     isLoading: store.isLoading,
     isInitialized: store.isInitialized,
     error: store.error,
+    preferences: store.preferences,
     fetchHabits: store.fetchHabits,
     fetchStats: store.fetchStats,
     createHabit,

@@ -20,6 +20,8 @@ interface ProfileData {
   bio: string | null
   timezone: string
   dayStartHour: number
+  emailReminders: boolean
+  theme: "light" | "dark" | "system"
   createdAt: string
   _count: { habits: number; logs: number }
   stats: {
@@ -113,7 +115,10 @@ export default function ProfilePage() {
     fetch(API_ROUTES.PROFILE.BASE, { signal })
       .then((r) => r.json())
       .then((json) => {
-        if (json.data) setProfile(json.data)
+        if (json.data) {
+          setProfile(json.data)
+          if (json.data.emailReminders !== undefined) setNotifOn(json.data.emailReminders)
+        }
       })
       .catch((err) => {
         if (err.name === "AbortError") return
@@ -132,14 +137,44 @@ export default function ProfilePage() {
   const currentTheme = theme === "system" ? systemTheme : theme
   const isDark = currentTheme === "dark"
 
-  const toggleTheme = () => {
-    setTheme(isDark ? "light" : "dark")
-    toast.success(isDark ? "☀️ Light mode on" : "🌙 Dark mode on")
+  // Sync next-themes when profile theme loads
+  useEffect(() => {
+    if (profile?.theme && profile.theme !== theme) {
+      setTheme(profile.theme)
+    }
+  }, [profile?.theme, setTheme])
+
+  const toggleTheme = async () => {
+    const newTheme = isDark ? "light" : "dark"
+    setTheme(newTheme) // local update for snappiness
+    
+    try {
+      await fetch(API_ROUTES.PROFILE.BASE, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ theme: newTheme })
+      })
+      toast.success(newTheme === "light" ? "☀️ Light mode saved" : "🌙 Dark mode saved")
+    } catch (err) {
+      console.error("Theme sync error:", err)
+    }
   }
 
-  const toggleNotif = () => {
-    setNotifOn(!notifOn)
-    toast.success(!notifOn ? "🔔 Notifications enabled" : "🔕 Notifications disabled")
+  const toggleNotif = async () => {
+    const newNotif = !notifOn
+    setNotifOn(newNotif)
+    
+    try {
+      await fetch(API_ROUTES.PROFILE.BASE, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ emailReminders: newNotif })
+      })
+      toast.success(newNotif ? "🔔 Notifications enabled" : "🔕 Notifications disabled")
+    } catch (err) {
+      console.error("Notif sync error:", err)
+      setNotifOn(!newNotif) // rollback
+    }
   }
 
   const handleDeleteAccount = async () => {
