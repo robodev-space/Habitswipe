@@ -35,6 +35,8 @@ model User {
   goal               String?           // health, mind, learn, work, finance, custom
   reminderTime       String?           // e.g. "07:00"
   emailReminders     Boolean  @default(true)
+  timezone           String   @default("UTC")
+  dayStartHour       Int      @default(0) // 0-23 (midnight is 0)
 
   // NextAuth relations
   accounts Account[]

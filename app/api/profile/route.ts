@@ -30,6 +30,8 @@ export async function GET() {
       image: true,
       phone: true,
       bio: true,
+      timezone: true,
+      dayStartHour: true,
       referralCode: true,
       referredBy: true,
       createdAt: true,
@@ -64,8 +66,10 @@ export async function GET() {
     },
   })
 
+  const u = user as any
+
   // 1. Total Check-ins
-  const totalCheckIns = user._count.logs
+  const totalCheckIns = u._count?.logs || 0
 
   // 2. Best Streak (Max of all habits' longest streaks)
   const bestStreak = habits.length > 0 
@@ -89,7 +93,7 @@ export async function GET() {
   })
 
   let perfectDays = 0
-  const totalHabits = user._count.habits
+  const totalHabits = u._count?.habits || 0
   if (totalHabits > 0) {
     logsByDate.forEach((count) => {
       if (count >= totalHabits) perfectDays++
@@ -134,6 +138,8 @@ const updateSchema = z.object({
     .optional()
     .nullable(),
   bio: z.string().max(160, "Max 160 characters").optional().nullable(),
+  timezone: z.string().optional(),
+  dayStartHour: z.number().int().min(0).max(23).optional(),
 })
 
 export async function PATCH(req: Request) {
@@ -173,6 +179,8 @@ export async function PATCH(req: Request) {
         image: true,
         phone: true,
         bio: true,
+        timezone: true,
+        dayStartHour: true,
         referralCode: true,
       },
     })

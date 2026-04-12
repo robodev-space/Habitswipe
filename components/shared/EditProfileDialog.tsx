@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { User, AtSign, Phone, FileText, X } from "lucide-react"
+import { User, Phone, Globe, Clock, X } from "lucide-react"
 import { toast } from "react-hot-toast"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { API_ROUTES } from "@/lib/constants/api-routes"
 import "./edit-profile.css"
-import "./confirm-dialog.css" // Reusing overlay styles
 
 interface EditProfileDialogProps {
   open: boolean
@@ -16,9 +16,29 @@ interface EditProfileDialogProps {
     username: string | null
     phone: string | null
     bio: string | null
+    timezone?: string
+    dayStartHour?: number
   }
   onSuccess: () => void
 }
+
+const TIMEZONES = [
+  "UTC",
+  "Asia/Kolkata",
+  "America/New_York",
+  "Europe/London",
+  "Asia/Tokyo",
+  "Australia/Sydney",
+  "America/Los_Angeles",
+  "Europe/Paris",
+  "Asia/Dubai",
+  "Asia/Singapore",
+  "America/Chicago",
+  "America/Sao_Paulo",
+  "Europe/Berlin",
+  "Asia/Hong_Kong",
+  "Pacific/Auckland",
+]
 
 export function EditProfileDialog({
   open,
@@ -30,18 +50,23 @@ export function EditProfileDialog({
     name: initialData.name || "",
     username: initialData.username || "",
     phone: initialData.phone || "",
-    bio: initialData.bio || ""
+    bio: initialData.bio || "",
+    timezone: initialData.timezone || "UTC",
+    dayStartHour: initialData.dayStartHour ?? 0
   })
   const [isSaving, setIsSaving] = useState(false)
 
-  // Sync state if initialData changes (e.g. after refresh)
   useEffect(() => {
-    setFormData({
-      name: initialData.name || "",
-      username: initialData.username || "",
-      phone: initialData.phone || "",
-      bio: initialData.bio || ""
-    })
+    if (open) {
+      setFormData({
+        name: initialData.name || "",
+        username: initialData.username || "",
+        phone: initialData.phone || "",
+        bio: initialData.bio || "",
+        timezone: initialData.timezone || "UTC",
+        dayStartHour: initialData.dayStartHour ?? 0
+      })
+    }
   }, [initialData, open])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,7 +86,7 @@ export function EditProfileDialog({
         throw new Error(json.error || "Failed to update profile")
       }
 
-      toast.success("Profile updated successfully! ✨")
+      toast.success("Profile saved! ✨")
       onSuccess()
       onOpenChange(false)
     } catch (err: any) {
@@ -72,27 +97,17 @@ export function EditProfileDialog({
   }
 
   return (
-    <AnimatePresence>
-      {open && (
-        <div className="cd-overlay">
-          <motion.div
-            className="cd-backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => !isSaving && onOpenChange(false)}
-          />
-
-          <motion.div
-            className="cd-card ep-card"
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-            animate={{ scale: 1,    opacity: 1, y: 0 }}
-            exit={{   scale: 0.9, opacity: 0, y: 20 }}
-            transition={{ type: "spring", stiffness: 500, damping: 30 }}
-            style={{ maxWidth: "440px", width: "94%" }}
-          >
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-xl font-extrabold text-[var(--txt)] tracking-tight">Edit Profile</h2>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent showCloseButton={false} className="p-0 border-none bg-transparent shadow-none max-w-none w-full flex items-center justify-center outline-none">
+        <div className="ep-dialog">
+          <div className="ep-accent"></div>
+          
+          <div className="ep-scroll">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <div className="ep-eyebrow">Settings</div>
+                <h2 className="ep-title">Refine your <em>profile</em></h2>
+              </div>
               <button 
                 className="p-2 hover:bg-[var(--surf2)] rounded-xl transition-all active:scale-95"
                 onClick={() => onOpenChange(false)}
@@ -101,36 +116,99 @@ export function EditProfileDialog({
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="ep-form">
-              {/* Full Name */}
-              <div className="ep-group">
-                <label className="ep-label">Full Name</label>
-                <div className="ep-input-wrap">
-                  <span className="ep-icon-inner"><User size={18} /></span>
-                  <input
-                    type="text"
-                    className="ep-input has-icon"
-                    placeholder="E.g. John Doe"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                  />
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4 pb-2 border-b border-[var(--bord)]">
+                <span className="text-[10px] font-bold text-[var(--ind)] uppercase tracking-widest">Account Details</span>
+              </div>
+              
+              <div className="ep-row-grid">
+                {/* Full Name */}
+                <div className="ep-group">
+                  <label className="ep-label">Full Name</label>
+                  <div className="ep-input-wrap">
+                    <span className="ep-icon-inner"><User size={16} /></span>
+                    <input
+                      type="text"
+                      className="ep-input has-icon"
+                      placeholder="E.g. John Doe"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Username */}
+                <div className="ep-group">
+                  <label className="ep-label">Username</label>
+                  <div className="ep-input-wrap">
+                    <span className="ep-username-prefix">@</span>
+                    <input
+                      type="text"
+                      className="ep-input ep-input-username"
+                      placeholder="username"
+                      value={formData.username}
+                      onChange={(e) => setFormData({ ...formData, username: e.target.value.replace(/\s/g, '').toLowerCase() })}
+                      required
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Username */}
+              {/* Bio */}
               <div className="ep-group">
-                <label className="ep-label">Username</label>
+                <label className="ep-label">Bio (Short story)</label>
                 <div className="ep-input-wrap">
-                  <span className="ep-username-prefix">@</span>
-                  <input
-                    type="text"
-                    className="ep-input ep-input-username"
-                    placeholder="username"
-                    value={formData.username}
-                    onChange={(e) => setFormData({ ...formData, username: e.target.value.replace(/\s/g, '').toLowerCase() })}
-                    required
+                  <textarea
+                    className="ep-input ep-textarea"
+                    placeholder="E.g. Designing my best life, one habit at a time."
+                    maxLength={160}
+                    value={formData.bio}
+                    onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                   />
+                </div>
+                <div className="ep-char-count">{formData.bio.length}/160</div>
+              </div>
+
+              <div className="mb-4 mt-8 pb-2 border-b border-[var(--bord)]">
+                <span className="text-[10px] font-bold text-[var(--ind)] uppercase tracking-widest">System Preferences</span>
+              </div>
+
+              <div className="ep-row-grid">
+                {/* Timezone */}
+                <div className="ep-group">
+                  <label className="ep-label">Region & Timezone</label>
+                  <div className="ep-input-wrap">
+                    <span className="ep-icon-inner"><Globe size={16} /></span>
+                    <select
+                      className="ep-input has-icon ep-select"
+                      value={formData.timezone}
+                      onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
+                    >
+                      {TIMEZONES.map(tz => <option key={tz} value={tz}>{tz}</option>)}
+                    </select>
+                  </div>
+                  <span className="text-[10px] text-[var(--txt3)] ml-1">Affects reminder delivery & history.</span>
+                </div>
+
+                {/* Day Start */}
+                <div className="ep-group">
+                  <label className="ep-label">Day resets at</label>
+                  <div className="ep-input-wrap">
+                    <span className="ep-icon-inner"><Clock size={16} /></span>
+                    <select
+                      className="ep-input has-icon ep-select"
+                      value={formData.dayStartHour}
+                      onChange={(e) => setFormData({ ...formData, dayStartHour: parseInt(e.target.value) })}
+                    >
+                      {[...Array(24)].map((_, i) => (
+                        <option key={i} value={i}>
+                          {i === 0 ? "Midnight (12 AM)" : i < 12 ? `${i} AM` : i === 12 ? "12 PM" : `${i-12} PM`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <span className="text-[10px] text-[var(--txt3)] ml-1">When your daily habits flip.</span>
                 </div>
               </div>
 
@@ -138,7 +216,7 @@ export function EditProfileDialog({
               <div className="ep-group">
                 <label className="ep-label">Phone Number</label>
                 <div className="ep-input-wrap">
-                  <span className="ep-icon-inner"><Phone size={18} /></span>
+                  <span className="ep-icon-inner"><Phone size={16} /></span>
                   <input
                     type="tel"
                     className="ep-input has-icon"
@@ -148,48 +226,30 @@ export function EditProfileDialog({
                   />
                 </div>
               </div>
-
-              {/* Bio */}
-              <div className="ep-group">
-                <label className="ep-label">Bio</label>
-                <div className="ep-input-wrap">
-                  <textarea
-                    className="ep-input ep-textarea"
-                    placeholder="Tell us about your journey..."
-                    maxLength={160}
-                    value={formData.bio}
-                    onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                  />
-                </div>
-                <div className="ep-char-count">{formData.bio.length}/160</div>
-              </div>
-
-              {/* Actions */}
-              <div className="ep-actions">
-                <button
-                  type="button"
-                  className="ep-btn ep-btn-cancel"
-                  disabled={isSaving}
-                  onClick={() => onOpenChange(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="ep-btn ep-btn-save flex items-center justify-center gap-2"
-                  disabled={isSaving}
-                >
-                  {isSaving ? (
-                    <span className="ep-spinner" />
-                  ) : (
-                    "Save Changes"
-                  )}
-                </button>
-              </div>
             </form>
-          </motion.div>
+          </div>
+
+          <div className="ep-footer">
+            <button
+              className="ep-btn-cancel"
+              disabled={isSaving}
+              onClick={() => onOpenChange(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="ep-btn-save"
+              disabled={isSaving}
+              onClick={handleSubmit}
+            >
+              <div className="shine"></div>
+              <span className="flex items-center justify-center gap-2">
+                {isSaving ? <span className="ep-spinner" /> : "Save Changes →"}
+              </span>
+            </button>
+          </div>
         </div>
-      )}
-    </AnimatePresence>
+      </DialogContent>
+    </Dialog>
   )
 }

@@ -17,6 +17,8 @@ interface ProfileData {
   username: string | null
   phone: string | null
   bio: string | null
+  timezone: string
+  dayStartHour: number
   createdAt: string
   _count: { habits: number; logs: number }
   stats: {
@@ -157,14 +159,19 @@ export default function ProfilePage() {
             <div className="sg-txt"><div className="sg-lbl">Notifications</div><div className="sg-sub">Daily reminders at 8am</div></div>
             <div className={`toggle ${notifOn ? "on" : ""}`} onClick={(e) => { e.stopPropagation(); toggleNotif() }}></div>
           </div>
-          <div className="sg-row" onClick={() => toast(`Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`)}>
+          <div className="sg-row" onClick={() => setIsEditOpen(true)}>
             <div className="sg-ico" style={{ background: "var(--grn-s)" }}>🌍</div>
-            <div className="sg-txt"><div className="sg-lbl">Timezone</div><div className="sg-sub">{Intl.DateTimeFormat().resolvedOptions().timeZone}</div></div>
+            <div className="sg-txt"><div className="sg-lbl">Timezone</div><div className="sg-sub">{profile?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone}</div></div>
             <div className="sg-right">Change <svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" /></svg></div>
           </div>
-          <div className="sg-row" onClick={() => toast("Day starts at midnight")}>
+          <div className="sg-row" onClick={() => setIsEditOpen(true)}>
             <div className="sg-ico" style={{ background: "var(--org-s)" }}>⏰</div>
-            <div className="sg-txt"><div className="sg-lbl">Day starts at</div><div className="sg-sub">Midnight (12:00 AM)</div></div>
+            <div className="sg-txt">
+              <div className="sg-lbl">Day starts at</div>
+              <div className="sg-sub">
+                {profile?.dayStartHour === 0 ? "Midnight" : profile?.dayStartHour && profile.dayStartHour < 12 ? `${profile.dayStartHour} AM` : profile?.dayStartHour === 12 ? "12 PM" : `${(profile?.dayStartHour || 0) - 12} PM`}
+              </div>
+            </div>
             <div className="sg-right">Edit <svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" /></svg></div>
           </div>
         </div>
@@ -226,6 +233,8 @@ export default function ProfilePage() {
           username: profile?.username || null,
           phone: profile?.phone || null,
           bio: profile?.bio || null,
+          timezone: profile?.timezone,
+          dayStartHour: profile?.dayStartHour
         }}
         onSuccess={() => fetchProfile()}
       />
