@@ -146,9 +146,15 @@
   margin-top: 5px;
 }
 
-.ep-select {
-  appearance: none;
-  cursor: pointer;
+.ep-select-trigger {
+  width: 100%;
+  justify-content: flex-start;
+  padding-right: 14px;
+}
+
+.ep-select-trigger [data-slot="select-value"] {
+  flex: 1;
+  text-align: left;
 }
 
 .ep-row-grid {

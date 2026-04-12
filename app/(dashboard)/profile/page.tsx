@@ -147,7 +147,7 @@ export default function ProfilePage() {
   const toggleTheme = async () => {
     const newTheme = isDark ? "light" : "dark"
     setTheme(newTheme) // local update for snappiness
-    
+
     try {
       await fetch(API_ROUTES.PROFILE.BASE, {
         method: "PATCH",
@@ -163,7 +163,7 @@ export default function ProfilePage() {
   const toggleNotif = async () => {
     const newNotif = !notifOn
     setNotifOn(newNotif)
-    
+
     try {
       await fetch(API_ROUTES.PROFILE.BASE, {
         method: "PATCH",
@@ -242,30 +242,30 @@ export default function ProfilePage() {
 
         <div className="sg">
           <div className="sg-head">Preferences</div>
-          <div className="sg-row" onClick={toggleTheme}>
+          <div className="sg-row" >
             <div className="sg-ico" style={{ background: "var(--amb-s)" }}>🌙</div>
             <div className="sg-txt"><div className="sg-lbl">Dark mode</div><div className="sg-sub">Switch appearance</div></div>
             <div className={`toggle ${isDark ? "on" : ""}`} onClick={(e) => { e.stopPropagation(); toggleTheme() }}></div>
           </div>
-          <div className="sg-row" onClick={toggleNotif}>
+          <div className="sg-row" >
             <div className="sg-ico" style={{ background: "var(--ind-s)" }}>🔔</div>
             <div className="sg-txt"><div className="sg-lbl">Notifications</div><div className="sg-sub">Daily reminders at 8am</div></div>
             <div className={`toggle ${notifOn ? "on" : ""}`} onClick={(e) => { e.stopPropagation(); toggleNotif() }}></div>
           </div>
-          <div className="sg-row" onClick={() => setIsEditOpen(true)}>
+          <div className="sg-row" >
             <div className="sg-ico" style={{ background: "var(--grn-s)" }}>🌍</div>
             <div className="sg-txt"><div className="sg-lbl">Timezone</div><div className="sg-sub">{profile?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone}</div></div>
-            <div className="sg-right">Change <svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" /></svg></div>
+            <div className="sg-right" onClick={(e) => { e.stopPropagation(); setIsEditOpen(true) }}>Change <svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" /></svg></div>
           </div>
-          <div className="sg-row" onClick={() => setIsEditOpen(true)}>
+          <div className="sg-row" >
             <div className="sg-ico" style={{ background: "var(--org-s)" }}>⏰</div>
             <div className="sg-txt">
-              <div className="sg-lbl">Day starts at</div>
+              <div className="sg-lbl" >Day starts at</div>
               <div className="sg-sub">
                 {profile?.dayStartHour === 0 ? "Midnight" : profile?.dayStartHour && profile.dayStartHour < 12 ? `${profile.dayStartHour} AM` : profile?.dayStartHour === 12 ? "12 PM" : `${(profile?.dayStartHour || 0) - 12} PM`}
               </div>
             </div>
-            <div className="sg-right">Edit <svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" /></svg></div>
+            <div className="sg-right" onClick={(e) => { e.stopPropagation(); setIsEditOpen(true) }}>Edit <svg viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" /></svg></div>
           </div>
         </div>
 

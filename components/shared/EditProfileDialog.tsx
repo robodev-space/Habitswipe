@@ -5,6 +5,13 @@ import { motion, AnimatePresence } from "framer-motion"
 import { User, Phone, Globe, Clock, X } from "lucide-react"
 import { toast } from "react-hot-toast"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select"
 import { API_ROUTES } from "@/lib/constants/api-routes"
 import "./edit-profile.css"
 
@@ -182,13 +189,19 @@ export function EditProfileDialog({
                   <label className="ep-label">Region & Timezone</label>
                   <div className="ep-input-wrap">
                     <span className="ep-icon-inner"><Globe size={16} /></span>
-                    <select
-                      className="ep-input has-icon ep-select"
-                      value={formData.timezone}
-                      onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
+                    <Select 
+                      value={formData.timezone} 
+                      onValueChange={(val) => setFormData({ ...formData, timezone: val })}
                     >
-                      {TIMEZONES.map(tz => <option key={tz} value={tz}>{tz}</option>)}
-                    </select>
+                      <SelectTrigger className="ep-input has-icon ep-select-trigger">
+                        <SelectValue placeholder="Select timezone" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {TIMEZONES.map(tz => (
+                          <SelectItem key={tz} value={tz}>{tz}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <span className="text-[10px] text-[var(--txt3)] ml-1">Affects reminder delivery & history.</span>
                 </div>
@@ -198,17 +211,21 @@ export function EditProfileDialog({
                   <label className="ep-label">Day resets at</label>
                   <div className="ep-input-wrap">
                     <span className="ep-icon-inner"><Clock size={16} /></span>
-                    <select
-                      className="ep-input has-icon ep-select"
-                      value={formData.dayStartHour}
-                      onChange={(e) => setFormData({ ...formData, dayStartHour: parseInt(e.target.value) })}
+                    <Select 
+                      value={formData.dayStartHour.toString()} 
+                      onValueChange={(val) => setFormData({ ...formData, dayStartHour: parseInt(val) })}
                     >
-                      {[...Array(24)].map((_, i) => (
-                        <option key={i} value={i}>
-                          {i === 0 ? "Midnight (12 AM)" : i < 12 ? `${i} AM` : i === 12 ? "12 PM" : `${i-12} PM`}
-                        </option>
-                      ))}
-                    </select>
+                      <SelectTrigger className="ep-input has-icon ep-select-trigger">
+                        <SelectValue placeholder="Select hour" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[...Array(24)].map((_, i) => (
+                          <SelectItem key={i} value={i.toString()}>
+                            {i === 0 ? "Midnight (12 AM)" : i < 12 ? `${i} AM` : i === 12 ? "12 PM" : `${i-12} PM`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <span className="text-[10px] text-[var(--txt3)] ml-1">When your daily habits flip.</span>
                 </div>
