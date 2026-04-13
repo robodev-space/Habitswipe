@@ -1,11 +1,11 @@
 "use client"
 
-// components/profile/AvatarUpload.tsx
+// components/shared/AvatarUpload.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 // AVATAR UPLOAD — Click to select image, preview, crop to circle, upload
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { Camera, Loader2 } from "lucide-react"
 
 interface AvatarUploadProps {
@@ -19,6 +19,10 @@ export function AvatarUpload({ currentImage, name, onUpload }: AvatarUploadProps
   const [preview, setPreview] = useState<string | null>(currentImage)
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    setPreview(currentImage)
+  }, [currentImage])
 
   const initials = name
     ? name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)

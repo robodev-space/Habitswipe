@@ -6,7 +6,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { create } from "zustand"
-import type { HabitWithStats, TodayHabit, DashboardStats } from "@/types"
+import type { HabitWithStats, TodayHabit, DashboardStats, ProfileData } from "@/types"
 import { API_ROUTES } from "@/lib/constants/api-routes"
 
 interface HabitStore {
@@ -14,6 +14,7 @@ interface HabitStore {
   habits: HabitWithStats[]
   todayHabits: TodayHabit[]    // habits pending swipe today
   stats: DashboardStats | null
+  profile: ProfileData | null
   isLoading: boolean
   isInitialized: boolean
   error: string | null
@@ -22,6 +23,7 @@ interface HabitStore {
   // ── Actions ───────────────────────────────────────────────────────────────
   fetchHabits: () => Promise<void>
   fetchStats: () => Promise<void>
+  fetchProfile: () => Promise<void>
   addHabit: (habit: HabitWithStats) => void
   updateHabit: (id: string, updates: Partial<HabitWithStats>) => void
   removeHabit: (id: string) => void
@@ -41,6 +43,17 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
   isInitialized: false,
   error: null,
   preferences: null,
+  profile: null,
+
+  fetchProfile: async () => {
+    try {
+      const res = await fetch(API_ROUTES.PROFILE.BASE)
+      const json = await res.json()
+      if (res.ok) set({ profile: json.data })
+    } catch {
+      // Profile is non-critical for main loop
+    }
+  },
 
   fetchHabits: async () => {
     const signal = get().getAbortSignal("fetchHabits")

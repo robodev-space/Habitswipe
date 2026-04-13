@@ -262,3 +262,25 @@ export type ChartTooltipContentProps = {
   nameKey?: string
   labelKey?: string
 }
+export interface ProfileData {
+  id: string
+  name: string | null
+  email: string | null
+  username: string | null
+  image: string | null
+  phone: string | null
+  bio: string | null
+  timezone: string
+  dayStartHour: number
+  emailReminders: boolean
+  theme: 'light' | 'dark' | 'system'
+  createdAt: string
+  referralCount?: number
+  stats?: {
+    currentStreak: number
+    bestStreak: number
+    totalCheckIns: number
+    perfectDays: number
+    completionRate: number
+  }
+}

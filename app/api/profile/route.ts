@@ -12,6 +12,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { nanoid } from "nanoid"
 import { computeCurrentStreak, computeLongestStreak } from "@/lib/streaks"
+import { storageService } from "@/lib/services/storage.service"
 
 // ── GET ───────────────────────────────────────────────────────────────────────
 export async function GET() {
@@ -55,6 +56,11 @@ export async function GET() {
       data: { referralCode: code },
     })
     user.referralCode = code
+  }
+
+  // ── Convert relative avatar path to Signed URL ──────────────────────────────
+  if (user.image) {
+    user.image = await storageService.getAuthenticatedUrl(user.image)
   }
 
   // ── Calculate Stats ────────────────────────────────────────────────────────
@@ -145,6 +151,7 @@ const updateSchema = z.object({
   theme: z.enum(["light", "dark", "system"]).optional(),
   timezone: z.string().optional(),
   dayStartHour: z.coerce.number().int().min(0).max(23).optional(),
+  image: z.string().optional().nullable(),
 })
 
 export async function PATCH(req: Request) {
@@ -181,6 +188,7 @@ export async function PATCH(req: Request) {
         name: true,
         email: true,
         username: true,
+        image: true,
         timezone: true,
         dayStartHour: true,
         emailReminders: true,

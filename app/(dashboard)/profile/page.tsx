@@ -16,6 +16,7 @@ interface ProfileData {
   name: string | null
   email: string | null
   username: string | null
+  image: string | null
   phone: string | null
   bio: string | null
   timezone: string
@@ -204,7 +205,11 @@ export default function ProfilePage() {
 
         <div className="prof-hero">
           <div className="prof-av-wrap" onClick={() => setIsEditOpen(true)} style={{ cursor: "pointer" }}>
-            <div className="prof-av">{session?.user?.name?.[0]?.toUpperCase() || 'U'}</div>
+            {profile?.image ? (
+              <img src={profile.image} alt={profile.name || "Avatar"} className="prof-av" style={{ objectFit: "cover" }} />
+            ) : (
+              <div className="prof-av">{profile?.name?.[0]?.toUpperCase() || session?.user?.name?.[0]?.toUpperCase() || 'U'}</div>
+            )}
             <div className="prof-online"></div>
           </div>
           <div className="prof-name">{profile?.name || session?.user?.name}</div>
@@ -213,7 +218,7 @@ export default function ProfilePage() {
           </div>
           <div className="prof-email">{profile?.email || session?.user?.email}</div>
           <div className="prof-since">
-            Member since {profile?.createdAt ? format(new Date(profile.createdAt), "MMMM yyyy") : "January 2026"} · {Intl.DateTimeFormat().resolvedOptions().timeZone}
+            Member since {profile?.createdAt ? format(new Date(profile.createdAt), "MMMM yyyy") : "January 2026"} · {profile?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone}
           </div>
           <div className="prof-badges">
             <div className="pb pb-gold">🏅 {profile?.stats?.currentStreak || 0}-day streak</div>
@@ -324,6 +329,7 @@ export default function ProfilePage() {
         initialData={{
           name: profile?.name || null,
           username: profile?.username || null,
+          image: profile?.image || null,
           phone: profile?.phone || null,
           bio: profile?.bio || null,
           timezone: profile?.timezone,

@@ -73,9 +73,10 @@ export const authOptions: NextAuthOptions = {
       if (user || trigger === "update") {
         const dbUser = await prisma.user.findUnique({
           where: { id: (token.id as string) || (user?.id as string) },
-          select: { onboardingComplete: true },
+          select: { onboardingComplete: true, name: true, image: true },
         })
         token.onboardingComplete = dbUser?.onboardingComplete ?? false
+        token.name = dbUser?.name
       }
 
       return token
@@ -86,6 +87,7 @@ export const authOptions: NextAuthOptions = {
       if (token && session.user) {
         session.user.id = token.id as string
         ;(session.user as any).onboardingComplete = token.onboardingComplete as boolean
+        session.user.name = token.name as string
       }
       return session
     },

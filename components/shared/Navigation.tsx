@@ -11,6 +11,7 @@ import {
   AlertTriangle
 } from "lucide-react"
 import { ConfirmDialog } from "./ConfirmDialog"
+import { useHabitStore } from "@/lib/store"
 
 const NAV_ITEMS = [
   { id: "today", href: "/today", label: "Today", badgeId: "sbadge" },
@@ -25,11 +26,17 @@ const NAV_ITEMS = [
 export function Navigation() {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+  const { profile, fetchProfile } = useHabitStore()
   const [mounted, setMounted] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
-  useEffect(() => setMounted(true), [])
+  useEffect(() => {
+    setMounted(true)
+    if (status === "authenticated" && !profile) {
+      fetchProfile()
+    }
+  }, [status, profile, fetchProfile])
 
   function handleLogout() {
     setShowLogoutConfirm(true)
@@ -40,6 +47,11 @@ export function Navigation() {
   }
 
   const isDark = theme === "dark" || (theme === "system" && mounted && window.matchMedia("(prefers-color-scheme: dark)").matches)
+
+  // Use profile image if available, otherwise session image, then initials
+  const userImage = profile?.image || session?.user?.image
+  const userName = profile?.name || session?.user?.name
+  const userEmail = profile?.email || session?.user?.email
 
   return (
     <>
@@ -91,18 +103,40 @@ export function Navigation() {
 
         <div className="s-div"></div>
 
-        {session?.user && (
-          <Link href="/profile" className="s-user text-inherit hover:text-inherit">
-            <div className="s-av">
-              {session.user.name?.[0]?.toUpperCase() ?? "U"}
-              <div className="s-av-dot"></div>
+        {status === "loading" ? (
+          <div className="s-user opacity-50 pointer-events-none">
+            <div className="s-av shimmer"></div>
+            <div className="s-user-info">
+              <div className="h-3 w-16 bg-[var(--surf2)] rounded shimmer mb-1"></div>
+              <div className="h-2 w-24 bg-[var(--surf2)] rounded shimmer"></div>
             </div>
-            <div>
-              <div className="s-un">{session.user.name}</div>
-              <div className="s-ue">{session.user.email}</div>
+          </div>
+        ) : session?.user ? (
+          <Link href="/profile" className="s-user text-inherit hover:text-inherit">
+            <div className="s-av-group">
+              <div className="s-av">
+                {userImage ? (
+                  <img 
+                    src={userImage} 
+                    alt={userName || "Avatar"} 
+                    className="s-av-img"
+                    onLoad={(e) => (e.currentTarget.style.opacity = "1")}
+                    style={{ opacity: 0, transition: "opacity 0.3s ease" }}
+                  />
+                ) : (
+                  <div className="s-av-initials">
+                    {userName?.[0]?.toUpperCase() ?? "U"}
+                  </div>
+                )}
+                <div className="s-av-dot"></div>
+              </div>
+              <div className="s-user-info">
+                <div className="s-un">{userName}</div>
+                <div className="s-ue">{userEmail}</div>
+              </div>
             </div>
           </Link>
-        )}
+        ) : null}
 
         <button className="s-btn" onClick={() => setTheme(isDark ? "light" : "dark")}>
           <svg viewBox="0 0 16 16">

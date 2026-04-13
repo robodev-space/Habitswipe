@@ -12,7 +12,10 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select"
+import { useSession } from "next-auth/react"
+import { useHabitStore } from "@/lib/store"
 import { API_ROUTES } from "@/lib/constants/api-routes"
+import { AvatarUpload } from "./AvatarUpload"
 import "./edit-profile.css"
 
 interface EditProfileDialogProps {
@@ -21,6 +24,7 @@ interface EditProfileDialogProps {
   initialData: {
     name: string | null
     username: string | null
+    image: string | null
     phone: string | null
     bio: string | null
     timezone?: string
@@ -31,21 +35,50 @@ interface EditProfileDialogProps {
 
 const TIMEZONES = [
   "UTC",
-  "Asia/Kolkata",
-  "America/New_York",
-  "Europe/London",
-  "Asia/Tokyo",
-  "Australia/Sydney",
-  "America/Los_Angeles",
-  "Europe/Paris",
-  "Asia/Dubai",
-  "Asia/Singapore",
+  "Africa/Lagos",
+  "Africa/Johannesburg",
+  "America/Anchorage",
+  "America/Argentina/Buenos_Aires",
   "America/Chicago",
+  "America/Denver",
+  "America/Los_Angeles",
+  "America/Mexico_City",
+  "America/New_York",
+  "America/Phoenix",
   "America/Sao_Paulo",
-  "Europe/Berlin",
+  "Asia/Bangkok",
+  "Asia/Dubai",
   "Asia/Hong_Kong",
+  "Asia/Jakarta",
+  "Asia/Kolkata",
+  "Asia/Manila",
+  "Asia/Seoul",
+  "Asia/Singapore",
+  "Asia/Tokyo",
+  "Atlantic/Reykjavik",
+  "Australia/Brisbane",
+  "Australia/Melbourne",
+  "Australia/Perth",
+  "Australia/Sydney",
+  "Europe/Amsterdam",
+  "Europe/Berlin",
+  "Europe/Brussels",
+  "Europe/Istanbul",
+  "Europe/London",
+  "Europe/Madrid",
+  "Europe/Moscow",
+  "Europe/Paris",
+  "Europe/Prague",
+  "Europe/Rome",
   "Pacific/Auckland",
 ]
+
+// Add current timezone if not present
+const currentTZ = Intl.DateTimeFormat().resolvedOptions().timeZone
+if (!TIMEZONES.includes(currentTZ)) {
+  TIMEZONES.push(currentTZ)
+  TIMEZONES.sort()
+}
 
 export function EditProfileDialog({
   open,
@@ -53,12 +86,14 @@ export function EditProfileDialog({
   initialData,
   onSuccess
 }: EditProfileDialogProps) {
+  const { update: updateSession } = useSession()
   const [formData, setFormData] = useState({
     name: initialData.name || "",
     username: initialData.username || "",
+    image: initialData.image || "",
     phone: initialData.phone || "",
     bio: initialData.bio || "",
-    timezone: initialData.timezone || "UTC",
+    timezone: initialData.timezone || currentTZ,
     dayStartHour: initialData.dayStartHour ?? 0
   })
   const [isSaving, setIsSaving] = useState(false)
@@ -68,13 +103,19 @@ export function EditProfileDialog({
       setFormData({
         name: initialData.name || "",
         username: initialData.username || "",
+        image: initialData.image || "",
         phone: initialData.phone || "",
         bio: initialData.bio || "",
-        timezone: initialData.timezone || "UTC",
+        timezone: initialData.timezone || currentTZ,
         dayStartHour: initialData.dayStartHour ?? 0
       })
     }
   }, [initialData, open])
+
+  const handleAvatarUpload = async (imageDataUrl: string) => {
+    // Only update local state, actual save happens via PATCH /api/profile
+    setFormData(prev => ({ ...prev, image: imageDataUrl }))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -92,6 +133,10 @@ export function EditProfileDialog({
       if (!response.ok) {
         throw new Error(json.error || "Failed to update profile")
       }
+
+      // Refresh the session and global store to reflect name/image changes everywhere
+      await updateSession()
+      await useHabitStore.getState().fetchProfile()
 
       toast.success("Profile saved! ✨")
       onSuccess()
@@ -125,6 +170,14 @@ export function EditProfileDialog({
           </div>
           
           <div className="ep-scroll">
+            <div className="flex justify-center mb-8">
+              <AvatarUpload 
+                currentImage={formData.image} 
+                name={formData.name} 
+                onUpload={async (img) => handleAvatarUpload(img)} 
+              />
+            </div>
+
             <form onSubmit={handleSubmit}>
               <div className="mb-4 pb-2 border-b border-[var(--bord)]">
                 <span className="text-[10px] font-bold text-[var(--ind)] uppercase tracking-widest">Account Details</span>
