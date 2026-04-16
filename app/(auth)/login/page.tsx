@@ -94,9 +94,9 @@ export default function LoginPage() {
           <div className="space-y-5">
             {/* Google */}
             <Button
-              variant="secondary"
+              variant="outline"
               size="lg"
-              className="w-full h-11 border border-gray-200 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2.5 rounded-xl font-medium text-sm text-gray-700 shadow-none"
+              className="w-full h-11 bg-white border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2.5 rounded-xl font-medium text-sm text-gray-800 shadow-sm hover:shadow"
               onClick={handleGoogle}
               disabled={isGoogleLoading}
             >
