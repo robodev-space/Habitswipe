@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion"
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import { MousePointerClick } from "lucide-react"
 
 export function LandingNavbar() {
   const { scrollY } = useScroll()
@@ -10,7 +11,7 @@ export function LandingNavbar() {
   const backgroundColor = useTransform(
     scrollY,
     [0, 100],
-    ["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, 0.8)"]
+    ["rgba(0, 0, 0, 0)", "rgba(10, 10, 20, 0.85)"]
   )
   const backdropBlur = useTransform(
     scrollY,
@@ -20,7 +21,7 @@ export function LandingNavbar() {
   const borderOpacity = useTransform(
     scrollY,
     [0, 100],
-    ["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 0.1)"]
+    ["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 0.06)"]
   )
 
   const [mounted, setMounted] = useState(false)
@@ -34,31 +35,33 @@ export function LandingNavbar() {
       className="fixed top-0 left-0 right-0 z-50 px-6 sm:px-8 py-4 transition-all duration-300 border-b border-transparent"
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-fit h-9 px-3 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center font-black text-white text-xs group-hover:scale-110 transition-transform shadow-lg shadow-indigo-500/25">
-            100x
+        {/* HabitClick Logo */}
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-indigo-500/25">
+            <MousePointerClick className="w-[18px] h-[18px] text-white" />
           </div>
           <span className="text-xl font-black tracking-tight text-white select-none">
-            100xFocus
+            Habit<span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Click</span>
           </span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-1 bg-white/5 p-1 rounded-2xl border border-white/5">
+        {/* Product nav */}
+        <div className="hidden md:flex items-center gap-1 bg-white/[0.04] p-1 rounded-2xl border border-white/[0.05]">
           {[
-            { name: "Products", href: "#products" },
-            { name: "About", href: "#about" },
-            { name: "Contact", href: "#contact" },
+            { name: "Features", href: "#features" },
+            { name: "Pricing", href: "#pricing" },
           ].map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className="px-5 py-2 text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+              className="px-5 py-2 text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/[0.05] rounded-xl transition-all"
             >
               {item.name}
             </Link>
           ))}
         </div>
 
+        {/* Auth buttons */}
         <div className="flex items-center gap-4">
           <Link
             href="/login"
