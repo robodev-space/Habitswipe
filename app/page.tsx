@@ -1,8 +1,15 @@
+import { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { LandingNavbar } from "@/components/landing/LandingNavbar"
 import { Hero } from "@/components/landing/Hero"
 import { Features } from "@/components/landing/Features"
 import { Footer } from "@/components/landing/Footer"
+
+export const metadata: Metadata = {
+  title: "100xFocus — Build Habits, Grow 100x Faster",
+  description: "Experience massive growth with 100xFocus. We build intelligent lifestyle improvement apps that help you stay focused, consistent, and productive.",
+  keywords: ["100x faster growth", "productivity software", "lifestyle improvement apps", "habit building tools"],
+}
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -22,10 +29,10 @@ export default function LandingPage() {
            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-indigo-500/5 blur-[100px] -z-10" />
            
            <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-8">
-             Crafted with care at <br /><span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-cyan-400 bg-clip-text text-transparent">Karotive Labs</span>
+             Crafted with care by <br /><span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-cyan-400 bg-clip-text text-transparent">100xFocus</span>
            </h2>
            <p className="text-fore-2 text-lg md:text-xl max-w-xl mx-auto mb-12">
-             We&apos;re a small team passionate about building products that make a real difference. Every product we ship is designed to help you live better.
+             We&apos;re a small team dedicated to building apps that make you productive and help you grow 100x faster. Every product we ship is designed for lifestyle improvement.
            </p>
            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a href="#products" className="w-full sm:w-auto">
@@ -49,8 +56,8 @@ export default function LandingPage() {
           <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Have a question or idea?</h3>
           <p className="text-zinc-400 text-lg mb-6">
             Reach out to us at{" "}
-            <a href="mailto:hello@karotivelabs.com" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-4 transition-colors">
-              hello@karotivelabs.com
+            <a href="mailto:hello@100xfocus.com" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-4 transition-colors">
+              hello@100xfocus.com
             </a>
           </p>
         </div>

@@ -13,13 +13,13 @@ const products = [
     icon: Zap,
     color: "from-blue-500 to-cyan-500",
     status: "live",
-    link: "/login",
+    link: "https://habitswipe.100focus.com",
     cta: "Open HabitSwipe",
   },
   {
     name: "Coming Soon",
     tagline: "Something exciting is brewing",
-    description: "We're working on our next product to help people build better routines. Stay tuned for updates from Karotive Labs.",
+    description: "We're working on our next product to help people build better routines. Stay tuned for updates from 100xFocus.",
     icon: Clock,
     color: "from-indigo-500 to-purple-500",
     status: "coming-soon",
@@ -164,7 +164,7 @@ export function Features() {
             transition={{ delay: 0.1 }}
             className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto font-light"
           >
-            Products crafted with care at Karotive Labs. Built to help you live better.
+            Products crafted with care by 100xFocus. Built to help you grow 100x faster.
           </motion.p>
         </div>
 

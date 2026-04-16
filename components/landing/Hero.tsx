@@ -107,7 +107,7 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-zinc-400 text-[15px] sm:text-base md:text-lg lg:text-xl max-w-xl mx-auto mb-10 leading-relaxed font-light text-balance"
         >
-          Karotive Labs crafts <span className="text-white font-medium">intelligent, beautiful products</span> that help people build better habits and live better lives.
+          100xFocus crafts <span className="text-white font-medium">intelligent, beautiful products</span> that help you be more productive, build better habits, and <span className="text-white font-medium">grow 100x faster</span>.
         </motion.p>
 
         <motion.div
@@ -161,8 +161,8 @@ export function Hero() {
                     transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                   >
                     <div className="flex items-center gap-4 mb-6">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-                        <span className="text-white font-black text-lg">K</span>
+                      <div className="w-fit h-12 px-3 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+                        <span className="text-white font-black text-sm">100x</span>
                       </div>
                       <div>
                         <div className="h-2.5 w-28 bg-white/20 rounded-full mb-2" />

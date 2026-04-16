@@ -22,9 +22,10 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "HabitSwipe — Build Better Habits",
+  title: "100xFocus — Build Habits, Grow 100x Faster",
   description:
-    "Track your daily habits with a satisfying swipe. Stay consistent, build streaks, and transform your life one habit at a time.",
+    "We build intelligent productivity apps for your lifestyle improvement. Use 100xFocus tools to stay consistent, build streaks, and grow 100x faster.",
+  keywords: ["productivity apps", "lifestyle improvement", "100x growth", "self-improvement tools", "habit tracking", "focus app", "personal development"],
   icons: { icon: "/favicon.ico" },
 }
 

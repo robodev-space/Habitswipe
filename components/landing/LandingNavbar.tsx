@@ -35,11 +35,11 @@ export function LandingNavbar() {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center font-black text-white text-sm group-hover:scale-110 transition-transform shadow-lg shadow-indigo-500/25">
-            K
+          <div className="w-fit h-9 px-3 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center font-black text-white text-xs group-hover:scale-110 transition-transform shadow-lg shadow-indigo-500/25">
+            100x
           </div>
           <span className="text-xl font-black tracking-tight text-white select-none">
-            Karotive Labs
+            100xFocus
           </span>
         </Link>
 

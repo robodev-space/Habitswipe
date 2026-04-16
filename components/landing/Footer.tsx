@@ -16,14 +16,13 @@ export function Footer() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-            <span className="text-white font-black text-xs">K</span>
+          <div className="w-fit h-7 px-2.5 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+            <span className="text-white font-black text-xs">100x</span>
           </div>
           <span
             className="text-base font-bold text-white tracking-tight"
-            style={{ fontFamily: "var(--font-dm-serif, Georgia, serif)" }}
           >
-            Karotive Labs
+            100xFocus
           </span>
         </Link>
 
@@ -42,7 +41,7 @@ export function Footer() {
 
         {/* Copyright */}
         <p className="text-xs text-zinc-700">
-          © 2026 Karotive Labs. All rights reserved.
+          © 2026 100xFocus. All rights reserved.
         </p>
 
       </div>
