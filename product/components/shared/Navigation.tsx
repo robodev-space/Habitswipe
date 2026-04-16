@@ -63,7 +63,7 @@ export function Navigation() {
               <path d="M7 1.5L8.2 5.3H12L8.9 7.6L10 11.2L7 9.2L4 11.2L5.1 7.6L2 5.3H5.8L7 1.5Z" fill="white" />
             </svg>
           </div>
-          <span className="s-lname">HabitSwipe</span>
+          <span className="s-lname">HabitClick</span>
         </Link>
         <div className="s-section">Main</div>
 

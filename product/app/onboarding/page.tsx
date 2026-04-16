@@ -280,7 +280,7 @@ export default function OnboardingPage() {
           <div className="ob-logo-mark">
             <Zap className="w-3.5 h-3.5" fill="white" />
           </div>
-          HabitSwipe
+          HabitClick
         </div>
         <button className="ob-skip-btn" onClick={handleSkip} disabled={isSubmitting}>
           Skip setup →

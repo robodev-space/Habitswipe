@@ -7,14 +7,14 @@ import Link from "next/link"
 
 const products = [
   {
-    name: "HabitSwipe",
+    name: "HabitClick",
     tagline: "Swipe-based habit tracking",
     description: "The most satisfying way to build habits. Swipe right for done, left for skip. AI-powered insights, streaks, analytics, and a beautiful dark UI built for focus.",
     icon: Zap,
     color: "from-blue-500 to-cyan-500",
     status: "live",
-    link: "https://habitswipe.100focus.com",
-    cta: "Open HabitSwipe",
+    link: "https://HabitClick.100focus.com",
+    cta: "Open HabitClick",
   },
   {
     name: "Coming Soon",

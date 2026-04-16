@@ -10,24 +10,24 @@ import Link from "next/link"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "HabitSwipe — The Most Satisfying Habit Tracker",
-  description: "Transform your life with a swipe. HabitSwipe makes habit building effortless with a unique swipe-based UI, deep analytics, and streak tracking. Rank higher in life.",
+  title: "HabitClick — The Most Satisfying Habit Tracker",
+  description: "Transform your life with a swipe. HabitClick makes habit building effortless with a unique swipe-based UI, deep analytics, and streak tracking. Rank higher in life.",
   keywords: ["habit tracker", "productivity app", "swipe habit", "streak tracking", "personal growth"],
   openGraph: {
-    title: "HabitSwipe — Build Better Habits Today",
+    title: "HabitClick — Build Better Habits Today",
     description: "The #1 habit tracker for focused individuals. Swipe right to win your day.",
     type: "website",
-    url: "https://habitswipe.100focus.com",
+    url: "https://HabitClick.100focus.com",
   },
 }
 
-export default function HabitSwipeLanding() {
+export default function HabitClickLanding() {
   return (
     <main className={`${inter.className} min-h-screen bg-black text-white selection:bg-indigo-500/30`}>
       {/* Product Specific Navbar or Reuse Generic one */}
       <LandingNavbar />
 
-      {/* Hero Section - HabitSwipe Specific */}
+      {/* Hero Section - HabitClick Specific */}
       <section className="relative pt-32 pb-20 px-6 overflow-hidden">
         <div className="absolute inset-0 z-0 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-indigo-500/10 blur-[120px] rounded-full" />
@@ -46,7 +46,7 @@ export default function HabitSwipeLanding() {
           </h1>
           
           <p className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 font-light">
-            Stop checking boxes. Start swiping towards your goals. HabitSwipe combines game-like mechanics with powerful analytics to keep you consistent.
+            Stop checking boxes. Start swiping towards your goals. HabitClick combines game-like mechanics with powerful analytics to keep you consistent.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -141,10 +141,10 @@ export default function HabitSwipeLanding() {
         <div className="max-w-3xl mx-auto text-center glass rounded-[3rem] border border-white/10 p-12 md:p-20 relative overflow-hidden">
            <div className="absolute inset-0 bg-indigo-500/5 -z-10 blur-3xl" />
            <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight">Ready to win <br /> your day?</h2>
-           <p className="text-zinc-400 text-lg mb-12">Join thousands of users building better lives with HabitSwipe.</p>
+           <p className="text-zinc-400 text-lg mb-12">Join thousands of users building better lives with HabitClick.</p>
            <Link href="/register">
               <button className="px-10 py-5 rounded-2xl bg-white text-black font-extrabold text-xl hover:bg-zinc-200 transition-all active:scale-95">
-                Join HabitSwipe Now
+                Join HabitClick Now
                 <ArrowRight className="inline-block ml-2 w-6 h-6" />
               </button>
            </Link>

@@ -30,8 +30,8 @@ export function ReferralCard({ referralCode, referralCount }: ReferralCardProps)
   async function shareLink() {
     if (navigator.share) {
       await navigator.share({
-        title: "Join me on HabitSwipe!",
-        text: "I've been building better habits with HabitSwipe. Join me!",
+        title: "Join me on HabitClick!",
+        text: "I've been building better habits with HabitClick. Join me!",
         url: referralLink,
       })
     } else {

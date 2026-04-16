@@ -7,7 +7,7 @@ export default function SnapPage() {
   const [cardColor, setCardColor] = useState("#5b50e8")
 
   const copyLink = () => {
-    navigator.clipboard?.writeText("https://habitswipe.app/share/user").catch(() => {})
+    navigator.clipboard?.writeText("https://HabitClick.app/share/user").catch(() => {})
     toast.success("🔗 Link copied to clipboard!")
   }
 
@@ -43,13 +43,13 @@ export default function SnapPage() {
         <div className="share-opt" onClick={copyLink}>
           <div className="share-ico">🔗</div><div className="share-lbl">Link</div><div className="share-sub">Copy URL</div>
         </div>
-        <div className="share-opt" onClick={() => window.open('https://twitter.com/intent/tweet?text=I%20just%20hit%20a%2014-day%20streak%20on%20HabitSwipe!%20%F0%9F%94%A5', '_blank')}>
+        <div className="share-opt" onClick={() => window.open('https://twitter.com/intent/tweet?text=I%20just%20hit%20a%2014-day%20streak%20on%20HabitClick!%20%F0%9F%94%A5', '_blank')}>
           <div className="share-ico">𝕏</div><div className="share-lbl">Twitter</div><div className="share-sub">Post thread</div>
         </div>
         <div className="share-opt" onClick={() => toast("Opening LinkedIn...")}>
           <div className="share-ico">💼</div><div className="share-lbl">LinkedIn</div><div className="share-sub">Post update</div>
         </div>
-        <div className="share-opt" onClick={() => window.open('https://wa.me/?text=I%20just%20hit%20a%2014-day%20streak%20on%20HabitSwipe!%20%F0%9F%94%A5', '_blank')}>
+        <div className="share-opt" onClick={() => window.open('https://wa.me/?text=I%20just%20hit%20a%2014-day%20streak%20on%20HabitClick!%20%F0%9F%94%A5', '_blank')}>
           <div className="share-ico">💬</div><div className="share-lbl">WhatsApp</div><div className="share-sub">Send to group</div>
         </div>
       </div>
@@ -59,7 +59,7 @@ export default function SnapPage() {
         <div className="prev-inner" id="prevCard" style={{ background: cardColor }}>
           <div className="prev-name">Habit Maker</div>
           <div className="prev-streak">🔥 14</div>
-          <div className="prev-sub">day streak on HabitSwipe</div>
+          <div className="prev-sub">day streak on HabitClick</div>
           <div className="prev-habits">
             <div className="prev-h"><div className="prev-hem">🏃</div><div className="prev-hs">14d</div></div>
             <div className="prev-h"><div className="prev-hem">📚</div><div className="prev-hs">21d</div></div>

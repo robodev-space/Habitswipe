@@ -154,7 +154,7 @@ export function CameraSnapModal({ habit, onClose, onShareSuccess }: CameraSnapMo
             </div>
             <div>
               <h3 className="text-xl font-bold font-serif">{habit.name}</h3>
-              <p className="opacity-80 text-sm">HabitSwipe Daily Challenge</p>
+              <p className="opacity-80 text-sm">HabitClick Daily Challenge</p>
             </div>
           </div>
 

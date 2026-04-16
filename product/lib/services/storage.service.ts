@@ -19,7 +19,7 @@ class StorageService {
         private_key: process.env.GCS_PRIVATE_KEY?.replace(/\\n/g, "\n"),
       },
     })
-    this.bucketName = process.env.GCS_BUCKET_NAME || "habitswipe-avatars"
+    this.bucketName = process.env.GCS_BUCKET_NAME || "HabitClick-avatars"
   }
 
   public static getInstance(): StorageService {

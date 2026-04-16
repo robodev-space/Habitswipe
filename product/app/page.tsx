@@ -2,6 +2,7 @@ import { Metadata } from "next"
 import { LandingNavbar } from "@/components/landing/LandingNavbar"
 import { Footer } from "@/components/landing/Footer"
 import { Pricing } from "@/components/landing/Pricing"
+import { ProductPreview } from "@/components/landing/ProductPreview"
 import {
   Sparkles,
   Zap,
@@ -14,9 +15,9 @@ import {
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "HabitSwipe — The Most Satisfying Habit Tracker",
+  title: "HabitClick — The Most Satisfying Habit Tracker",
   description:
-    "Transform your life with a swipe. HabitSwipe makes habit building effortless with a unique swipe-based UI, deep analytics, and streak tracking.",
+    "Transform your life with a swipe. HabitClick makes habit building effortless with a unique swipe-based UI, deep analytics, and streak tracking.",
   keywords: [
     "habit tracker",
     "productivity app",
@@ -25,11 +26,11 @@ export const metadata: Metadata = {
     "personal growth",
   ],
   openGraph: {
-    title: "HabitSwipe — Build Better Habits Today",
+    title: "HabitClick — Build Better Habits Today",
     description:
       "The #1 habit tracker for focused individuals. Swipe right to win your day.",
     type: "website",
-    url: "https://habitswipe.100xfocus.com",
+    url: "https://HabitClick.100xfocus.com",
   },
 }
 
@@ -109,13 +110,13 @@ export default function ProductLandingPage() {
             <span className="text-white/95">Build Habits with</span>
             <br />
             <span className="bg-gradient-to-r from-indigo-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
-              a Simple Swipe.
+              a Simple Click.
             </span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-            Stop checking boxes. Start swiping towards your goals. HabitSwipe
+            Stop checking boxes. Start swiping towards your goals. HabitClick
             combines game-like mechanics with powerful analytics to keep you
             consistent.
           </p>
@@ -137,18 +138,8 @@ export default function ProductLandingPage() {
 
           {/* Product Preview — clean container for a demo video/screenshot */}
           <div className="relative max-w-4xl mx-auto">
-            <div className="aspect-[16/9] rounded-2xl sm:rounded-3xl border border-white/[0.06] overflow-hidden shadow-2xl shadow-black/40 bg-zinc-900/50 backdrop-blur-sm">
-              <div className="w-full h-full flex items-center justify-center">
-                {/* Replace this placeholder with a video or screenshot */}
-                <div className="text-zinc-500 flex flex-col items-center gap-3">
-                  <div className="w-16 h-16 rounded-2xl border border-white/[0.06] flex items-center justify-center bg-white/[0.02]">
-                    <Sparkles className="w-7 h-7 text-indigo-400/60" />
-                  </div>
-                  <span className="text-xs font-medium tracking-widest uppercase text-zinc-600">
-                    App Preview
-                  </span>
-                </div>
-              </div>
+            <div className="aspect-[16/9] rounded-2xl sm:rounded-3xl border border-white/[0.06] overflow-hidden shadow-2xl shadow-black/40">
+              <ProductPreview />
             </div>
             {/* Soft glow under preview */}
             <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-[80%] h-32 bg-indigo-500/[0.08] blur-[80px] rounded-full -z-10" />
@@ -217,11 +208,11 @@ export default function ProductLandingPage() {
             your day?
           </h2>
           <p className="text-zinc-400 text-base mb-10">
-            Join thousands of users building better lives with HabitSwipe.
+            Join thousands of users building better lives with HabitClick.
           </p>
           <Link href="/register">
             <button className="group px-8 py-4 rounded-2xl bg-white text-zinc-900 font-bold text-base hover:bg-zinc-100 transition-all active:scale-[0.97] shadow-xl shadow-white/[0.06] inline-flex items-center gap-2">
-              Join HabitSwipe Now
+              Join HabitClick Now
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </Link>
