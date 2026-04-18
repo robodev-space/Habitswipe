@@ -4,7 +4,7 @@ import React from "react"
 import { motion, useMotionValue, useMotionTemplate } from "framer-motion"
 import { Zap, ArrowRight, Clock, Sparkles } from "lucide-react"
 
-const PRODUCT_URL = process.env.NEXT_PUBLIC_PRODUCT_URL || "https://habitswipe.100xfocus.com"
+const PRODUCT_URL = process.env.NEXT_PUBLIC_PRODUCT_PROD_URL || "https://habitclick.100xfocus.com/"
 
 const products = [
   {
@@ -59,11 +59,10 @@ function ProductCard({ product, index }: { product: typeof products[0]; index: n
       transition={{ duration: 0.6, delay: index * 0.1 }}
       onMouseMove={handleMouseMove}
       whileHover={{ y: -8 }}
-      className={`group relative bg-white/[0.02] rounded-[2.5rem] border p-10 transition-all duration-500 overflow-hidden ${
-        isLive
-          ? "border-indigo-500/30 hover:border-indigo-500/50 cursor-pointer"
-          : "border-white/5 hover:border-white/10 cursor-default"
-      }`}
+      className={`group relative bg-white/[0.02] rounded-[2.5rem] border p-10 transition-all duration-500 overflow-hidden ${isLive
+        ? "border-indigo-500/30 hover:border-indigo-500/50 cursor-pointer"
+        : "border-white/5 hover:border-white/10 cursor-default"
+        }`}
     >
       {/* Mouse Glow */}
       <motion.div
@@ -96,16 +95,14 @@ function ProductCard({ product, index }: { product: typeof products[0]; index: n
       )}
 
       <div className="flex flex-col h-full gap-6 relative z-10">
-        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${product.color} flex items-center justify-center p-4 shadow-2xl ${
-          !isLive ? "opacity-40" : ""
-        }`}>
+        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${product.color} flex items-center justify-center p-4 shadow-2xl ${!isLive ? "opacity-40" : ""
+          }`}>
           <product.icon className="w-full h-full text-white" />
         </div>
 
         <div>
-          <h3 className={`text-3xl font-black tracking-tight mb-2 leading-tight ${
-            isLive ? "text-white" : "text-zinc-500"
-          }`}>
+          <h3 className={`text-3xl font-black tracking-tight mb-2 leading-tight ${isLive ? "text-white" : "text-zinc-500"
+            }`}>
             {product.name}
           </h3>
           <p className={`text-sm font-medium mb-4 ${isLive ? "text-indigo-400" : "text-zinc-600"}`}>
