@@ -2,8 +2,8 @@
 
 import { motion, useScroll, useTransform } from "framer-motion"
 import Link from "next/link"
+import Image from "next/image"
 import { useState, useEffect } from "react"
-import { MousePointerClick } from "lucide-react"
 
 export function LandingNavbar() {
   const { scrollY } = useScroll()
@@ -37,9 +37,14 @@ export function LandingNavbar() {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* HabitClick Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-indigo-500/25">
-            <MousePointerClick className="w-[18px] h-[18px] text-white" />
-          </div>
+          <Image
+            src="/favicon.ico"
+            alt="HabitClick logo"
+            width={36}
+            height={36}
+            className="rounded-xl group-hover:scale-110 transition-transform shadow-lg shadow-indigo-500/25"
+            priority
+          />
           <span className="text-xl font-black tracking-tight text-white select-none">
             Habit<span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Click</span>
           </span>

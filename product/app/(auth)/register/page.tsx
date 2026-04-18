@@ -12,9 +12,10 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import Link from "next/link"
+import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "react-hot-toast"
-import { Zap, Clock, CheckCircle2, TrendingUp, Mail } from "lucide-react"
+import { Clock, CheckCircle2, TrendingUp, Mail } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { API_ROUTES } from "@/lib/constants/api-routes"
@@ -306,9 +307,14 @@ export default function RegisterPage() {
         >
           {/* Logo */}
           <div className="flex items-center gap-2.5 mb-8">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-sm">
-              <Zap className="w-4 h-4 text-white" fill="white" />
-            </div>
+            <Image
+              src="/favicon.ico"
+              alt="HabitClick logo"
+              width={32}
+              height={32}
+              className="rounded-lg shadow-sm"
+              priority
+            />
           </div>
 
           <AnimatePresence mode="wait">

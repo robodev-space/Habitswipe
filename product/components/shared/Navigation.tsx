@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { signOut, useSession } from "next-auth/react"
 import { useTheme } from "next-themes"
 import { useState, useEffect } from "react"
+import Image from "next/image"
 import {
   LayoutDashboard, ListChecks, User,
   Sun, Moon, LogOut, Zap, Flame, Camera,
@@ -58,11 +59,14 @@ export function Navigation() {
       {/* ── SIDEBAR ────────────────────────────────────────────────────────────── */}
       <nav className="sidebar">
         <Link href="/today" className="s-logo text-inherit hover:text-inherit">
-          <div className="s-lmark">
-            <svg viewBox="0 0 14 14" fill="none">
-              <path d="M7 1.5L8.2 5.3H12L8.9 7.6L10 11.2L7 9.2L4 11.2L5.1 7.6L2 5.3H5.8L7 1.5Z" fill="white" />
-            </svg>
-          </div>
+          <Image
+            src="/favicon.ico"
+            alt="HabitClick logo"
+            width={28}
+            height={28}
+            className="rounded-lg"
+            priority
+          />
           <span className="s-lname">HabitClick</span>
         </Link>
         <div className="s-section">Main</div>

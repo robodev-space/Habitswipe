@@ -10,7 +10,8 @@ import { useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Zap, Plus, AlertCircle } from "lucide-react"
+import Image from "next/image"
+import { Plus, AlertCircle } from "lucide-react"
 import { API_ROUTES } from "@/lib/constants/api-routes"
 import "./onboarding.css"
 
@@ -277,9 +278,14 @@ export default function OnboardingPage() {
       {/* Top bar */}
       <div className="ob-topbar">
         <div className="ob-logo">
-          <div className="ob-logo-mark">
-            <Zap className="w-3.5 h-3.5" fill="white" />
-          </div>
+          <Image
+            src="/favicon.ico"
+            alt="HabitClick logo"
+            width={24}
+            height={24}
+            className="rounded-md"
+            priority
+          />
           HabitClick
         </div>
         <button className="ob-skip-btn" onClick={handleSkip} disabled={isSubmitting}>
