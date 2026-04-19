@@ -8,7 +8,6 @@ import bcrypt from "bcryptjs"
 import { z } from "zod"
 import crypto from "crypto"
 import { prisma } from "@/lib/prisma"
-// import { emailService } from "@/lib/services/email.service"
 import { emailService } from "@/lib/services/email.resend.service"
 
 const registerSchema = z.object({
