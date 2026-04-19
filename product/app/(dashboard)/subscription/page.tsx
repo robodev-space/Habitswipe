@@ -34,13 +34,13 @@ export default function SubscriptionPage() {
 
       <div className="billing-nav">
         <div className="billing-toggle">
-          <div 
+          <div
             className={`billing-opt ${billingInterval === "monthly" ? "active" : ""}`}
             onClick={() => setBillingInterval("monthly")}
           >
             Monthly
           </div>
-          <div 
+          <div
             className={`billing-opt ${billingInterval === "annual" ? "active" : ""}`}
             onClick={() => setBillingInterval("annual")}
           >
@@ -50,40 +50,38 @@ export default function SubscriptionPage() {
       </div>
 
       <div className="sub-grid">
-        {/* Basic Plan */}
+
+        {/* Starter Plan */}
         <div className="sub-card">
           <div className="sub-header">
-            <div className="sub-name">Basic</div>
+            <div className="sub-name">Starter</div>
             <div className="sub-price">$0<span>/forever</span></div>
           </div>
           <ul className="sub-features">
             <li className="sub-feature">
-              <Check size={16} /> <span>Up to 5 habits</span>
+              <Check size={16} /> <span>Up to 5 active habits</span>
             </li>
             <li className="sub-feature">
-              <Check size={16} /> <span>Daily & Weekly stats</span>
+              <Check size={16} /> <span>Basic swipe tracking</span>
             </li>
             <li className="sub-feature">
-              <Check size={16} /> <span>Basic reminders</span>
+              <Check size={16} /> <span>7-day history</span>
             </li>
-            <li className="sub-feature disabled">
-              <Check size={16} /> <span>Yearly analytics</span>
-            </li>
-            <li className="sub-feature disabled">
-              <Check size={16} /> <span>Custom habit colors</span>
+            <li className="sub-feature">
+              <Check size={16} /> <span>Mobile access</span>
             </li>
           </ul>
-          <button className="btn-sub" onClick={() => handleCheckout("Basic")}>
+          <button className="btn-sub" onClick={() => handleCheckout("Starter")}>
             Current Plan
           </button>
         </div>
 
-        {/* Pro Plan */}
+        {/* Prime Plan */}
         <div className="sub-card pro">
           <div className="sub-header">
-            <div className="sub-name">Pro</div>
+            <div className="sub-name">Prime</div>
             <div className="sub-price">
-              {billingInterval === "monthly" ? "$5" : "$48"}
+              {billingInterval === "monthly" ? "$9" : "$89"}
               <span>/{billingInterval === "monthly" ? "mo" : "yr"}</span>
             </div>
           </div>
@@ -92,20 +90,47 @@ export default function SubscriptionPage() {
               <Zap size={16} fill="var(--ind)" color="var(--ind)" /> <span><strong>Unlimited</strong> habits</span>
             </li>
             <li className="sub-feature">
-              <BarChart3 size={16} /> <span>Advanced Yearly analytics</span>
+              <BarChart3 size={16} /> <span>Advanced heatmaps</span>
             </li>
             <li className="sub-feature">
-              <Palette size={16} /> <span>Custom colors & themes</span>
+              <Shield size={16} /> <span>Cloud sync across devices</span>
             </li>
             <li className="sub-feature">
-              <Shield size={16} /> <span>Cloud sync & backup</span>
+              <Star size={16} /> <span>Priority agentic suggestions</span>
             </li>
             <li className="sub-feature">
-              <Smartphone size={16} /> <span>Early access to Snap cards</span>
+              <Palette size={16} /> <span>Custom themes</span>
+            </li>
+          </ul>
+          <button className="btn-sub" onClick={() => handleCheckout("Prime")}>
+            Upgrade to Prime
+          </button>
+        </div>
+
+        {/* Pro Plan */}
+        <div className="sub-card">
+          <div className="sub-header">
+            <div className="sub-name">Pro</div>
+            <div className="sub-price">
+              $49<span>/year</span>
+            </div>
+          </div>
+          <ul className="sub-features">
+            <li className="sub-feature">
+              <Check size={16} /> <span>Everything in Prime</span>
+            </li>
+            <li className="sub-feature">
+              <Infinity size={16} /> <span>Shared habit rooms</span>
+            </li>
+            <li className="sub-feature">
+              <BarChart3 size={16} /> <span>Team analytics dashboard</span>
+            </li>
+            <li className="sub-feature">
+              <Shield size={16} /> <span>Admin controls</span>
             </li>
           </ul>
           <button className="btn-sub" onClick={() => handleCheckout("Pro")}>
-            Upgrade to Pro
+            Get Pro Annual
           </button>
         </div>
       </div>

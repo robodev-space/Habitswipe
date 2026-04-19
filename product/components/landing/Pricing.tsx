@@ -44,7 +44,7 @@ const tiers = [
     period: "/year",
     description: "Collaborative habit building for teams.",
     features: [
-      "Everything in Pro",
+      "Everything in Prime",
       "Shared habit rooms",
       "Team analytics dashboard",
       "Admin controls",
