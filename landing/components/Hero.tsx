@@ -1,33 +1,49 @@
 "use client"
 
+import { useRef } from "react"
+import { ArrowRight, Sparkles } from "lucide-react"
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
-import { ArrowRight, Sparkles, Zap } from "lucide-react"
-import { useEffect } from "react"
-
-const PRODUCT_URL = process.env.NEXT_PUBLIC_PRODUCT_URL || "https://habitswipe.100xfocus.com"
+import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 
 export function Hero() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const monitorRef = useRef<HTMLDivElement>(null)
+  
+  // Re-implementing your motion values for the glows (Reverting to your original UI)
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
-
   const springX = useSpring(mouseX, { stiffness: 50, damping: 20 })
   const springY = useSpring(mouseY, { stiffness: 50, damping: 20 })
 
-  useEffect(() => {
+  useGSAP(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth) * 200 - 100
-      const y = (e.clientY / window.innerHeight) * 200 - 100
-      mouseX.set(x)
-      mouseY.set(y)
+      const { clientX, clientY } = e
+      const { innerWidth, innerHeight } = window
+      
+      const xPercent = (clientX / innerWidth - 0.5)
+      const yPercent = (clientY / innerHeight - 0.5)
+
+      // Set motion values for original UI glows
+      mouseX.set(xPercent * 200)
+      mouseY.set(yPercent * 200)
+
+      // Keep Tilt ONLY for the monitor/video area
+      gsap.to(monitorRef.current, {
+        rotateY: xPercent * 20,
+        rotateX: -yPercent * 20,
+        duration: 1,
+        ease: "power2.out"
+      })
     }
 
     window.addEventListener("mousemove", handleMouseMove)
     return () => window.removeEventListener("mousemove", handleMouseMove)
-  }, [mouseX, mouseY])
+  }, { scope: containerRef })
 
   return (
-    <section className="relative pt-24 sm:pt-32 pb-16 sm:pb-20 px-6 sm:px-8 overflow-hidden bg-black min-h-[90vh] flex items-center">
-      {/* ── Background Layer ────────────────────────────────────────────────── */}
+    <section ref={containerRef} className="relative pt-24 sm:pt-32 pb-16 sm:pb-20 px-6 sm:px-8 overflow-hidden bg-black min-h-[90vh] flex items-center">
+      {/* ── REVERTED Background Layer ───────────────────────────────────────────── */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div
           className="absolute inset-0 opacity-[0.15]"
@@ -60,18 +76,9 @@ export function Hero() {
             y: useTransform(springY, (v) => -v * 0.4),
           }}
         />
-
-        <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-indigo-500/5 blur-[150px]"
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        />
       </div>
 
-      {/* ── Content ─────────────────────────────────────────────────────────── */}
+      {/* ── Content (REVERTED TO YOUR ORIGINAL VERSION) ─────────────────────────── */}
       <div className="max-w-7xl mx-auto text-center relative z-10 w-full flex flex-col items-center">
         {/* Company Badge */}
         <motion.div
@@ -115,12 +122,11 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 group"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
         >
           <a href="#products">
             <button className="relative group h-13 px-8 py-3.5 rounded-xl text-[15px] font-semibold text-white overflow-hidden transition-all active:scale-95 flex items-center gap-2 shadow-xl shadow-indigo-600/25">
               <span className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600" />
-              <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
               <span className="relative">Explore Products</span>
               <ArrowRight className="relative w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </button>
@@ -132,68 +138,57 @@ export function Hero() {
           </a>
         </motion.div>
 
-        {/* Animated Preview */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 40 }}
-          whileInView={{ opacity: 1, scale: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{
-            duration: 1.2,
-            delay: 0.2,
-            ease: [0.16, 1, 0.3, 1]
-          }}
-          className="mt-12 sm:mt-20 relative w-full flex justify-center"
-        >
-          <div className="w-full max-w-5xl aspect-video rounded-[2rem] sm:rounded-[3rem] border border-white/5 shadow-[0_32px_128px_-16px_rgba(0,0,0,1)] overflow-hidden relative group/preview bg-zinc-950/50 backdrop-blur-sm">
-            <div className="absolute inset-0 bg-indigo-500/[0.03] pointer-events-none" />
-
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-full h-full relative">
-                <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent pointer-events-none" />
-
-                <div className="absolute inset-0 flex items-center justify-center opacity-30">
-                  <Zap className="w-24 h-24 sm:w-40 sm:h-40 text-blue-400 blur-[2px]" />
+        {/* ── THE ONLY PART UPDATED: MacOS Video Showcase (With Individual Hover Fix) ── */}
+        <div className="relative w-full max-w-4xl flex justify-center perspective-3000">
+          <div 
+            ref={monitorRef}
+            className="w-full flex flex-col rounded-2xl border border-white/10 shadow-[0_48px_96px_-24px_rgba(0,0,0,1)] overflow-hidden relative bg-zinc-950/90 backdrop-blur-3xl"
+            style={{ transformStyle: "preserve-3d" }}
+          >
+            {/* MacOS Title Bar */}
+            <div className="h-9 sm:h-11 w-full bg-white/[0.03] border-b border-white/[0.08] flex items-center px-4 relative z-30">
+              <div className="flex gap-2">
+                {/* Close (Individual Hover) */}
+                <div className="w-3 h-3 rounded-full bg-[#FF5F56] shadow-inner shadow-black/10 flex items-center justify-center relative transition-colors hover:bg-[#ff4b40] group/close">
+                  <svg className="w-1.5 h-1.5 text-black/60 opacity-0 group-hover/close:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
                 </div>
-
-                <div className="absolute inset-0 flex items-center justify-center p-6 sm:p-12">
-                  <motion.div
-                    className="w-full max-w-sm glass rounded-3xl border border-white/10 p-6 sm:p-8 shadow-2xl bg-zinc-900/40 backdrop-blur-2xl"
-                    animate={{ y: [0, -15, 0] }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                  >
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="w-fit h-12 px-3 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-                        <span className="text-white font-black text-sm">100x</span>
-                      </div>
-                      <div>
-                        <div className="h-2.5 w-28 bg-white/20 rounded-full mb-2" />
-                        <div className="h-2 w-20 bg-white/10 rounded-full" />
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                        <motion.div
-                          className="h-full bg-blue-500"
-                          animate={{ width: ["0%", "70%", "70%"] }}
-                          transition={{ duration: 4, repeat: Infinity }}
-                        />
-                      </div>
-                      <div className="h-1.5 w-[80%] bg-white/5 rounded-full overflow-hidden">
-                        <motion.div
-                          className="h-full bg-cyan-400"
-                          animate={{ width: ["0%", "0%", "90%", "90%"] }}
-                          transition={{ duration: 4, repeat: Infinity }}
-                        />
-                      </div>
-                    </div>
-                  </motion.div>
+                {/* Minimize (Individual Hover) */}
+                <div className="w-3 h-3 rounded-full bg-[#FFBD2E] shadow-inner shadow-black/10 flex items-center justify-center relative transition-colors hover:bg-[#ffad00] group/min">
+                  <svg className="w-1.5 h-1.5 text-black/60 opacity-0 group-hover/min:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="6">
+                    <path d="M5 12h14" />
+                  </svg>
+                </div>
+                {/* Fullscreen (Individual Hover) */}
+                <div className="w-3 h-3 rounded-full bg-[#27C93F] shadow-inner shadow-black/10 flex items-center justify-center relative transition-colors hover:bg-[#1eb033] group/full">
+                  <svg className="w-1.5 h-1.5 text-black/60 opacity-0 group-hover/full:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4">
+                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                  </svg>
                 </div>
               </div>
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-[0.2em] opacity-50">Habitswipe_Preview</span>
+              </div>
+            </div>
+
+            {/* Viewport content */}
+            <div className="relative w-full aspect-video">
+              <video
+                className="w-full h-full object-cover"
+                src="/hero-preview.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+              />
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.02] via-transparent to-white/[0.01] pointer-events-none z-10" />
             </div>
           </div>
 
-          <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[90%] h-48 bg-indigo-500/20 blur-[120px] -z-10 rounded-full" />
-        </motion.div>
+          <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[85%] h-48 bg-indigo-600/15 blur-[120px] -z-10 rounded-full" />
+        </div>
       </div>
     </section>
   )
