@@ -1,6 +1,7 @@
 "use client"
 
 import { motion, useScroll, useTransform } from "framer-motion"
+import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 
@@ -37,9 +38,7 @@ export function LandingNavbar() {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-fit h-9 px-3 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center font-black text-white text-xs group-hover:scale-110 transition-transform shadow-lg shadow-indigo-500/25">
-            100x
-          </div>
+          <Image src={`/favicon.ico`} alt="Logo" width={32} height={32} />
           <span className="text-xl font-black tracking-tight text-white select-none">
             100xFocus
           </span>
@@ -62,7 +61,7 @@ export function LandingNavbar() {
         </div>
 
         <div className="flex items-center gap-4">
-          <a
+          {/* <a
             href={`${PRODUCT_URL}/login`}
             className="hidden sm:block text-sm font-medium text-zinc-400 hover:text-white transition-colors"
           >
@@ -74,7 +73,7 @@ export function LandingNavbar() {
               <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
               <span className="relative">Get Started</span>
             </button>
-          </a>
+          </a> */}
         </div>
       </div>
     </motion.nav>

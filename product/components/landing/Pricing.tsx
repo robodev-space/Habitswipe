@@ -70,6 +70,24 @@ export function Pricing() {
   return (
     <section className={`${inter.className} py-24 px-6 relative overflow-hidden`} id="pricing">
       <div className="max-w-7xl mx-auto">
+
+
+        <div className="text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm font-medium mb-8"
+          >
+            <Zap className="w-4 h-4 fill-current" />
+            <span>ANNUAL SALE: DISCOUNT ON PRO PLAN</span>
+          </motion.div>
+          <h2 className="text-3xl md:text-5xl lg:text-7xl font-black tracking-tighter mb-6 leading-[0.95]">
+            Simple, honest pricing.
+          </h2>
+          <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
+            Choose the plan that fits your growth velocity. No hidden fees.
+          </p>
+        </div>
         {/* Animated Promo Banner */}
         <AnimatePresence>
           {showBanner && (
@@ -87,7 +105,7 @@ export function Pricing() {
                     </div>
                     <div>
                       <p className="text-white font-black text-lg tracking-tight">SAVE ON PRO PLAN</p>
-                      <p className="text-indigo-200/60 text-sm">Unlock pro features for just $44/mo</p>
+                      <p className="text-indigo-200/60 text-sm">Unlock pro features for just $44/Year</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 w-full md:w-auto">
@@ -109,24 +127,6 @@ export function Pricing() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        <div className="text-center mb-16">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm font-medium mb-8"
-          >
-            <Zap className="w-4 h-4 fill-current" />
-            <span>ANNUAL SALE: DISCOUNT ON PRO PLAN</span>
-          </motion.div>
-          <h2 className="text-3xl md:text-5xl lg:text-7xl font-black tracking-tighter mb-6 leading-[0.95]">
-            Simple, honest pricing.
-          </h2>
-          <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-            Choose the plan that fits your growth velocity. No hidden fees.
-          </p>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {tiers.map((tier, index) => {
             const isAnnualPlan = tier.name === "Pro";

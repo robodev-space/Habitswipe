@@ -8,14 +8,14 @@ const PRODUCT_URL = process.env.NEXT_PUBLIC_PRODUCT_PROD_URL || "https://habitcl
 
 const products = [
   {
-    name: "HabitSwipe",
-    tagline: "Swipe-based habit tracking",
-    description: "The most satisfying way to build habits. Swipe right for done, left for skip. AI-powered insights, streaks, analytics, and a beautiful dark UI built for focus.",
+    name: "HabitClick",
+    tagline: "Click-based habit tracking",
+    description: "The most satisfying way to build habits. Click for done, skip for skip. AI-powered insights, streaks, analytics, and a beautiful dark UI built for focus.",
     icon: Zap,
     color: "from-blue-500 to-cyan-500",
     status: "live",
     link: PRODUCT_URL,
-    cta: "Open HabitSwipe",
+    cta: "Open HabitClick",
   },
   {
     name: "Coming Soon",

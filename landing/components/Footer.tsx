@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 
 const footerLinks = [
@@ -16,9 +17,7 @@ export function Footer() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-fit h-7 px-2.5 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-            <span className="text-white font-black text-xs">100x</span>
-          </div>
+          <Image src={`/favicon.ico`} alt="Logo" width={32} height={32} />
           <span className="text-base font-bold text-white tracking-tight">
             100xFocus
           </span>
