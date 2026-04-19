@@ -115,7 +115,7 @@ function ProductCard({ product, index }: { product: typeof products[0]; index: n
 
         <div className="mt-auto">
           {isLive ? (
-            <a href={product.link}>
+            <a href={product.link} target="_blank" rel="noopener noreferrer">
               <button className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 transition-all active:scale-95 shadow-lg shadow-indigo-500/20">
                 {product.cta}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
