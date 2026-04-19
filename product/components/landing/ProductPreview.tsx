@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { useState, useEffect } from "react"
 import { Check, X, Flame, Trophy, Zap } from "lucide-react"
+import Image from "next/image"
 
 const DEMO_HABITS = [
   { name: "Morning Workout", emoji: "🏋️", streak: 12, color: "#6366f1" },
@@ -58,9 +59,10 @@ export function ProductPreview() {
       {/* ── Top Bar ─────────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-5 sm:px-8 pt-5 sm:pt-6 pb-3">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+          {/* <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
             <span className="text-[8px] font-black text-white">100x</span>
-          </div>
+          </div> */}
+          <Image src="/favicon.ico" alt="HabitClick" width={24} height={24} />
           <span className="text-xs sm:text-sm font-bold text-white/80">Today</span>
         </div>
         <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20">
@@ -121,11 +123,10 @@ export function ProductPreview() {
                   className="absolute inset-0 z-20 flex items-center justify-center"
                 >
                   <div
-                    className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                      action === "done"
-                        ? "bg-emerald-500/20 border-2 border-emerald-500/50"
-                        : "bg-red-500/20 border-2 border-red-500/50"
-                    }`}
+                    className={`w-16 h-16 rounded-full flex items-center justify-center ${action === "done"
+                      ? "bg-emerald-500/20 border-2 border-emerald-500/50"
+                      : "bg-red-500/20 border-2 border-red-500/50"
+                      }`}
                   >
                     {action === "done" ? (
                       <Check className="w-8 h-8 text-emerald-400" />
@@ -196,9 +197,8 @@ export function ProductPreview() {
                   className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border text-xs font-semibold"
                 >
                   <Check
-                    className={`w-4 h-4 ${
-                      activeBtn === "done" ? "text-emerald-400" : "text-indigo-400"
-                    }`}
+                    className={`w-4 h-4 ${activeBtn === "done" ? "text-emerald-400" : "text-indigo-400"
+                      }`}
                   />
                   <span className={activeBtn === "done" ? "text-emerald-400" : "text-indigo-400"}>
                     Done
