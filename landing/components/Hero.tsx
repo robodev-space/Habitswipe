@@ -9,7 +9,7 @@ import { useGSAP } from "@gsap/react"
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null)
   const monitorRef = useRef<HTMLDivElement>(null)
-  
+
   // Re-implementing your motion values for the glows (Reverting to your original UI)
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
@@ -20,7 +20,7 @@ export function Hero() {
     const handleMouseMove = (e: MouseEvent) => {
       const { clientX, clientY } = e
       const { innerWidth, innerHeight } = window
-      
+
       const xPercent = (clientX / innerWidth - 0.5)
       const yPercent = (clientY / innerHeight - 0.5)
 
@@ -140,7 +140,7 @@ export function Hero() {
 
         {/* ── THE ONLY PART UPDATED: MacOS Video Showcase (With Individual Hover Fix) ── */}
         <div className="relative w-full max-w-4xl flex justify-center perspective-3000">
-          <div 
+          <div
             ref={monitorRef}
             className="w-full flex flex-col rounded-2xl border border-white/10 shadow-[0_48px_96px_-24px_rgba(0,0,0,1)] overflow-hidden relative bg-zinc-950/90 backdrop-blur-3xl"
             style={{ transformStyle: "preserve-3d" }}
@@ -168,7 +168,7 @@ export function Hero() {
                 </div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-[0.2em] opacity-50">Habitswipe_Preview</span>
+                {/* <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-[0.2em] opacity-50">Habitswipe_Preview</span> */}
               </div>
             </div>
 
