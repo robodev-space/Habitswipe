@@ -96,7 +96,7 @@ npx prisma studio        # optional: visual DB explorer
 npm run dev
 # Open http://localhost:3000
 ```
-
+dsdsa
 ---
 
 ## File Structure Explained
