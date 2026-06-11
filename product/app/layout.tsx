@@ -23,7 +23,7 @@ const inter = Inter({
 
 // ── Viewport (themeColor + viewport must live here in Next.js 14+) ───────────
 export const viewport: Viewport = {
-  themeColor: "#7c3aed",
+  themeColor: "#ffffff",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     icon: [
       { url: "/favicon.ico" },
       { url: "/icon-192x192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icon-512x512.png", sizes: "512x512", type: "image/png" },
+      // { url: "/icon-512x512.png", sizes: "512x512", type: "image/png" },
     ],
     shortcut: "/favicon.ico",
     apple: "/icon-192x192.png",
