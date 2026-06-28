@@ -8,11 +8,11 @@ import { getServerSession } from "next-auth"
 import { format, subDays } from "date-fns"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-// import {
-//   calculateCurrentStreak,
-//   calculateLongestStreak,
-//   calculateCompletionRate,
-// } from "@/lib/utils"
+import {
+  computeCurrentStreak,
+  computeLongestStreak,
+  computeCompletionRate,
+} from "@/lib/streaks"
 import type { StreakPageData, LogStatus, MonthlyPerformancePoint } from "@/types"
 
 export async function GET() {
@@ -139,12 +139,11 @@ export async function GET() {
     // For individual habit heatmap, we still only show last 84 days to keep it compact
     const currentWeekLogs = logs.filter(l => new Date(l.date) >= subDays(new Date(), 83))
 
-    const currentStreak = 1
-    const longestStreak = 2
-    const completionRate = 3
-    // const currentStreak = calculateCurrentStreak(logs)
-    // const longestStreak = calculateLongestStreak(logs)
-    // const completionRate = calculateCompletionRate(logs)
+    // Dynamically calculate metrics using the streak engine
+    const doneDates = logs.filter(l => l.status === "DONE").map(l => l.date)
+    const currentStreak = computeCurrentStreak(doneDates)
+    const longestStreak = computeLongestStreak(doneDates)
+    const completionRate = computeCompletionRate(logs, 30)
 
     const habitHeatmap: { date: string; status: LogStatus | null }[] = []
     const logMap = new Map(logs.map(l => [format(new Date(l.date), "yyyy-MM-dd"), l.status]))

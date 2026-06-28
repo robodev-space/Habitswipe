@@ -43,6 +43,11 @@ export const authOptions: NextAuthOptions = {
           throw new Error("No account found with this email")
         }
 
+        // Block soft-deleted accounts from logging in
+        if (user.deletedAt) {
+          throw new Error("This account has been deleted")
+        }
+
         const isValid = await bcrypt.compare(credentials.password, user.password)
         if (!isValid) {
           throw new Error("Incorrect password")
@@ -63,7 +68,22 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    // Add user ID + onboardingComplete to the JWT token
+    // ── 1. Intercept all sign-ins to block soft-deleted users ──
+    async signIn({ user }) {
+      if (user.email) {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email },
+          select: { deletedAt: true }
+        })
+        if (dbUser?.deletedAt) {
+          // Returning false redirects to /login?error=AccessDenied
+          return false
+        }
+      }
+      return true
+    },
+
+    // ── 2. Add user ID + onboardingComplete to the JWT token ──
     async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id

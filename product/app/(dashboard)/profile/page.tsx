@@ -180,12 +180,25 @@ export default function ProfilePage() {
 
   const handleDeleteAccount = async () => {
     setIsDeleting(true)
-    // Mock deletion
-    setTimeout(() => {
-      toast.error("Account deletion is disabled for this demo.")
+    try {
+      const res = await fetch(API_ROUTES.PROFILE.BASE, { method: "DELETE" })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || "Failed to delete account")
+      }
+
+      toast.success("Account deleted. We're sorry to see you go.")
+      // Sign out and redirect to login after a short delay
+      setTimeout(() => {
+        signOut({ callbackUrl: "/login" })
+      }, 1000)
+    } catch (err: any) {
+      console.error("Delete account error:", err)
+      toast.error(err.message || "Failed to delete account. Please try again.")
       setIsDeleting(false)
       setShowDeleteConfirm(false)
-    }, 1500)
+    }
   }
 
   if (isLoading || !mounted) {
@@ -316,7 +329,7 @@ export default function ProfilePage() {
         variant="danger"
         icon={<Trash2 size={22} strokeWidth={2} color="#ef4444" />}
         title="Delete your account?"
-        description="This will permanently delete all your habits, streaks, and history. This action cannot be undone."
+        description="Your account will be deactivated and you'll be signed out. Your data will be retained for 30 days in case you change your mind."
         confirmLabel="Delete account"
         cancelLabel="Keep account"
         isLoading={isDeleting}

@@ -1,7 +1,8 @@
 // app/api/profile/route.ts
 // ─────────────────────────────────────────────────────────────────────────────
-// GET  /api/profile — Fetch current user profile
-// PATCH /api/profile — Update name, phone, bio, username
+// GET    /api/profile — Fetch current user profile
+// PATCH  /api/profile — Update name, phone, bio, username
+// DELETE /api/profile — Soft-delete user account (sets deletedAt)
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { NextResponse } from "next/server"
@@ -203,6 +204,30 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: err.errors[0].message }, { status: 400 })
     }
     console.error("[PROFILE_PATCH_ERROR]", err)
+    return NextResponse.json({ error: "Something went wrong" }, { status: 500 })
+  }
+}
+
+// ── DELETE (Soft Delete) ──────────────────────────────────────────────────────
+export async function DELETE() {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  try {
+    // Soft delete: set deletedAt timestamp instead of removing the record
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { deletedAt: new Date() },
+    })
+
+    return NextResponse.json(
+      { message: "Account deleted successfully" },
+      { status: 200 }
+    )
+  } catch (err) {
+    console.error("[PROFILE_DELETE_ERROR]", err)
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 })
   }
 }
