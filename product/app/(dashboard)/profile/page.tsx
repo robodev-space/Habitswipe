@@ -188,7 +188,9 @@ export default function ProfilePage() {
         throw new Error(data.error || "Failed to delete account")
       }
 
+      setShowDeleteConfirm(false)
       toast.success("Account deleted. We're sorry to see you go.")
+      
       // Sign out and redirect to login after a short delay
       setTimeout(() => {
         signOut({ callbackUrl: "/login" })
