@@ -330,6 +330,7 @@ export default function ProfilePage() {
         icon={<Trash2 size={22} strokeWidth={2} color="#ef4444" />}
         title="Delete your account?"
         description="Your account will be deactivated and you'll be signed out. Your data will be retained for 30 days in case you change your mind."
+        requireInput={session?.user?.email || profile?.email || ""}
         confirmLabel="Delete account"
         cancelLabel="Keep account"
         isLoading={isDeleting}

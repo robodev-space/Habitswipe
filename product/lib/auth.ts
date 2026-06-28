@@ -45,12 +45,12 @@ export const authOptions: NextAuthOptions = {
 
         // Block soft-deleted accounts from logging in
         if (user.deletedAt) {
-          throw new Error("This account has been deleted")
+          throw new Error("This account has been deleted. signUp again")
         }
 
         const isValid = await bcrypt.compare(credentials.password, user.password)
         if (!isValid) {
-          throw new Error("Incorrect password")
+          throw new Error("Incorrect  username or password")
         }
 
         return {
@@ -106,7 +106,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string
-        ;(session.user as any).onboardingComplete = token.onboardingComplete as boolean
+          ; (session.user as any).onboardingComplete = token.onboardingComplete as boolean
         session.user.name = token.name as string
       }
       return session

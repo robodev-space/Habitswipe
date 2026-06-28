@@ -7,7 +7,7 @@
 // Use for: delete habit, sign-out, delete account, archive, etc.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { Trash2, AlertTriangle, CheckCircle2 } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import "./confirm-dialog.css"
@@ -25,6 +25,8 @@ interface ConfirmDialogProps {
   description: string
   confirmLabel?: string
   cancelLabel?: string
+  /** If provided, user must type this exact string to enable the confirm button */
+  requireInput?: string
   /** Controls the colour of the confirm button */
   variant?: Variant
   /** Shows a spinner on the confirm button while an async action runs */
@@ -53,6 +55,7 @@ export function ConfirmDialog({
   description,
   confirmLabel = "Confirm",
   cancelLabel = "Cancel",
+  requireInput,
   variant = "danger",
   isLoading = false,
   onConfirm,
@@ -61,6 +64,15 @@ export function ConfirmDialog({
 
   const displayIcon = icon ?? VARIANT_ICONS[variant]
   const displayBg   = iconBg ?? defaultIconBg
+
+  const [inputValue, setInputValue] = useState("")
+
+  // Reset input when dialog closes
+  useEffect(() => {
+    if (!open) setInputValue("")
+  }, [open])
+
+  const isConfirmDisabled = isLoading || (requireInput ? inputValue !== requireInput : false)
 
   async function handleConfirm() {
     await onConfirm()
@@ -99,6 +111,26 @@ export function ConfirmDialog({
             <h3 className="cd-title">{title}</h3>
             <p className="cd-desc">{description}</p>
 
+            {requireInput && (
+              <div className="cd-require-input" style={{ marginTop: "16px", textAlign: "left" }}>
+                <label style={{ display: "block", fontSize: "13px", color: "var(--gray)", marginBottom: "8px" }}>
+                  Please type <strong>{requireInput}</strong> to confirm.
+                </label>
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder={requireInput}
+                  style={{
+                    width: "100%", padding: "10px 12px", fontSize: "14px", borderRadius: "8px",
+                    border: "1px solid var(--border)", background: "var(--bg-s)", color: "var(--text)", outline: "none"
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = variant === "danger" ? "var(--red)" : "var(--ind)")}
+                  onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
+                />
+              </div>
+            )}
+
             {/* Actions */}
             <div className="cd-actions">
               <button
@@ -110,9 +142,13 @@ export function ConfirmDialog({
               </button>
               <button
                 className="cd-btn cd-btn-confirm"
-                style={{ background: btn }}
+                style={{ 
+                  background: btn,
+                  opacity: isConfirmDisabled ? 0.5 : 1,
+                  cursor: isConfirmDisabled ? "not-allowed" : "pointer"
+                }}
                 onClick={handleConfirm}
-                disabled={isLoading}
+                disabled={isConfirmDisabled}
               >
                 {isLoading ? (
                   <span className="cd-spinner" />
