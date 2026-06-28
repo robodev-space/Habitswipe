@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 
 // ── Fonts ────────────────────────────────────────────────────────────────────
-// Inter: The same high-impact font used by BridgeMind
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",

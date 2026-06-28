@@ -20,24 +20,25 @@ model User {
   email         String    @unique
   name          String?
   username      String?   @unique
-  image         String?   // avatar URL
-  password      String?   // null for OAuth users
+  image         String? // avatar URL
+  password      String? // null for OAuth users
   emailVerified DateTime?
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  phone         String?           // mobile number
-  bio           String?           // short bio
-  referralCode  String?  @unique  // this user's own referral code
-  referredBy    String?           // referral code used when signing up
+  updatedAt     DateTime  @updatedAt // Not null for UI/UX
+  deletedAt     DateTime? // Soft delete
+  phone         String? // mobile number
+  bio           String? // short bio
+  referralCode  String?   @unique // this user's own referral code
+  referredBy    String? // referral code used when signing up
 
   // Onboarding
-  onboardingComplete Boolean  @default(false)
-  goal               String?           // health, mind, learn, work, finance, custom
-  reminderTime       String?           // e.g. "07:00"
-  emailReminders     Boolean  @default(true)
-  timezone           String   @default("UTC")
-  dayStartHour       Int      @default(0) // 0-23 (midnight is 0)
-  theme              String   @default("system") // "light", "dark", or "system"
+  onboardingComplete Boolean @default(false)
+  goal               String? // health, mind, learn, work, finance, custom
+  reminderTime       String? // e.g. "07:00"
+  emailReminders     Boolean @default(true)
+  timezone           String  @default("UTC")
+  dayStartHour       Int     @default(0) // 0-23 (midnight is 0)
+  theme              String  @default("system") // "light", "dark", or "system"
 
   // NextAuth relations
   accounts Account[]
@@ -97,8 +98,8 @@ model Otp {
   id        String   @id @default(cuid())
   email     String   @unique
   code      String
-  name      String?  // Store pending user name
-  password  String?  // Store pending hashed password
+  name      String? // Store pending user name
+  password  String? // Store pending hashed password
   expiresAt DateTime
   createdAt DateTime @default(now())
 
@@ -108,20 +109,20 @@ model Otp {
 // ─── HABIT ───────────────────────────────────────────────────────────────────
 // A habit belongs to one user. Frequency controls which days it appears.
 model Habit {
-  id         String        @id @default(cuid())
-  userId     String
-  name       String
-  icon       String        @default("⚡")  // emoji
-  color      String        @default("#6366f1") // hex
-  frequency  HabitFrequency @default(DAILY)
-  targetDays Int           @default(7)   // days per week for WEEKLY habits
-  isArchived Boolean       @default(false)
-  sortOrder  Int           @default(0)
-  reminderTime String?
-  emailReminders Boolean   @default(true)
+  id             String         @id @default(cuid())
+  userId         String
+  name           String
+  icon           String         @default("⚡") // emoji
+  color          String         @default("#6366f1") // hex
+  frequency      HabitFrequency @default(DAILY)
+  targetDays     Int            @default(7) // days per week for WEEKLY habits
+  isArchived     Boolean        @default(false)
+  sortOrder      Int            @default(0)
+  reminderTime   String?
+  emailReminders Boolean        @default(true)
   lastRemindedAt DateTime?
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
   user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   logs HabitLog[]
@@ -130,8 +131,8 @@ model Habit {
 }
 
 enum HabitFrequency {
-  DAILY   // appears every day
-  WEEKLY  // appears X days per week (user picks count)
+  DAILY // appears every day
+  WEEKLY // appears X days per week (user picks count)
 }
 
 // ─── HABIT LOG ────────────────────────────────────────────────────────────────
@@ -140,7 +141,7 @@ model HabitLog {
   id        String    @id @default(cuid())
   habitId   String
   userId    String
-  date      DateTime  @db.Date  // only the date, no time
+  date      DateTime  @db.Date // only the date, no time
   status    LogStatus
   createdAt DateTime  @default(now())
 
@@ -153,22 +154,21 @@ model HabitLog {
 }
 
 enum LogStatus {
-  DONE    // swiped right ✅
+  DONE // swiped right ✅
   SKIPPED // swiped left ❌
 }
-
 
 // ─── STREAK MILESTONE ────────────────────────────────────────────────────────
 // Records when a user hits a streak milestone (7, 14, 30, 60, 100 days).
 // Used to show achievements on the Streaks page.
 model StreakMilestone {
-  id        String   @id @default(cuid())
-  userId    String
-  habitId   String
-  milestone Int      // 7, 14, 30, 60, 100
-  achieved  Boolean  @default(false)
+  id         String    @id @default(cuid())
+  userId     String
+  habitId    String
+  milestone  Int // 7, 14, 30, 60, 100
+  achieved   Boolean   @default(false)
   achievedAt DateTime?
-  createdAt DateTime @default(now())
+  createdAt  DateTime  @default(now())
 
   @@unique([habitId, milestone])
   @@map("streak_milestones")
@@ -182,7 +182,7 @@ model SnapShareLog {
   date      DateTime @db.Date // Only the date, no time
   createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // One log per user per day max
   @@unique([userId, date])
@@ -195,12 +195,12 @@ model MoodLog {
   id        String   @id @default(cuid())
   userId    String
   date      DateTime @db.Date // Only the date, no time
-  mood      String   // e.g. "Exhausted", "Tired", "Good", "Energised", "On fire"
-  emoji     String   // e.g. "😴"
+  mood      String // e.g. "Exhausted", "Tired", "Good", "Energised", "On fire"
+  emoji     String // e.g. "😴"
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // One mood per user per day max
   @@unique([userId, date])
